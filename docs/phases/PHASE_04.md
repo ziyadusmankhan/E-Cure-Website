@@ -2,7 +2,9 @@
 
 **Phase:** 4 — White-label Customization Foundation
 
-**Status:** PASSED_AWAITING_APPROVAL
+**Status:** APPROVED
+
+Approval: The user authorized Phase 5. Checkpoint `7da31f3`.
 
 Verified locally on 2 November 2026, Windows, Node 24.18.0 and Chromium. The user authorized Phase 4 with “move to phase 4”. Phase 5 has not started.
 

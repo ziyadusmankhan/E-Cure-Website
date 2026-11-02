@@ -5,7 +5,19 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,8 +28,13 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run db:check-migrations
+      - run: npm run test:db
+        env:
+          TEST_DATABASE_SERVER_URL: postgresql://postgres:ci-only-password@127.0.0.1:5432/postgres
       - run: npx playwright install --with-deps chromium
       - run: npm run build
+      - run: npm run test:boundaries
       - run: npm run test:e2e
       - run: npm run test:profiles
       - uses: actions/upload-artifact@v4
@@ -27,4 +44,5 @@ jobs:
           path: |
             playwright-report/
             .profile-results/
+            .db-results/
           retention-days: 7

@@ -9,3 +9,7 @@ test-results/
 playwright-report/
 coverage/
 .profile-results/
+.local/
+.db-results/
+supabase/.temp/
+supabase/.branches/

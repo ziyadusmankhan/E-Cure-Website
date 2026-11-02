@@ -14,21 +14,37 @@
     "test:e2e": "playwright test",
     "test:e2e:foundation": "playwright test foundation.spec.ts",
     "test:e2e:public": "playwright test public-website.spec.ts",
-    "test:profiles": "node qa/verify-profiles.mjs"
+    "test:profiles": "node qa/verify-profiles.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:check-migrations": "drizzle-kit check",
+    "db:migrate": "node --conditions=react-server --import tsx scripts/database.ts migrate",
+    "db:check": "node --conditions=react-server --import tsx scripts/database.ts check",
+    "db:seed": "node --conditions=react-server --import tsx scripts/database.ts seed",
+    "test:db": "node --conditions=react-server --import tsx qa/database-tests.ts",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "db:local:start": "node --conditions=react-server --import tsx scripts/local-database.ts start",
+    "db:local:stop": "node --conditions=react-server --import tsx scripts/local-database.ts stop",
+    "db:local:migrate": "node --conditions=react-server --import tsx scripts/local-database.ts migrate",
+    "test:boundaries": "node qa/verify-backend-boundaries.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
+    "@next/env": "16.4.2",
     "@radix-ui/react-accordion": "1.3.1",
     "@radix-ui/react-dialog": "1.3.1",
     "@radix-ui/react-navigation-menu": "1.4.1",
     "@radix-ui/react-slot": "1.5.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "drizzle-orm": "0.45.4",
     "lucide-react": "1.61.0",
     "next": "16.4.2",
+    "postgres": "3.4.9",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-hook-form": "7.90.0",
+    "server-only": "0.0.1",
     "tailwind-merge": "3.7.0",
     "zod": "4.6.7"
   },
@@ -44,12 +60,20 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.2.1",
+    "drizzle-kit": "0.31.11",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
     "jsdom": "30.1.3",
+    "supabase": "3.0.0",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "5.0.5"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "0.28.2"
+    }
   }
 }

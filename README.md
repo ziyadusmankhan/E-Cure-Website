@@ -1,10 +1,10 @@
 # Home Health Services — frontend demonstration
 
-A complete multi-page Next.js App Router project for presenting a home healthcare website. Temporary branding and deliberately unconfirmed business information are editable in one place. There is no booking backend, database, authentication, payment system, or form persistence.
+A complete multi-page Next.js App Router healthcare frontend with typed business profiles and a Phase 5 PostgreSQL/Drizzle backend foundation. Public forms remain frontend demonstrations; authentication, payments and public request persistence are not activated.
 
 ## Run locally
 
-Phases 1–4 (foundation, design system, public website and white-label configuration) are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later backend and operational admin phases require separate approval.
+Phases 1–5 are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Public form integration and operational admin phases require separate approval.
 
 Use a current Node.js LTS release (Node 24 was used during development).
 
@@ -14,6 +14,16 @@ npm run dev
 ```
 
 Open http://localhost:3000. If the port is occupied, Next.js prints the selected port.
+
+The public frontend runs without database access. For the approved local PostgreSQL foundation, installed PostgreSQL binaries are required:
+
+```powershell
+npm.cmd run db:local:start
+npm.cmd run db:check
+npm.cmd run test:db
+```
+
+Development uses a persistent workspace cluster on port 55433; tests use a separate cluster on 55432 and fresh disposable databases. Local setup preserves existing environment files and never prints credentials. `db:local:stop` retains development data; `db:local:migrate` applies reviewed migrations. Supabase configuration is prepared but its running stack/hosted verification is deferred by the user's local-PostgreSQL choice. See `docs/architecture/BACKEND.md` for the complete setup, schema, permissions and service contract.
 
 ```bash
 npm run lint
@@ -114,10 +124,10 @@ Next.js Image optimizes photographs and provides responsive sizing. The small cu
 
 The booking URL accepts a known service slug, for example `/book-appointment?service=physiotherapy`; invalid slugs leave the selection empty. The flow validates service, name, phone, optional email, future/today date, time preference, and inquiry length. Contact validates name, email, topic, and message. Example details should be used throughout.
 
-To add a real backend later:
+The Phase 5 internal database/service layer now exists under `src/server/`. To activate real public submissions in Phase 6:
 
 1. Establish approved care scope, identity, privacy notices, consent, retention, and operational ownership.
-2. Add a dedicated server-side booking API with independent validation, appropriate access protections, rate limiting, and controlled storage. Never trust client validation alone.
+2. Add the server-side booking API around the internal service layer with independent validation, appropriate access protections, anti-spam, rate limiting and idempotency. Never trust client validation alone. Match the deployment profile to its own initialized database; the backend rejects a different business identity.
 3. Replace the completion handler in `src/components/forms/booking-form.tsx` and the contact submit handler in `src/components/forms/contact-form.tsx` with a request to that API. Add real pending/error states, retry handling, and duplicate submission protection.
 4. Distinguish an acknowledged request from a confirmed appointment. Only show confirmation that the backend actually provides.
 5. Update the demonstration notices and privacy text to reflect the implemented data handling. Changing `site.demo` alone deliberately does not activate submissions.
@@ -125,7 +135,7 @@ To add a real backend later:
 ## Deploy to Vercel
 
 1. Commit this source to your repository and import it into Vercel.
-2. Choose the Next.js preset, repository root, `npm run build`, and a supported Node.js LTS version. No database or secret is needed for the demo.
+2. Choose the Next.js preset, repository root, `npm run build`, and a supported Node.js LTS version. The public frontend demo still runs without a database. Backend-enabled deployments need independent restricted runtime credentials and a separately controlled migration job as documented in `docs/architecture/BACKEND.md`.
 3. Optionally configure `NEXT_PUBLIC_SITE_URL` with the real deployment URL for canonical metadata. Keep `site.demo: true` for a demonstration.
 4. Deploy and verify direct navigation, images, FAQs, mobile menu, and both form flows.
 
