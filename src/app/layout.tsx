@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { WhatsAppContact } from "@/components/shared/whatsapp-contact";
 import { site } from "@/config/site";
+import { getTheme } from "@/config/themes";
 import "./globals.css";
 
 const lora = Lora({ subsets: ["latin"], variable: "--font-heading", display: "swap" });
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${lora.variable} ${sourceSans.variable}`}>
+    <html
+      lang="en"
+      data-theme={getTheme(process.env.SITE_THEME)}
+      className={`${lora.variable} ${sourceSans.variable}`}
+    >
       <body>
         <a href="#main-content" className="skip-link">
           Skip to content

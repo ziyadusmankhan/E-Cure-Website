@@ -1,20 +1,11 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/components.css";
 
 @theme inline {
   --font-sans: var(--font-body);
-  --color-primary: #125e96;
-  --color-foreground: #16374a;
-}
-:root {
-  --blue: #125e96;
-  --ink: #16374a;
-  --green: #147c70;
-  --muted: #5b6d78;
-  --line: #dbe4e5;
-  --paper: #f7f9f8;
-  --mint: #ecf4ef;
-  --white: #fff;
-  --radius: 6px;
+  --color-primary: var(--blue);
+  --color-foreground: var(--ink);
 }
 * {
   box-sizing: border-box;
@@ -73,7 +64,7 @@ textarea {
     transform 0.2s;
 }
 :focus-visible {
-  outline: 3px solid #257b9b;
+  outline: 3px solid var(--blue);
   outline-offset: 4px;
 }
 [tabindex="-1"]:focus {
@@ -175,7 +166,7 @@ figure {
   min-height: 50px;
   padding: 13px 23px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--radius-button);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
@@ -196,7 +187,7 @@ figure {
   color: #fff;
 }
 .button-primary:hover {
-  background: #0e4b78;
+  background: var(--deep);
 }
 .button-outline {
   border-color: #b9cbd1;
@@ -738,9 +729,9 @@ figure {
   display: flex;
 }
 .card-number {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.12em;
-  color: #6d807b;
+  color: var(--muted);
 }
 .service-card h3 {
   font-size: 19px;
@@ -946,7 +937,7 @@ figure {
   flex-shrink: 0;
 }
 .cta-section {
-  background: #163e54;
+  background: var(--deep);
   color: white;
   position: relative;
   overflow: hidden;

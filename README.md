@@ -4,6 +4,8 @@ A complete multi-page Next.js App Router project for presenting a home healthcar
 
 ## Run locally
 
+Phase 1 foundation and Phase 2 design-system work are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later backend and operational admin phases require separate approval.
+
 Use a current Node.js LTS release (Node 24 was used during development).
 
 ```bash
@@ -16,6 +18,7 @@ Open http://localhost:3000. If the port is occupied, Next.js prints the selected
 ```bash
 npm run lint
 npm run typecheck
+npm test
 npm run build
 npm start
 ```
@@ -31,6 +34,17 @@ The check defaults to `http://localhost:3000`. Set `QA_BASE_URL` when testing an
 The lockfile records the resolved dependency versions. Use `npm ci` for reproducible installations. Next.js font optimization downloads Lora (bold, classic headings) and Source Sans 3 (clean, modern body text) at build time, then serves them locally. The first build needs access to Google Fonts.
 
 ## Routes
+
+The opt-in `/design-system` review page demonstrates three theme presets, shared forms/dialogs, status chips, responsive tables and an admin layout using fictional records. It returns 404 unless `ENABLE_DESIGN_SYSTEM=true`. To review it in PowerShell:
+
+```powershell
+$env:ENABLE_DESIGN_SYSTEM = "true"
+npm run dev
+```
+
+Then open http://localhost:3000/design-system. Use `SITE_THEME=clinical-blue`, `soft-teal`, or `warm-neutral` before a build to choose a deployment preset. Keep the review flag disabled on customer deployments.
+
+For automated browser verification, run `npx playwright install chromium`, `npm run build`, then `npm run test:e2e`. Playwright starts its own production server on port 3100 and enables the review fixture only for that process. Run dev and build sequentially to avoid generated-type file races. See `docs/testing/README.md` for details.
 
 - `/` — hero, services, about, home care benefits, process, clearly labeled testimonial placeholder, CTA, contact preview
 - `/about` — home care philosophy and editable company placeholders
