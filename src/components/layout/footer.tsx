@@ -17,6 +17,7 @@ export function Footer() {
             <h2>Explore</h2>
             <Link href="/about">About home care</Link>
             <Link href="/services">All services</Link>
+            <Link href="/faq">Frequently asked questions</Link>
             <Link href="/#how-it-works">How it works</Link>
             <Link href="/book-appointment">Request an appointment</Link>
             <Link href="/contact">Contact</Link>

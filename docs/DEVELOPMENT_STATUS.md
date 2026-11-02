@@ -1,9 +1,9 @@
 # Development status
 
-Phase 1: APPROVED after verification; checkpoint fa21249. The user authorized progression to Phase 2 on 2 November 2026.
+Phase 1: APPROVED, checkpoint fa21249.
+Phase 2: APPROVED by the user's Phase 3 request on 2 November 2026, checkpoint 957e8df.
+Phase 3: PASSED_AWAITING_APPROVAL. The public website is complete for the demo scope, with 13 pages including the new FAQ route. Lint, types, 16 unit/component tests, final production build, all 11 browser tests, responsive review and HTTP route/link/image checks pass.
 
-Phase 2: PASSED_AWAITING_APPROVAL. Design tokens, three presets, reusable components and opt-in review page are complete. Lint, types, 16 unit/component tests, production build, six Chromium tests, responsive review and scoped accessibility checks pass.
+Phases 4–12: NOT_STARTED. Do not begin Phase 4 without explicit user approval.
 
-Phases 3–12: NOT_STARTED. Do not begin Phase 3 until the user explicitly approves.
-
-See docs/phases/PHASE_01.md and PHASE_02.md for evidence and limitations. Public forms remain frontend demonstrations. No database, operational admin access, email delivery or production launch is activated.
+See docs/phases/PHASE_03.md for results, evidence, limitations and the next approval gate. Forms remain frontend-only. No production booking, database, authentication or operational admin is activated.

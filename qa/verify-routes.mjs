@@ -15,6 +15,7 @@ const routes = [
   "/services/nursing-care",
   "/book-appointment",
   "/contact",
+  "/faq",
   "/privacy-policy",
 ];
 const titles = new Set();

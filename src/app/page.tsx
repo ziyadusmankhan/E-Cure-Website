@@ -9,6 +9,8 @@ import { ContactDetails } from "@/components/shared/contact-details";
 import { services } from "@/data/services";
 import { benefits, steps } from "@/data/site-content";
 import { site } from "@/config/site";
+import { FAQ } from "@/components/ui/accordion";
+import { homepageFAQs } from "@/data/faqs";
 
 export default function Home() {
   return (
@@ -213,6 +215,21 @@ export default function Home() {
           </div>
         </section>
       )}
+      <section className="faq-section section" id="questions">
+        <div className="container faq-grid">
+          <div>
+            <SectionHeading
+              eyebrow="HELPFUL TO KNOW"
+              title="A few questions, answered."
+              description="Understand your options before taking the next step."
+            />
+            <Link href="/faq" className="text-link homepage-faq-link">
+              Read all frequently asked questions <ArrowUpRight size={18} />
+            </Link>
+          </div>
+          <FAQ items={homepageFAQs} />
+        </div>
+      </section>
       <CTASection />
       <section className="contact-preview section" id="contact">
         <div className="container contact-preview-grid">

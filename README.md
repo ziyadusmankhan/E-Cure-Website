@@ -49,6 +49,7 @@ For automated browser verification, run `npx playwright install chromium`, `npm 
 - `/` — hero, services, about, home care benefits, process, clearly labeled testimonial placeholder, CTA, contact preview
 - `/about` — home care philosophy and editable company placeholders
 - `/services` — all six care categories
+- `/faq` — grouped general questions, accessible answers, and service-specific cross-links
 - `/services/online-consultation`
 - `/services/physiotherapy`
 - `/services/caretaker-services`
@@ -82,6 +83,7 @@ The fixed WhatsApp icon appears throughout the site. With an empty `contact.what
 
 - `src/data/services.ts`: descriptions, hero copy, imagery, inclusions/equipment categories, audiences, preparation, FAQs, and related-service slugs. The `Service` type is in `src/types/service.ts`.
 - `src/data/site-content.ts`: homepage benefits and the four-step process.
+- `src/data/faqs.ts`: general FAQ groups and the homepage question preview.
 - `src/app/globals.css`: shared design tokens, component styles, responsive rules, and reduced-motion support; Tailwind CSS v4 is configured for utility extensions.
 - `src/components/ui`: selectively adopted shadcn-style Button (Slot/CVA) and Radix Accordion. `components.json` supports adding additional shadcn components.
 - `src/components/layout/header.tsx`: Radix keyboard-accessible desktop navigation and modal mobile navigation, with focus trapping, body scroll locking, and navigation-close behavior.

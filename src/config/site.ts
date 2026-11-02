@@ -9,6 +9,6 @@ export const site: SiteConfig = {
   contact: { phone: "", email: "", address: "", serviceArea: "", whatsappUrl: "", mapUrl: "" },
   socialLinks: [] as { label: string; url: string }[],
   url: process.env.NEXT_PUBLIC_SITE_URL || "",
-  showTestimonials: true,
+  showTestimonials: false,
   demo: true,
 };

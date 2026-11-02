@@ -14,6 +14,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/#about" },
   { label: "Why home care", href: "/#why-home-care" },
+  { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
 ];
 export function Header() {
@@ -101,7 +102,7 @@ export function Header() {
           </NavigationMenu.Root>
           <Button asChild size="small" className="header-cta">
             <Link href="/book-appointment">
-              Book appointment <ArrowUpRight size={16} aria-hidden="true" />
+              Request appointment <ArrowUpRight size={16} aria-hidden="true" />
             </Link>
           </Button>
           <Dialog.Root open={open} onOpenChange={setOpen}>
