@@ -1,4 +1,5 @@
-export const site = {
+import type { SiteConfig } from "@/types/site";
+export const site: SiteConfig = {
   name: "Home Health Services",
   shortName: "Home Health",
   tagline: "Care, in familiar surroundings.",
