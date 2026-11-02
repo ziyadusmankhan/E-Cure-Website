@@ -1,3 +1,4 @@
+import { site } from "@/config/site";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,7 +34,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   if (!service) notFound();
   return (
     <>
-      <section className={`service-hero ${slug === "medical-equipment" ? "equipment-hero" : ""}`}>
+      <section className={`service-hero ${service.kind === "equipment" ? "equipment-hero" : ""}`}>
         <div className="container">
           <Breadcrumbs
             items={[{ label: "Services", href: "/services" }, { label: service.title }]}
@@ -47,13 +48,13 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               <h1>{service.headline}</h1>
               <p>{service.overview}</p>
               <Button asChild>
-                <Link href={`/book-appointment?service=${slug}`}>
-                  Request this service <ArrowUpRight size={18} />
+                <Link
+                  href={site.features.booking ? `/book-appointment?service=${slug}` : "/contact"}
+                >
+                  {site.copy.service_request} <ArrowUpRight size={18} />
                 </Link>
               </Button>
-              <span className="service-availability">
-                An introduction to care options · Availability to be confirmed
-              </span>
+              <span className="service-availability">{site.copy.service_availability}</span>
             </div>
             <figure
               className={`service-hero-image ${service.image.endsWith("svg") ? "is-illustration" : ""}`}
@@ -74,12 +75,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         <div className="container">
           <SectionHeading
             eyebrow={
-              slug === "medical-equipment" ? "EQUIPMENT CATEGORIES" : "UNDERSTANDING THE SERVICE"
+              service.kind === "equipment"
+                ? site.copy.service_equipment_eyebrow
+                : site.copy.service_includes_eyebrow
             }
             title={
-              slug === "medical-equipment"
-                ? "Practical categories. Individual needs."
-                : "What support could look like."
+              service.kind === "equipment"
+                ? site.copy.service_equipment_title
+                : site.copy.service_includes_title
             }
           />
           <div className="inclusion-grid">
@@ -88,10 +91,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <span className="inclusion-number">0{i + 1}</span>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                {slug === "medical-equipment" && (
-                  <span className="category-note">
-                    Illustrative category · Inquire about availability
-                  </span>
+                {service.kind === "equipment" && (
+                  <span className="category-note">{site.copy.service_equipment_note}</span>
                 )}
               </article>
             ))}
@@ -102,8 +103,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         <div className="container two-column">
           <div>
             <SectionHeading
-              eyebrow="WHO IT MAY HELP"
-              title="A starting point for your situation."
+              eyebrow={site.copy.service_audience_eyebrow}
+              title={site.copy.service_audience_title}
             />
             <ul className="check-list">
               {service.audience.map((item) => (
@@ -115,10 +116,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </ul>
           </div>
           <div className="expect-panel">
-            <span className="eyebrow">WHAT TO EXPECT</span>
-            <h2>Start with a conversation.</h2>
+            <span className="eyebrow">{site.copy.service_expect_eyebrow}</span>
+            <h2>{site.copy.service_expect_title}</h2>
             <p>{service.expectation}</p>
-            <h3>Before making arrangements</h3>
+            <h3>{site.copy.service_prepare_title}</h3>
             <ul>
               {service.preparation.map((item) => (
                 <li key={item}>{item}</li>
@@ -130,18 +131,23 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <section className="section">
         <div className="container service-request-row">
           <div>
-            <span className="eyebrow">TAKING THE NEXT STEP</span>
-            <h2>How to request {service.shortTitle.toLowerCase()}</h2>
+            <span className="eyebrow">{site.copy.service_process_eyebrow}</span>
+            <h2>
+              {site.copy.service_process_title} {service.shortTitle.toLowerCase()}
+            </h2>
           </div>
           <ol className="request-steps">
             <li>
-              <span>01</span>Choose this service <ArrowRight size={16} />
+              <span>01</span>
+              {site.copy.service_step_one} <ArrowRight size={16} />
             </li>
             <li>
-              <span>02</span>Review your demo request <ArrowRight size={16} />
+              <span>02</span>
+              {site.copy.service_step_two} <ArrowRight size={16} />
             </li>
             <li>
-              <span>03</span>Explore the next steps
+              <span>03</span>
+              {site.copy.service_step_three}
             </li>
           </ol>
           <p className="small muted">
@@ -150,26 +156,33 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </p>
         </div>
       </section>
-      <section className="faq-section section">
-        <div className="container faq-grid">
-          <SectionHeading eyebrow="HELPFUL TO KNOW" title="Your questions, a little clearer." />
-          <FAQ items={service.faqs} />
-        </div>
-      </section>
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="OTHER WAYS TO FIND SUPPORT"
-            title="Care that can sit alongside it."
-          />
-          <div className="related-grid">
-            {service.related.map((related, i) => {
-              const item = getService(related);
-              return item ? <ServiceCard service={item} index={i} key={related} /> : null;
-            })}
+      {site.features.serviceFAQs && (
+        <section className="faq-section section">
+          <div className="container faq-grid">
+            <SectionHeading
+              eyebrow={site.copy.service_faq_eyebrow}
+              title={site.copy.service_faq_title}
+            />
+            <FAQ items={service.faqs} />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+      {site.features.relatedServices && service.related.length > 0 && (
+        <section className="section">
+          <div className="container">
+            <SectionHeading
+              eyebrow={site.copy.service_related_eyebrow}
+              title={site.copy.service_related_title}
+            />
+            <div className="related-grid">
+              {service.related.map((related, i) => {
+                const item = getService(related);
+                return item ? <ServiceCard service={item} index={i} key={related} /> : null;
+              })}
+            </div>
+          </div>
+        </section>
+      )}
       <CTASection service={slug} />
     </>
   );

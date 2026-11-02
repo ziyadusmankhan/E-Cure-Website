@@ -4,7 +4,7 @@ A complete multi-page Next.js App Router project for presenting a home healthcar
 
 ## Run locally
 
-Phase 1 foundation and Phase 2 design-system work are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later backend and operational admin phases require separate approval.
+Phases 1–4 (foundation, design system, public website and white-label configuration) are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later backend and operational admin phases require separate approval.
 
 Use a current Node.js LTS release (Node 24 was used during development).
 
@@ -64,10 +64,11 @@ All six service routes are generated from typed content and can be loaded direct
 
 ## Change the company name, logo, and business details
 
-Edit `src/config/site.ts`:
+Edit the selected public profile in `src/config/profiles.ts`; `src/config/site.ts` now selects and validates it. See `docs/architecture/WHITE_LABEL.md` for the full configuration contract.
 
 - `name`: full company name for page titles, accessible labels, and copyright
 - `shortName`: short display name in the header and footer
+- `brandLine`, `businessType`, `theme`: logo subtitle, business category and controlled palette
 - `logo.src`: local image path such as `/images/company-logo.svg`; leave empty to use the temporary house/cross mark
 - `logo.alt`: description for the official logo
 - `contact`: phone, email, address, serviceArea, whatsappUrl, and mapUrl
@@ -75,15 +76,26 @@ Edit `src/config/site.ts`:
 - `showTestimonials`: hide the placeholder section by setting this to `false`
 - `demo`: keeps search engines out while this is a demonstration
 
+Choose a profile before starting dev or building production:
+
+```powershell
+$env:NEXT_PUBLIC_SITE_PROFILE = "general-clinic"
+npm.cmd run dev
+```
+
+Options: `default` (the existing site), `general-clinic`, `home-care`, `physiotherapy-center`. The three named businesses are clearly fictional demos. Restart dev or rebuild production after switching. Keep the same profile environment for build and start. Leave `SITE_THEME` unset to use the selected profile's palette.
+
+`npm.cmd run test:profiles` independently builds and browser-tests all three fixtures, records an unchanged-source hash, and restores a default production build afterward. Stop dev and other builds first. Detailed results/screenshots are generated in `.profile-results/`. This matrix is also configured in CI; no hosted run is implied by local results.
+
 Empty contact values appear as plain, explanatory text. Phone, email, WhatsApp, map, and social actions become links only when configured. Use full validated HTTPS URLs for external destinations. These changes do not activate the forms.
 
 The fixed WhatsApp icon appears throughout the site. With an empty `contact.whatsappUrl`, it opens a clear “coming soon” information panel. Once a real WhatsApp URL is configured, it opens that chat directly in a new tab.
 
 ## Content and appearance
 
-- `src/data/services.ts`: descriptions, hero copy, imagery, inclusions/equipment categories, audiences, preparation, FAQs, and related-service slugs. The `Service` type is in `src/types/service.ts`.
-- `src/data/site-content.ts`: homepage benefits and the four-step process.
-- `src/data/faqs.ts`: general FAQ groups and the homepage question preview.
+- `src/data/service-catalog.ts` and `src/config/service-templates.ts`: service descriptions, media, inclusions, preparation and FAQs. Profile entries select enabled services and display order. `src/data/services.ts` exposes only the active catalog to UI and booking validation.
+- `src/config/content/default-copy.ts`: centralized, typed public page and form copy. Each profile overrides the fields that differ.
+- `src/config/profiles.ts`: homepage benefits/process, FAQ groups, hero/About media, navigation, SEO defaults and section/feature flags. The data modules expose the selected profile.
 - `src/app/globals.css`: shared design tokens, component styles, responsive rules, and reduced-motion support; Tailwind CSS v4 is configured for utility extensions.
 - `src/components/ui`: selectively adopted shadcn-style Button (Slot/CVA) and Radix Accordion. `components.json` supports adding additional shadcn components.
 - `src/components/layout/header.tsx`: Radix keyboard-accessible desktop navigation and modal mobile navigation, with focus trapping, body scroll locking, and navigation-close behavior.
@@ -92,7 +104,7 @@ Replace demo text only with approved business information. Do not publish unveri
 
 ## Images
 
-Assets are local in `public/images`; photo source links and licensing notes are in `public/images/CREDITS.md`. Photography is illustrative and must not be represented as company personnel. Replace the asset or update its path and descriptive alt text in service data. Main homepage images are referenced in `src/app/page.tsx`; the About image is in `src/app/about/page.tsx`.
+Assets are local in `public/images`; photo source links and licensing notes are in `public/images/CREDITS.md`. Photography is illustrative and must not be represented as company personnel. Edit media/alt text in the profile or service catalog. The three new SVG logo marks are original fictional demonstration assets.
 
 Next.js Image optimizes photographs and provides responsive sizing. The small custom SVG illustrations remain vectors. Keep replacements appropriately cropped and compressed; preserve declared image containers to prevent layout shifts.
 

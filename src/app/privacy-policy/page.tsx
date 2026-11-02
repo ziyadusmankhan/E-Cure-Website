@@ -1,65 +1,38 @@
+import { pageMetadata } from "@/config/metadata";
+import { site } from "@/config/site";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
-export const metadata: Metadata = {
-  title: "Provisional privacy policy",
-  description:
-    "How this demonstration handles form entries and what must be reviewed before a production launch.",
-};
+export const metadata: Metadata = pageMetadata("privacy");
 export default function PrivacyPage() {
   return (
     <div className="container legal-page">
       <Breadcrumbs items={[{ label: "Privacy policy" }]} />
-      <span className="eyebrow">PROVISIONAL · DEMONSTRATION ONLY</span>
+      <span className="eyebrow">{site.copy.privacy_policy_provisional_demonstration_only_1}</span>
       <h1>
-        Your information
+        {site.copy.privacy_policy_your_information_2}
         <br />
-        and this demo.
+        {site.copy.privacy_policy_and_this_demo_3}
       </h1>
-      <p className="lead">
-        This is a demonstration notice, not a final privacy policy. The operating company must
-        provide and review its legal and privacy content before a production launch.
-      </p>
+      <p className="lead">{site.copy.privacy_policy_this_is_a_demonstration_notice_4}</p>
       <section>
-        <h2>What happens to form entries</h2>
-        <p>
-          The appointment and inquiry forms run in your browser. Entries are used only to display
-          the form and review state. The demo does not send these entries to a booking service,
-          store them in a database, or save them to localStorage. Entries are cleared when you
-          complete the demo or leave the form.
-        </p>
+        <h2>{site.copy.privacy_policy_what_happens_to_form_entries_5}</h2>
+        <p>{site.copy.privacy_policy_the_appointment_and_inquiry_forms_6}</p>
       </section>
       <section>
-        <h2>Use example details</h2>
-        <p>
-          Please use fictional contact details when exploring this demonstration. Do not enter
-          medical histories, identification documents, test results, or other sensitive health
-          information.
-        </p>
+        <h2>{site.copy.privacy_policy_use_example_details_7}</h2>
+        <p>{site.copy.privacy_policy_please_use_fictional_contact_details_8}</p>
       </section>
       <section>
-        <h2>Website delivery</h2>
-        <p>
-          Serving a website involves ordinary technical requests to the hosting service. Hosting
-          infrastructure may process technical information such as IP addresses and request logs.
-          This project has no added analytics, advertising trackers, payment processing, or
-          authentication. Production hosting and any future integrations need a separate privacy
-          review.
-        </p>
+        <h2>{site.copy.privacy_policy_website_delivery_9}</h2>
+        <p>{site.copy.privacy_policy_serving_a_website_involves_ordinary_10}</p>
       </section>
       <section>
-        <h2>Before a real service launches</h2>
-        <p>
-          The final policy must identify the responsible organisation, the information collected,
-          its purposes and handling, retention periods, service providers, contact details, and any
-          applicable rights and requirements. This demonstration makes no legal compliance claims.
-        </p>
+        <h2>{site.copy.privacy_policy_before_a_real_service_launches_11}</h2>
+        <p>{site.copy.privacy_policy_the_final_policy_must_identify_12}</p>
       </section>
       <section>
-        <h2>Privacy contact</h2>
-        <p>
-          The responsible company and its privacy contact details are to be confirmed. Do not use
-          this demonstration to request care or transmit private information.
-        </p>
+        <h2>{site.copy.privacy_policy_privacy_contact_13}</h2>
+        <p>{site.copy.privacy_policy_the_responsible_company_and_its_14}</p>
       </section>
     </div>
   );

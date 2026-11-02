@@ -1,4 +1,6 @@
 export type Service = {
+  icon?: string;
+  kind?: "care" | "equipment";
   slug: string;
   title: string;
   shortTitle: string;

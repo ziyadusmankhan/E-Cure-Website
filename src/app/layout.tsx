@@ -10,17 +10,23 @@ import "./globals.css";
 const lora = Lora({ subsets: ["latin"], variable: "--font-heading", display: "swap" });
 const sourceSans = Source_Sans_3({ subsets: ["latin"], variable: "--font-body", display: "swap" });
 export const metadata: Metadata = {
-  title: { default: `${site.name} — Care, closer to home`, template: `%s | ${site.name}` },
+  title: { default: `${site.name} — ${site.seo.homeTitle}`, template: `%s | ${site.name}` },
   description: site.description,
   ...(site.url ? { metadataBase: new URL(site.url) } : {}),
-  openGraph: { title: site.name, description: site.description, type: "website", locale: "en_US" },
+  openGraph: {
+    title: site.name,
+    description: site.description,
+    type: "website",
+    locale: site.seo.locale,
+  },
   robots: { index: !site.demo, follow: !site.demo },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      data-theme={getTheme(process.env.SITE_THEME)}
+      data-profile={site.id}
+      data-theme={getTheme(process.env.SITE_THEME || site.theme)}
       className={`${lora.variable} ${sourceSans.variable}`}
     >
       <body>

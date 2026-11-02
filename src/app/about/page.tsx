@@ -1,81 +1,69 @@
+import { pageMetadata } from "@/config/metadata";
+import { site } from "@/config/site";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { HeartHandshake, House, MessagesSquare } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { CTASection } from "@/components/shared/cta-section";
-export const metadata: Metadata = {
-  title: "About home healthcare",
-  description:
-    "Understand the purpose and possibilities of thoughtful home healthcare for individuals and their families.",
-};
+export const metadata: Metadata = pageMetadata("about");
 export default function AboutPage() {
   return (
     <>
       <div className="page-intro">
         <div className="container">
           <Breadcrumbs items={[{ label: "About" }]} />
-          <span className="eyebrow">THE IDEA BEHIND HOME CARE</span>
+          <span className="eyebrow">{site.copy.about_the_idea_behind_home_care_2}</span>
           <h1>
-            Care belongs in
+            {site.copy.about_care_belongs_in_3}
             <br />
-            the story of everyday life.
+            {site.copy.about_the_story_of_everyday_life_4}
           </h1>
-          <p>
-            People have routines, favourite places, and ways of doing things. A thoughtful care
-            experience starts by recognising all of them.
-          </p>
+          <p>{site.copy.about_people_have_routines_favourite_places_5}</p>
         </div>
       </div>
       <section className="section">
         <div className="container editorial-grid">
           <div className="about-image">
             <Image
-              src="/images/home-care.jpg"
-              alt="An older man and a companion sharing a book at home"
+              src={site.media.about.src}
+              alt={site.media.about.alt}
               fill
               sizes="(max-width: 760px) 100vw, 45vw"
             />
           </div>
           <div className="editorial-copy">
             <SectionHeading
-              eyebrow="OUR PROPOSED APPROACH"
-              title="See the person. Understand the need."
+              eyebrow={site.copy.about_our_proposed_approach_7}
+              title={site.copy.about_see_the_person_understand_the_8}
             />
-            <p>
-              This website introduces a possible home healthcare service built around clear
-              information and considered care arrangements. It brings clinical services and everyday
-              assistance into one easy-to-explore starting point.
-            </p>
-            <p>
-              Home care is not one-size-fits-all. What is appropriate depends on a person’s needs,
-              professional assessment where required, and the services available in their location.
-            </p>
+            <p>{site.copy.about_this_website_introduces_a_possible_9}</p>
+            <p>{site.copy.about_home_care_is_not_onesizefitsall_10}</p>
           </div>
         </div>
       </section>
       <section className="values-section section">
         <div className="container">
           <SectionHeading
-            eyebrow="PRINCIPLES THAT GUIDE THE EXPERIENCE"
-            title="Simple ideas. Thoughtfully considered."
+            eyebrow={site.copy.about_principles_that_guide_the_experience_11}
+            title={site.copy.about_simple_ideas_thoughtfully_considered_12}
           />
           <div className="inclusion-grid">
             {[
               {
                 icon: HeartHandshake,
-                title: "Respect for the individual",
-                text: "Make room for personal preferences, dignity, and the person's involvement in care decisions.",
+                title: site.copy.about_respect_for_the_individual_13,
+                text: site.copy.about_make_room_for_personal_preferences_14,
               },
               {
                 icon: MessagesSquare,
-                title: "Clear conversations",
-                text: "Understand what a service involves, who provides it, and what needs to be agreed before it begins.",
+                title: site.copy.about_clear_conversations_15,
+                text: site.copy.about_understand_what_a_service_involves_16,
               },
               {
                 icon: House,
-                title: "Care in context",
-                text: "Consider the home environment, daily routines, and the practical needs of patients and families.",
+                title: site.copy.about_care_in_context_17,
+                text: site.copy.about_consider_the_home_environment_daily_18,
               },
             ].map((v) => (
               <article key={v.title}>
@@ -90,27 +78,27 @@ export default function AboutPage() {
       <section className="section">
         <div className="container company-details">
           <SectionHeading
-            eyebrow="A NOTE ABOUT THIS DEMONSTRATION"
-            title="A foundation for a real care organisation."
-            description="The final company identity and business details are still to be provided. This demo does not represent verified staff, credentials, or service availability."
+            eyebrow={site.copy.about_a_note_about_this_demonstration_19}
+            title={site.copy.about_a_foundation_for_a_real_20}
+            description={site.copy.about_the_final_company_identity_and_21}
           />
           <dl>
             {[
               {
-                title: "Our story & mission",
-                text: "The company's history and approved mission will be added here.",
+                title: site.copy.about_our_story_mission_22,
+                text: site.copy.about_the_companys_history_and_approved_23,
               },
               {
-                title: "The people behind the care",
-                text: "Verified team profiles and relevant qualifications will be introduced before launch.",
+                title: site.copy.about_the_people_behind_the_care_24,
+                text: site.copy.about_verified_team_profiles_and_relevant_25,
               },
               {
-                title: "Our service locations",
-                text: "Confirmed areas and local arrangements will be published when available.",
+                title: site.copy.about_our_service_locations_26,
+                text: site.copy.about_confirmed_areas_and_local_arrangements_27,
               },
               {
-                title: "Professional credentials",
-                text: "Applicable registrations and independently verified credentials will be provided by the company.",
+                title: site.copy.about_professional_credentials_28,
+                text: site.copy.about_applicable_registrations_and_independently_verified_29,
               },
             ].map((d) => (
               <div key={d.title}>

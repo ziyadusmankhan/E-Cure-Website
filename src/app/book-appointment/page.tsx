@@ -1,48 +1,47 @@
+import { pageMetadata } from "@/config/metadata";
+import { site } from "@/config/site";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { HandHeart, ShieldCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { BookingForm } from "@/components/forms/booking-form";
 import Link from "next/link";
-export const metadata: Metadata = {
-  title: "Request an appointment — demo",
-  description:
-    "Try a three-step appointment request demonstration. Choose a service, review example details, and explore the care arrangement experience.",
-};
+export const metadata: Metadata = pageMetadata("booking");
 export default function BookingPage() {
+  if (!site.features.booking) notFound();
   return (
     <div className="booking-page">
       <div className="container">
         <Breadcrumbs items={[{ label: "Request an appointment" }]} />
         <div className="booking-layout">
           <aside className="booking-aside">
-            <span className="eyebrow">A LITTLE CLOSER TO CARE</span>
+            <span className="eyebrow">{site.copy.book_appointment_a_little_closer_to_care_1}</span>
             <h1>
-              Let’s find your
+              {site.copy.book_appointment_lets_find_your_2}
               <br />
-              next step.
+              {site.copy.book_appointment_next_step_3}
             </h1>
-            <p>A few simple details are a starting point for a more personal conversation.</p>
+            <p>{site.copy.book_appointment_a_few_simple_details_are_4}</p>
             <div className="booking-aside-art">
               <HandHeart size={100} strokeWidth={0.8} />
-              <span>Care starts with listening.</span>
+              <span>{site.copy.book_appointment_care_starts_with_listening_5}</span>
             </div>
             <div className="demo-info">
               <ShieldCheck size={22} strokeWidth={1.5} />
               <div>
-                <h2>A safe space to explore</h2>
-                <p>
-                  This is a frontend demonstration. Please use example details. Nothing you enter is
-                  sent or saved by the form.
-                </p>
-                <Link href="/privacy-policy">Read the provisional privacy notice</Link>
+                <h2>{site.copy.book_appointment_a_safe_space_to_explore_6}</h2>
+                <p>{site.copy.book_appointment_this_is_a_frontend_demonstration_7}</p>
+                <Link href="/privacy-policy">
+                  {site.copy.book_appointment_read_the_provisional_privacy_notice_8}
+                </Link>
               </div>
             </div>
           </aside>
           <Suspense
             fallback={
               <p className="form-loading" role="status">
-                Preparing the request form…
+                {site.copy.book_appointment_preparing_the_request_form_9}
               </p>
             }
           >

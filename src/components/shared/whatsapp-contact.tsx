@@ -24,6 +24,7 @@ function WhatsAppIcon() {
 }
 
 export function WhatsAppContact() {
+  if (!site.features.whatsapp) return null;
   if (site.contact.whatsappUrl) {
     return (
       <a

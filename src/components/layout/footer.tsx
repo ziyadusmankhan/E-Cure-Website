@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
+import { footerNavigation } from "@/config/navigation";
 import { services } from "@/data/services";
 import { site } from "@/config/site";
 export function Footer() {
@@ -10,20 +11,21 @@ export function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <Brand />
-            <p>A thoughtful starting point for finding care in the place you call home.</p>
-            <span className="small muted">Temporary branding · Frontend demonstration</span>
+            <p>{site.copy.layout_footer_a_thoughtful_starting_point_for_1}</p>
+            <span className="small muted">
+              {site.copy.layout_footer_temporary_branding_frontend_demonstration_2}
+            </span>
           </div>
           <div>
-            <h2>Explore</h2>
-            <Link href="/about">About home care</Link>
-            <Link href="/services">All services</Link>
-            <Link href="/faq">Frequently asked questions</Link>
-            <Link href="/#how-it-works">How it works</Link>
-            <Link href="/book-appointment">Request an appointment</Link>
-            <Link href="/contact">Contact</Link>
+            <h2>{site.copy.layout_footer_explore_3}</h2>
+            {footerNavigation.map((link) => (
+              <Link href={link.href} key={link.href}>
+                {link.label}
+              </Link>
+            ))}
           </div>
           <div>
-            <h2>Our services</h2>
+            <h2>{site.copy.layout_footer_our_services_10}</h2>
             {services.map((s) => (
               <Link key={s.slug} href={`/services/${s.slug}`}>
                 {s.title}
@@ -31,16 +33,17 @@ export function Footer() {
             ))}
           </div>
           <div>
-            <h2>Let’s connect</h2>
+            <h2>{site.copy.layout_footer_lets_connect_11}</h2>
             {site.contact.email ? (
               <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
             ) : (
-              <p>Contact details coming soon.</p>
+              <p>{site.copy.layout_footer_contact_details_coming_soon_12}</p>
             )}
             {site.contact.phone && <a href={`tel:${site.contact.phone}`}>{site.contact.phone}</a>}
             <p>{site.contact.serviceArea || "Service areas to be confirmed."}</p>
             <Link href="/contact" className="footer-contact">
-              Explore contact options <ArrowUpRight size={16} />
+              {site.copy.layout_footer_explore_contact_options_13}
+              <ArrowUpRight size={16} />
             </Link>
             {site.socialLinks.length ? (
               site.socialLinks.map((link) => (
@@ -49,16 +52,21 @@ export function Footer() {
                 </a>
               ))
             ) : (
-              <span className="small muted">Social profiles to be added</span>
+              <span className="small muted">
+                {site.copy.layout_footer_social_profiles_to_be_added_14}
+              </span>
             )}
           </div>
         </div>
         <div className="footer-bottom">
           <span>
-            © {new Date().getFullYear()} {site.name}. Demonstration website.
+            {site.copy.layout_footer__15}
+            {new Date().getFullYear()} {site.name}
+            {site.copy.layout_footer__demonstration_website_16}
           </span>
           <Link href="/privacy-policy">
-            Provisional privacy policy <ArrowUpRight size={14} />
+            {site.copy.layout_footer_provisional_privacy_policy_17}
+            <ArrowUpRight size={14} />
           </Link>
         </div>
       </div>

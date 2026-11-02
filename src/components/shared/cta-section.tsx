@@ -1,23 +1,35 @@
+import { site } from "@/config/site";
 import Link from "next/link";
 import { ArrowUpRight, HousePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 export function CTASection({ service }: { service?: string }) {
+  if (!site.sections.cta) return null;
   return (
     <section className="cta-section">
       <div className="container cta-inner">
         <div>
-          <span className="eyebrow">LET’S FIND YOUR NEXT STEP</span>
-          <h2>Looking for care at home?</h2>
-          <p>Explore the options and share what you’re looking for.</p>
+          <span className="eyebrow">{site.copy.shared_cta_section_lets_find_your_next_step_1}</span>
+          <h2>{site.copy.shared_cta_section_looking_for_care_at_home_2}</h2>
+          <p>{site.copy.shared_cta_section_explore_the_options_and_share_3}</p>
         </div>
         <div className="cta-actions">
           <Button asChild variant="light">
-            <Link href={service ? `/book-appointment?service=${service}` : "/book-appointment"}>
-              Request an appointment <ArrowUpRight size={18} />
+            <Link
+              href={
+                !site.features.booking
+                  ? "/contact"
+                  : service
+                    ? `/book-appointment?service=${service}`
+                    : "/book-appointment"
+              }
+            >
+              {site.copy.shared_cta_section_request_an_appointment_4}
+              <ArrowUpRight size={18} />
             </Link>
           </Button>
           <Link className="light-link" href="/services">
-            Explore all services <ArrowUpRight size={17} />
+            {site.copy.shared_cta_section_explore_all_services_5}
+            <ArrowUpRight size={17} />
           </Link>
         </div>
         <HousePlus className="cta-watermark" size={250} strokeWidth={0.5} aria-hidden="true" />

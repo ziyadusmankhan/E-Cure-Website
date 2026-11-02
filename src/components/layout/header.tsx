@@ -1,4 +1,5 @@
 "use client";
+import { site } from "@/config/site";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -7,16 +8,12 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowUpRight, ChevronDown, Menu, X, House } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
 import { Button } from "@/components/ui/button";
+import { mainNavigation } from "@/config/navigation";
 import { services } from "@/data/services";
 import { ServiceIcon } from "@/components/shared/service-icon";
 
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/#about" },
-  { label: "Why home care", href: "/#why-home-care" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
-];
+const navLinks = mainNavigation;
+const serviceIndex = Math.max(1, navLinks.findIndex((link) => link.section === "about") + 1);
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -34,10 +31,12 @@ export function Header() {
       <div className="utility-bar">
         <div className="container utility-inner">
           <span>
-            <House size={13} aria-hidden="true" /> A little closer to home. A little more care.
+            <House size={13} aria-hidden="true" />
+            {site.copy.layout_header_a_little_closer_to_home_1}
           </span>
           <span className="demo-label">
-            <i /> Website demonstration
+            <i />
+            {site.copy.layout_header_website_demonstration_2}
           </span>
         </div>
       </div>
@@ -46,7 +45,7 @@ export function Header() {
           <Brand />
           <NavigationMenu.Root className="desktop-nav" aria-label="Main navigation">
             <NavigationMenu.List className="nav-list">
-              {navLinks.slice(0, 2).map((link) => (
+              {navLinks.slice(0, serviceIndex).map((link) => (
                 <NavigationMenu.Item key={link.label}>
                   <NavigationMenu.Link asChild>
                     <Link
@@ -63,10 +62,11 @@ export function Header() {
                 <NavigationMenu.Trigger
                   className={`nav-link nav-trigger ${pathname.startsWith("/services") ? "active" : ""}`}
                 >
-                  Services <ChevronDown size={14} aria-hidden="true" />
+                  {site.navigation.servicesLabel}
+                  <ChevronDown size={14} aria-hidden="true" />
                 </NavigationMenu.Trigger>
                 <NavigationMenu.Content className="services-dropdown">
-                  <span className="eyebrow">CARE OPTIONS</span>
+                  <span className="eyebrow">{site.copy.layout_header_care_options_4}</span>
                   <div className="dropdown-grid">
                     {services.map((service) => (
                       <NavigationMenu.Link asChild key={service.slug}>
@@ -80,12 +80,13 @@ export function Header() {
                   </div>
                   <NavigationMenu.Link asChild>
                     <Link className="dropdown-all" href="/services">
-                      Explore all home health services <ArrowUpRight size={16} aria-hidden="true" />
+                      {site.copy.layout_header_explore_all_home_health_services_5}
+                      <ArrowUpRight size={16} aria-hidden="true" />
                     </Link>
                   </NavigationMenu.Link>
                 </NavigationMenu.Content>
               </NavigationMenu.Item>
-              {navLinks.slice(2).map((link) => (
+              {navLinks.slice(serviceIndex).map((link) => (
                 <NavigationMenu.Item key={link.label}>
                   <NavigationMenu.Link asChild>
                     <Link
@@ -100,11 +101,14 @@ export function Header() {
               ))}
             </NavigationMenu.List>
           </NavigationMenu.Root>
-          <Button asChild size="small" className="header-cta">
-            <Link href="/book-appointment">
-              Request appointment <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-          </Button>
+          {site.features.booking && (
+            <Button asChild size="small" className="header-cta">
+              <Link href="/book-appointment">
+                {site.copy.layout_header_request_appointment_6}
+                <ArrowUpRight size={16} aria-hidden="true" />
+              </Link>
+            </Button>
+          )}
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
               <button className="mobile-menu-button" aria-label="Open navigation">
@@ -115,7 +119,7 @@ export function Header() {
               <Dialog.Overlay className="drawer-overlay" />
               <Dialog.Content className="mobile-drawer">
                 <div className="drawer-heading">
-                  <Dialog.Title>Explore home care</Dialog.Title>
+                  <Dialog.Title>{site.copy.layout_header_explore_home_care_7}</Dialog.Title>
                   <Dialog.Close asChild>
                     <button className="icon-button" aria-label="Close navigation">
                       <X />
@@ -123,7 +127,7 @@ export function Header() {
                   </Dialog.Close>
                 </div>
                 <Dialog.Description className="sr-only">
-                  Main navigation and healthcare services
+                  {site.copy.layout_header_main_navigation_and_healthcare_services_8}
                 </Dialog.Description>
                 <nav aria-label="Mobile navigation">
                   {navLinks.map((link) => (
@@ -137,7 +141,7 @@ export function Header() {
                       <ArrowUpRight size={18} />
                     </Link>
                   ))}
-                  <span className="eyebrow">OUR SERVICES</span>
+                  <span className="eyebrow">{site.copy.layout_header_our_services_9}</span>
                   {services.map((service) => (
                     <Link
                       className="mobile-service"
@@ -150,15 +154,21 @@ export function Header() {
                     </Link>
                   ))}
                   <Link href="/services" onClick={() => setOpen(false)}>
-                    All home health services <ArrowUpRight size={18} />
+                    {site.navigation.allServicesLabel}
+                    <ArrowUpRight size={18} />
                   </Link>
                 </nav>
-                <Button asChild>
-                  <Link href="/book-appointment" onClick={() => setOpen(false)}>
-                    Request an appointment <ArrowUpRight size={18} />
-                  </Link>
-                </Button>
-                <p className="small muted">A frontend demo. No appointments are booked.</p>
+                {site.features.booking && (
+                  <Button asChild>
+                    <Link href="/book-appointment" onClick={() => setOpen(false)}>
+                      {site.copy.layout_header_request_an_appointment_11}
+                      <ArrowUpRight size={18} />
+                    </Link>
+                  </Button>
+                )}
+                <p className="small muted">
+                  {site.copy.layout_header_a_frontend_demo_no_appointments_12}
+                </p>
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>

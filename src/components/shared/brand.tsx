@@ -27,7 +27,7 @@ export function Brand() {
       )}
       <span>
         {site.shortName}
-        <small>SERVICES</small>
+        <small>{site.brandLine}</small>
       </span>
     </Link>
   );

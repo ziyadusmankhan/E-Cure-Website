@@ -1,14 +1,12 @@
+import { pageMetadata } from "@/config/metadata";
+import { site } from "@/config/site";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ServiceCard } from "@/components/shared/service-card";
 import { CTASection } from "@/components/shared/cta-section";
 import { services } from "@/data/services";
 import { HandHeart } from "lucide-react";
-export const metadata: Metadata = {
-  title: "All home health services",
-  description:
-    "Explore six home healthcare categories, including nursing, physiotherapy, caretaker support, equipment, laboratory services, and online consultation.",
-};
+export const metadata: Metadata = pageMetadata("services");
 export default function ServicesPage() {
   return (
     <>
@@ -17,15 +15,13 @@ export default function ServicesPage() {
           <Breadcrumbs items={[{ label: "All services" }]} />
           <div className="intro-row">
             <div>
-              <span className="eyebrow">ALL HOME HEALTH SERVICES</span>
+              <span className="eyebrow">{site.copy.services_all_home_health_services_1}</span>
               <h1>
-                A little support.
-                <br />A world of difference.
+                {site.copy.services_a_little_support_2}
+                <br />
+                {site.copy.services_a_world_of_difference_3}
               </h1>
-              <p>
-                Every care journey is different. Get to know the options and find a starting point
-                that makes sense for you and your family.
-              </p>
+              <p>{site.copy.services_every_care_journey_is_different_4}</p>
             </div>
             <HandHeart className="intro-icon" size={140} strokeWidth={0.7} aria-hidden="true" />
           </div>
@@ -34,8 +30,8 @@ export default function ServicesPage() {
       <section className="section">
         <div className="container">
           <div className="directory-heading">
-            <h2>Explore your care options</h2>
-            <span>06 service categories</span>
+            <h2>{site.copy.services_explore_your_care_options_5}</h2>
+            <span>{String(services.length).padStart(2, "0")} service categories</span>
           </div>
           <div className="services-grid">
             {services.map((s, i) => (
@@ -43,8 +39,7 @@ export default function ServicesPage() {
             ))}
           </div>
           <p className="directory-note">
-            These categories describe potential care options. Locations, professionals, service
-            scope, and availability will be confirmed before a real service can be arranged.
+            {site.copy.services_these_categories_describe_potential_care_7}
           </p>
         </div>
       </section>

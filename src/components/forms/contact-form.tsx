@@ -1,4 +1,5 @@
 "use client";
+import { site } from "@/config/site";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,13 +36,13 @@ export function ContactForm() {
       <div className="contact-form completion">
         <CheckCircle2 size={40} strokeWidth={1.4} />
         <h2 ref={statusRef} tabIndex={-1}>
-          You’ve tried the inquiry form.
+          {site.copy.forms_contact_form_youve_tried_the_inquiry_form_1}
         </h2>
         <p className="completion-notice" role="status">
-          This is a demonstration. Your request has not been submitted or saved.
+          {site.copy.forms_contact_form_this_is_a_demonstration_your_2}
         </p>
         <Button type="button" onClick={() => setComplete(false)}>
-          Try another inquiry
+          {site.copy.forms_contact_form_try_another_inquiry_3}
         </Button>
       </div>
     );
@@ -54,15 +55,15 @@ export function ContactForm() {
         setComplete(true);
       })}
     >
-      <span className="eyebrow">DEMO INQUIRY</span>
-      <h2>What would you like to know?</h2>
-      <p className="form-subtitle">Try this form using example details. All fields are required.</p>
+      <span className="eyebrow">{site.copy.forms_contact_form_demo_inquiry_4}</span>
+      <h2>{site.copy.forms_contact_form_what_would_you_like_to_5}</h2>
+      <p className="form-subtitle">{site.copy.forms_contact_form_try_this_form_using_example_6}</p>
       <div className="fields-grid">
         <div className="field">
-          <label htmlFor="contact-name">Your name</label>
+          <label htmlFor="contact-name">{site.copy.forms_contact_form_your_name_7}</label>
           <input
             id="contact-name"
-            placeholder="e.g. Alex Taylor"
+            placeholder={site.copy.forms_contact_form_eg_alex_taylor_8}
             maxLength={80}
             autoComplete="off"
             {...register("name")}
@@ -71,11 +72,11 @@ export function ContactForm() {
           {error("name")}
         </div>
         <div className="field">
-          <label htmlFor="contact-email">Email address</label>
+          <label htmlFor="contact-email">{site.copy.forms_contact_form_email_address_9}</label>
           <input
             id="contact-email"
             type="email"
-            placeholder="alex@example.com"
+            placeholder={site.copy.forms_contact_form_alexexamplecom_10}
             autoComplete="off"
             {...register("email")}
             {...attrs("email")}
@@ -83,38 +84,39 @@ export function ContactForm() {
           {error("email")}
         </div>
         <div className="field field-full">
-          <label htmlFor="contact-topic">Topic</label>
+          <label htmlFor="contact-topic">{site.copy.forms_contact_form_topic_11}</label>
           <select id="contact-topic" {...register("topic")} {...attrs("topic")}>
-            <option value="">Choose a topic</option>
-            <option>Exploring care options</option>
-            <option>Service locations</option>
-            <option>Appointment arrangements</option>
-            <option>Something else</option>
+            <option value="">{site.copy.forms_contact_form_choose_a_topic_12}</option>
+            <option>{site.copy.forms_contact_form_exploring_care_options_13}</option>
+            <option>{site.copy.forms_contact_form_service_locations_14}</option>
+            <option>{site.copy.forms_contact_form_appointment_arrangements_15}</option>
+            <option>{site.copy.forms_contact_form_something_else_16}</option>
           </select>
           {error("topic")}
         </div>
         <div className="field field-full">
-          <label htmlFor="contact-message">Your message</label>
+          <label htmlFor="contact-message">{site.copy.forms_contact_form_your_message_17}</label>
           <textarea
             id="contact-message"
             rows={4}
             maxLength={500}
-            placeholder="A general question about home healthcare"
+            placeholder={site.copy.forms_contact_form_a_general_question_about_home_18}
             {...register("message")}
             {...attrs("message")}
             aria-describedby={`contact-hint${errors.message ? " contact-message-error" : ""}`}
           />
           <span className="field-hint" id="contact-hint">
-            Please leave out medical histories and sensitive health information.
+            {site.copy.forms_contact_form_please_leave_out_medical_histories_19}
           </span>
           {error("message")}
         </div>
       </div>
       <p className="small muted form-disclaimer">
-        This form is a demonstration. Messages are not sent or saved.
+        {site.copy.forms_contact_form_this_form_is_a_demonstration_20}
       </p>
       <Button type="submit">
-        Preview inquiry completion <ArrowUpRight size={17} />
+        {site.copy.forms_contact_form_preview_inquiry_completion_21}
+        <ArrowUpRight size={17} />
       </Button>
     </form>
   );

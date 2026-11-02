@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:foundation": "playwright test foundation.spec.ts",
-    "test:e2e:public": "playwright test public-website.spec.ts"
+    "test:e2e:public": "playwright test public-website.spec.ts",
+    "test:profiles": "node qa/verify-profiles.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
