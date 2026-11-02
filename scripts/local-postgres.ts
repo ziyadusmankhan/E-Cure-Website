@@ -18,7 +18,7 @@ function postgresBin() {
   }
 }
 
-export function startLocalPostgres(kind: "development" | "test") {
+export async function startLocalPostgres(kind: "development" | "test") {
   const root = resolve(kind === "test" ? ".local/database" : ".local/postgres-dev");
   const data = join(root, "data");
   const port = kind === "test" ? 55432 : 55433;
@@ -70,12 +70,24 @@ export function startLocalPostgres(kind: "development" | "test") {
         join(root, "postgres.log"),
         "-o",
         `-h 127.0.0.1 -p ${port}`,
-        "-w",
+        "-W",
         "start",
       ],
       { stdio: "ignore", windowsHide: true, timeout: 30_000 },
     );
     started = true;
+  }
+  const deadline = Date.now() + 600000;
+  let lastNotice = 0;
+  while (true) {
+    try {
+      execFileSync(exe("pg_isready"), ["-h", "127.0.0.1", "-p", String(port), "-t", "2"], { stdio: "ignore", windowsHide: true, timeout: 5000 });
+      break;
+    } catch {
+      if (Date.now() >= deadline) throw Object.assign(new Error("Local PostgreSQL is still recovering. Retry after recovery completes; the data directory has been preserved."), { code: "CONNECT_TIMEOUT" });
+      if (Date.now() - lastNotice >= 30000) { console.log(`Waiting for ${kind} PostgreSQL to become ready; recovery and data synchronization may take time.`); lastNotice = Date.now(); }
+      await new Promise((done) => setTimeout(done, 1000));
+    }
   }
   return {
     root,

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { services } from "@/data/services";
-export function localToday() {
+import { businessToday } from "./submission-values";
+export function localToday(timezone?: string) {
+  if (timezone) return businessToday(timezone);
   const date = new Date();
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
@@ -10,7 +12,7 @@ const name = z
   .min(2, "Please enter at least two characters.")
   .max(80, "Please keep the name under 80 characters.");
 const email = z.union([z.literal(""), z.email("Please enter a valid email address.")]);
-export function createBookingSchema(availableServices: { slug: string }[]) {
+export function createBookingSchema(availableServices: { slug: string }[], timezone?: string) {
   return z.object({
     service: z
       .string()
@@ -36,7 +38,7 @@ export function createBookingSchema(availableServices: { slug: string }[]) {
         date.getFullYear() === year &&
         date.getMonth() === month - 1 &&
         date.getDate() === day &&
-        value >= localToday()
+        value >= localToday(timezone)
       );
     }, "Please choose today or a future date."),
     time: z.enum(

@@ -7,9 +7,12 @@ import { HandHeart, ShieldCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { BookingForm } from "@/components/forms/booking-form";
 import Link from "next/link";
+import { submissionPageConfig } from "@/server/submissions/config";
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata("booking");
-export default function BookingPage() {
+export default async function BookingPage() {
   if (!site.features.booking) notFound();
+  const submissions = await submissionPageConfig();
   return (
     <div className="booking-page">
       <div className="container">
@@ -31,7 +34,13 @@ export default function BookingPage() {
               <ShieldCheck size={22} strokeWidth={1.5} />
               <div>
                 <h2>{site.copy.book_appointment_a_safe_space_to_explore_6}</h2>
-                <p>{site.copy.book_appointment_this_is_a_frontend_demonstration_7}</p>
+                <p>
+                  {submissions.enabled
+                    ? submissions.localTest
+                      ? site.copy.submission_local_notice
+                      : site.copy.submission_live_notice
+                    : site.copy.book_appointment_this_is_a_frontend_demonstration_7}
+                </p>
                 <Link href="/privacy-policy">
                   {site.copy.book_appointment_read_the_provisional_privacy_notice_8}
                 </Link>
@@ -45,7 +54,7 @@ export default function BookingPage() {
               </p>
             }
           >
-            <BookingForm />
+            <BookingForm submissions={submissions} />
           </Suspense>
         </div>
       </div>

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
+    "dev": "node scripts/start-server.mjs dev",
     "build": "next build",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "node scripts/start-server.mjs start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:routes": "node qa/verify-routes.mjs",
@@ -26,7 +26,8 @@
     "db:local:start": "node --conditions=react-server --import tsx scripts/local-database.ts start",
     "db:local:stop": "node --conditions=react-server --import tsx scripts/local-database.ts stop",
     "db:local:migrate": "node --conditions=react-server --import tsx scripts/local-database.ts migrate",
-    "test:boundaries": "node qa/verify-backend-boundaries.mjs"
+    "test:boundaries": "node qa/verify-backend-boundaries.mjs",
+    "test:submissions": "node --conditions=react-server --import tsx qa/database-tests.ts --browser"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

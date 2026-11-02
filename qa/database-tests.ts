@@ -7,12 +7,20 @@ import { migrateDatabase } from "../src/server/db/migrate";
 import { assertTestDatabase, connectionSettings } from "../src/server/env";
 import { safeError } from "../src/server/errors";
 import { startLocalPostgres } from "../scripts/local-postgres";
+import { seedDemoProfile } from "../src/server/db/fixtures";
 
 function runTests(env: NodeJS.ProcessEnv) {
   return new Promise<number>((done, reject) => {
     const child = spawn(
       process.execPath,
-      ["node_modules/vitest/vitest.mjs", "run", "--config", "vitest.database.config.mts"],
+      process.argv.includes("--browser")
+        ? [
+            "node_modules/@playwright/test/cli.js",
+            "test",
+            "--config",
+            "playwright.submissions.config.ts",
+          ]
+        : ["node_modules/vitest/vitest.mjs", "run", "--config", "vitest.database.config.mts"],
       { env, stdio: "inherit", windowsHide: true },
     );
     child.on("error", reject);
@@ -22,12 +30,19 @@ function runTests(env: NodeJS.ProcessEnv) {
 async function main() {
   mkdirSync(".db-results", { recursive: true });
   let serverUrl = process.env.TEST_DATABASE_SERVER_URL;
-  let local: ReturnType<typeof startLocalPostgres> | undefined;
+  let local: Awaited<ReturnType<typeof startLocalPostgres>> | undefined;
   const suffix = randomBytes(6).toString("hex");
-  const names = [`healthcare_phase5_test_${suffix}`, `healthcare_isolation_test_${suffix}`];
+  const browser = process.argv.includes("--browser");
+  const names = browser
+    ? [`healthcare_browser_test_${suffix}`]
+    : [
+        `healthcare_phase5_test_${suffix}`,
+        `healthcare_isolation_test_${suffix}`,
+        `healthcare_submissions_test_${suffix}`,
+      ];
   const appPassword = randomBytes(32).toString("hex");
   if (!serverUrl) {
-    local = startLocalPostgres("test");
+    local = await startLocalPostgres("test");
     serverUrl = local.url;
     console.log("Using an isolated workspace PostgreSQL cluster on loopback port 55432.");
   }
@@ -39,6 +54,7 @@ async function main() {
   const created: string[] = [];
   const migrations: ReturnType<typeof openDatabase>[] = [];
   let exitCode = 1;
+  let ownsExternalRole = false;
   try {
     if (process.env.TEST_DATABASE_SERVER_URL) {
       const [role] = await maintenance`select 1 from pg_roles where rolname = 'healthcare_app'`;
@@ -46,6 +62,7 @@ async function main() {
         throw new Error(
           "Refusing to modify an existing application role on an external test server; use a fresh dedicated CI server.",
         );
+      ownsExternalRole = true;
     }
     const appUrls: string[] = [];
     for (const role of ["anon", "authenticated", "service_role"]) {
@@ -74,20 +91,29 @@ async function main() {
     }
     // Only a freshly created CI role or our own isolated workspace role is changed.
     await maintenance.unsafe(`ALTER ROLE healthcare_app LOGIN PASSWORD '${appPassword}'`);
+    if (browser) await seedDemoProfile(migrations[0].db, "default");
     exitCode = await runTests({
       ...process.env,
       NODE_ENV: "test",
       TEST_DATABASE_URL: appUrls[0],
       TEST_ISOLATION_DATABASE_URL: appUrls[1],
       TEST_MIGRATION_URL: new URL(`/${names[0]}`, serverUrl).toString(),
+      TEST_SUBMISSION_DATABASE_URL: appUrls[2],
+      TEST_SUBMISSION_MIGRATION_URL: names[2]
+        ? new URL(`/${names[2]}`, serverUrl).toString()
+        : undefined,
+      QA_SUBMISSION_DB: browser ? appUrls[0] : undefined,
+      QA_SUBMISSION_ADMIN: browser ? new URL(`/${names[0]}`, serverUrl).toString() : undefined,
+      QA_SUBMISSION_HMAC: browser ? randomBytes(32).toString("hex") : undefined,
+      NEXT_PUBLIC_SITE_PROFILE: "default",
     });
     writeFileSync(
-      ".db-results/summary.json",
+      browser ? ".db-results/browser-summary.json" : ".db-results/summary.json",
       JSON.stringify(
         {
           passed: exitCode === 0,
-          freshDatabases: 2,
-          migrationReplays: 2,
+          freshDatabases: names.length,
+          migrationReplays: names.length,
           isolatedRuntimeRole: true,
           loopbackOnly: true,
         },
@@ -98,6 +124,7 @@ async function main() {
   } finally {
     for (const connection of migrations) await connection.close();
     for (const name of created.reverse()) await maintenance`drop database ${maintenance(name)}`;
+    if (ownsExternalRole) await maintenance.unsafe("DROP ROLE IF EXISTS healthcare_app");
     await maintenance.end({ timeout: 5 });
     if (local?.started) local.stop();
   }

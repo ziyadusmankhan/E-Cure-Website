@@ -19,7 +19,7 @@ function visit(file) {
     throw new Error("Client graph imports a private backend module.");
   const text = readFileSync(file, "utf8");
   if (
-    /process\.env\.(DATABASE_URL|DIRECT_URL|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY)/.test(
+    /process\.env\.(DATABASE_URL|DIRECT_URL|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|TURNSTILE_SECRET_KEY|SUBMISSIONS_HMAC_SECRET)/.test(
       text,
     )
   )
@@ -77,6 +77,8 @@ const secrets = [
   "DIRECT_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_SECRET_KEY",
+  "TURNSTILE_SECRET_KEY",
+  "SUBMISSIONS_HMAC_SECRET",
 ].flatMap((key) => {
   const value = values[key];
   if (!value) return [];

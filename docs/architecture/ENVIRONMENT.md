@@ -2,7 +2,9 @@
 
 The current demo runs without credentials. `NEXT_PUBLIC_SITE_URL` is optional, must be an absolute HTTP(S) URL if supplied, and becomes public in the browser bundle. Leave it unset for local development. Future credentials must never use a `NEXT_PUBLIC_` prefix.
 
-Phase 5 introduces server-only `DATABASE_URL` (restricted runtime) and `DIRECT_URL` (migration job only). Auth, mail, storage and Turnstile settings remain later-phase work. Each customer has independent deployments, credentials and databases. Keep runtime, migration, staging and production permissions separate. Do not activate public submissions yet.
+Phase 5 introduces server-only `DATABASE_URL` (restricted runtime) and `DIRECT_URL` (migration job only). Each customer has independent deployments, credentials and databases. Keep runtime, migration, staging and production permissions separate. Auth, mail and storage remain later-phase work.
+
+Phase 6 adds `SUBMISSIONS_MODE=disabled|local-test|live`, server-only `TURNSTILE_SECRET_KEY`, a random 64-character lowercase hex `SUBMISSIONS_HMAC_SECRET`, exact `SUBMISSION_ALLOWED_ORIGINS`, and optional `TRUSTED_CLIENT_IP_HEADER` (defaults to `none`). `TURNSTILE_SITE_KEY` is public and passed as a safe DTO field; never expose the secret key. Only the official dummy pair is allowed in loopback-only local-test mode. Live mode rejects dummy keys and demo profiles. The dev/start wrapper binds local-test to 127.0.0.1. See [SUBMISSIONS.md](SUBMISSIONS.md) for configuration, privacy, proxy trust and clock/cache troubleshooting.
 
 `.env.example` documents only supported variables; `.env*` files are ignored except that example. CI Phase 1 requires no application secrets. The first font build downloads fonts; allow Google Fonts access during build. Production visitors receive self-hosted font files.
 

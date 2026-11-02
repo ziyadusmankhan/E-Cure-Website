@@ -2,8 +2,11 @@ import { pageMetadata } from "@/config/metadata";
 import { site } from "@/config/site";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { submissionPageConfig } from "@/server/submissions/config";
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata("privacy");
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const submissions = await submissionPageConfig();
   return (
     <div className="container legal-page">
       <Breadcrumbs items={[{ label: "Privacy policy" }]} />
@@ -16,7 +19,20 @@ export default function PrivacyPage() {
       <p className="lead">{site.copy.privacy_policy_this_is_a_demonstration_notice_4}</p>
       <section>
         <h2>{site.copy.privacy_policy_what_happens_to_form_entries_5}</h2>
-        <p>{site.copy.privacy_policy_the_appointment_and_inquiry_forms_6}</p>
+        {submissions.enabled ? (
+          <>
+            <p>{site.copy.privacy_active_fields}</p>
+            <p>
+              {submissions.localTest
+                ? site.copy.privacy_local_records
+                : site.copy.privacy_live_records}
+            </p>
+            <p>{site.copy.privacy_security_processing}</p>
+            <p>{site.copy.privacy_form_memory}</p>
+          </>
+        ) : (
+          <p>{site.copy.privacy_policy_the_appointment_and_inquiry_forms_6}</p>
+        )}
       </section>
       <section>
         <h2>{site.copy.privacy_policy_use_example_details_7}</h2>

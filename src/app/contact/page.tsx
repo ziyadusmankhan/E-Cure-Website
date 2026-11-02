@@ -6,8 +6,11 @@ import { ArrowUpRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ContactDetails } from "@/components/shared/contact-details";
 import { ContactForm } from "@/components/forms/contact-form";
+import { submissionPageConfig } from "@/server/submissions/config";
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata("contact");
-export default function ContactPage() {
+export default async function ContactPage() {
+  const submissions = await submissionPageConfig();
   return (
     <>
       <div className="page-intro">
@@ -38,7 +41,7 @@ export default function ContactPage() {
             </div>
           </div>
           {site.features.inquiryForm ? (
-            <ContactForm />
+            <ContactForm submissions={submissions} />
           ) : (
             <div className="expect-panel">
               <p>{site.copy.inquiry_disabled}</p>

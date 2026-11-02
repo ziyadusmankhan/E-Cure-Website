@@ -2,7 +2,9 @@
 
 **Phase:** 5 — Database and Backend Foundation
 
-**Status:** PASSED_AWAITING_APPROVAL (local PostgreSQL scope explicitly chosen by the user)
+**Status:** APPROVED (local PostgreSQL scope explicitly chosen by the user)
+
+Approval: The user explicitly requested Phase 6. Checkpoint `78f037a`.
 
 Verified locally on 2 November 2026 with Node 24.18.0, PostgreSQL 18.4 and Chromium. Phase 5 was explicitly authorized. When local Supabase failed to start because Docker Desktop's engine returned HTTP 500, the user selected “Use local PostgreSQL for now”. Supabase configuration/CLI are prepared; running-stack/hosted verification is deferred rather than claimed as passed. Phase 6 has not started.
 

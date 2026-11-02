@@ -138,6 +138,7 @@ export const appointments = healthcare.table(
     timeWindow: varchar("time_window", { length: 80 }).notNull(),
     status: appointmentStatus("status").notNull().default("new"),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
+    inquiry: varchar("inquiry", { length: 500 }).notNull().default(""),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -164,16 +165,22 @@ export const contactInquiries = healthcare.table(
   "contact_inquiries",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    reference: varchar("reference", { length: 40 })
+      .notNull()
+      .unique()
+      .default(sql`'INQ-' || upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 24))`),
     name: varchar("name", { length: 120 }).notNull(),
     email: varchar("email", { length: 254 }).notNull(),
     subject: varchar("subject", { length: 160 }).notNull(),
     message: text("message").notNull(),
     status: inquiryStatus("status").notNull().default("new"),
+    consentAt: timestamp("consent_at", { withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
   (t) => [
     check("inquiry_name_nonempty", sql`length(trim(${t.name})) > 0`),
+    check("inquiry_reference_valid", sql`${t.reference} ~ '^INQ-[A-F0-9]{24}$'`),
     check(
       "inquiry_email_valid",
       sql`${t.email} ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'`,
@@ -235,6 +242,48 @@ export const auditEvents = healthcare.table(
     ),
     index("audit_entity_created_idx").on(t.entityType, t.entityId, t.createdAt),
     index("audit_actor_idx").on(t.actorId),
+  ],
+);
+
+export const submissionReceipts = healthcare.table(
+  "submission_receipts",
+  {
+    keyHash: varchar("key_hash", { length: 64 }).primaryKey(),
+    fingerprint: varchar("fingerprint", { length: 64 }).notNull(),
+    kind: varchar("kind", { length: 20 }).notNull(),
+    reference: varchar("reference", { length: 40 }).notNull(),
+    appointmentId: uuid("appointment_id").references(() => appointments.id, {
+      onDelete: "restrict",
+    }),
+    inquiryId: uuid("inquiry_id").references(() => contactInquiries.id, { onDelete: "restrict" }),
+    createdAt: createdAt(),
+    expiresAt: timestamp("expires_at", { withTimezone: true })
+      .notNull()
+      .default(sql`now() + interval '7 days'`),
+  },
+  (t) => [
+    check(
+      "receipt_kind_valid",
+      sql`(${t.kind} = 'appointment' and ${t.appointmentId} is not null and ${t.inquiryId} is null) or (${t.kind} = 'inquiry' and ${t.inquiryId} is not null and ${t.appointmentId} is null)`,
+    ),
+    check(
+      "receipt_hash_valid",
+      sql`${t.keyHash} ~ '^[a-f0-9]{64}$' and ${t.fingerprint} ~ '^[a-f0-9]{64}$'`,
+    ),
+    index("receipt_expiry_idx").on(t.expiresAt),
+  ],
+);
+export const submissionLimits = healthcare.table(
+  "submission_limits",
+  {
+    keyHash: varchar("key_hash", { length: 64 }).primaryKey(),
+    attempts: integer("attempts").notNull().default(1),
+    resetsAt: timestamp("resets_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    check("limit_attempts_positive", sql`${t.attempts} > 0`),
+    check("limit_hash_valid", sql`${t.keyHash} ~ '^[a-f0-9]{64}$'`),
+    index("limit_expiry_idx").on(t.resetsAt),
   ],
 );
 

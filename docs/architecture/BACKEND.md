@@ -1,5 +1,7 @@
 # Phase 5 database and backend foundation
 
+Phase 6 extends this foundation with public submission handlers, two technical tables and migrations 0002/0003. See [SUBMISSIONS.md](SUBMISSIONS.md) for the current HTTP, verification, privacy and retry contract. Authentication and administrative authorization remain later phases.
+
 One independent deployment and database per client. PostgreSQL access lives in `src/server/` and uses Drizzle ORM 0.45.4, Drizzle Kit 0.31.11 and Postgres.js 3.4.9. These versions are pinned in the lockfile. No request-based tenant switching is introduced.
 
 The user explicitly chose **local PostgreSQL for now** when Docker Desktop returned an engine HTTP 500 and could not start local Supabase. Supabase CLI 3.0.0 and its configuration are prepared; neither a running Supabase stack nor a hosted project connection is claimed. The local database foundation is verified against PostgreSQL 18.4. CI is configured for PostgreSQL 17 but has not been executed remotely.
@@ -14,7 +16,7 @@ npm.cmd run db:check
 npm.cmd run dev
 ```
 
-`db:local:start` creates a private workspace cluster under ignored `.local/postgres-dev/`, listens only on `127.0.0.1:55433`, initializes `healthcare_development`, applies both migrations, and verifies the restricted runtime connection. It uses SCRAM password authentication and generated random credentials. It creates ignored `.env.local` with **only** `DATABASE_URL` if that file does not exist; an existing environment file is preserved. A generated runtime connection is also available in ignored `.local/postgres-dev/runtime.env`. No passwords are printed.
+`db:local:start` creates a private workspace cluster under ignored `.local/postgres-dev/`, listens only on `127.0.0.1:55433`, initializes `healthcare_development`, applies all reviewed migrations, and verifies the restricted runtime connection. It uses SCRAM password authentication and generated random credentials. It creates ignored `.env.local` with **only** `DATABASE_URL` if that file does not exist; an existing environment file is preserved. A generated runtime connection is also available in ignored `.local/postgres-dev/runtime.env`. No passwords are printed.
 
 Migration-owner credentials remain under `.local/postgres-dev/`, outside the Next.js runtime environment. Do not share, commit or upload `.local/`, `.env.local` or local database logs. Unix file creation requests mode 0600; Windows inherits the workspace/user account's filesystem ACLs. This local setup is for development, not a production database service or backup strategy.
 
@@ -40,7 +42,7 @@ For this phase the development database was seeded with `default`. Changing the 
 
 ## Relational model
 
-All nine tables live in the private `healthcare` schema:
+The original nine foundation tables live in the private `healthcare` schema:
 
 | Table | Integrity and purpose |
 | --- | --- |
@@ -56,7 +58,7 @@ All nine tables live in the private `healthcare` schema:
 
 Appointment references use 12 cryptographically random bytes and a database unique constraint. Requests start at `new`, with no confirmed time. `confirmed`/`completed` records require an actual confirmation timestamp at database level; staff transitions and scheduling logic belong to later phases. No appointment hard-delete service exists, and the runtime role has no appointment/inquiry DELETE privilege. Referenced services/customers cannot be deleted. Audit actor deletion uses SET NULL; administrative identity lifecycle remains a controlled later-phase concern.
 
-Timestamp columns are timezone-aware. Database triggers maintain updated timestamps even for direct SQL updates. Preferred dates are calendar dates rather than UTC instants. The foundation rejects invalid date formats/calendar values; business-timezone rules, future-date checks, availability, idempotency and public submission protections must be completed in Phase 6 before connecting forms.
+Timestamp columns are timezone-aware. Database triggers maintain updated timestamps even for direct SQL updates. Preferred dates are calendar dates rather than UTC instants. The foundation rejects invalid date formats/calendar values; Phase 6 now adds business-timezone future-date checks, idempotency and public submission protections. Scheduling availability is not promised.
 
 Supabase identity UUIDs are opaque mappings in this phase. There is deliberately no fake `auth.users` table or assumed Supabase Auth FK on local PostgreSQL. Phase 7 must verify real identities, add the managed identity relationship where appropriate, enforce sessions/MFA/permissions and implement controlled staff provisioning.
 
@@ -70,7 +72,7 @@ Supabase identity UUIDs are opaque mappings in this phase. There is deliberately
 - Writes and their redacted audit events share a transaction. Appointment creation locks the active service while creating the customer/request; a failed audit rolls all writes back. Customer contacts are not treated as unique identities because families can share contact details.
 - Service exceptions are mapped to structured safe codes/statuses. Driver details, query parameters, SQL, submitted values and secrets are never returned through `publicError`. PostgreSQL 18 `23001` and earlier FK `23503` both map to conflict.
 
-These are **trusted internal foundation APIs**, not authorization mechanisms. There are no new Route Handlers or `use server` actions. Do not expose private record reads or administrative writes directly: Phase 6 must add the protected public submission boundary, and Phase 7 must add server-side authorization before administrative callers exist. Current audit actors are system/null, never fabricated verified administrators.
+These are **trusted internal foundation APIs**, not authorization mechanisms. Phase 6 adds only protected public submission Route Handlers. Do not expose private record reads or administrative writes directly: Phase 7 must add server-side authorization before administrative callers exist. Current audit actors are system/null, never fabricated verified administrators.
 
 ## Database privileges
 
@@ -98,7 +100,7 @@ npm.cmd run db:local:migrate
 npm.cmd run db:migrate
 ```
 
-Commit the SQL, journal and snapshots together. `0000` defines the relational schema; `0001` defines privileges/RLS, timestamp triggers and role definitions. Never edit an already-applied migration: the runner compares stored hashes to versioned files and rejects altered/unknown history. A session advisory lock serializes migration writers; the migration connection must remain max 1 in direct/session mode. Drizzle controls the SQL transaction itself.
+Commit the SQL, journal and snapshots together. `0000` defines the relational schema; `0001` defines privileges/RLS, timestamp triggers and role definitions. Phase 6 adds `0002` for submission fields/technical tables and `0003` for their RLS and restricted grants. Never edit an already-applied migration: the runner compares stored hashes to versioned files and rejects altered/unknown history. A session advisory lock serializes migration writers; the migration connection must remain max 1 in direct/session mode. Drizzle controls the SQL transaction itself.
 
 Use additive, backward-compatible migrations, stage/test first, and back up before destructive changes. This phase never automatically resets a client database or invokes `drizzle-kit push`. Roll back application releases when the schema remains compatible; otherwise use a reviewed forward fix or a separately approved restore. Production backup/restore drills and deployment automation remain later-phase work.
 
@@ -114,11 +116,11 @@ npm.cmd run test:boundaries
 npm.cmd run test:e2e
 ```
 
-The database runner uses an independent cluster on loopback port 55432, creates two unique test databases, applies/replays both migrations, provisions a restricted runtime role, runs Node/Vitest tests and drops only the databases it created. It stops the test cluster if it started it. It never resets the persistent development database. Test targets must be loopback, have a `healthcare_*test_*` name, and differ from known runtime/migration targets even when credentials differ. CI can supply `TEST_DATABASE_SERVER_URL` for a fresh dedicated local PostgreSQL service; the runner refuses a preexisting application role there rather than rotating someone else's credentials.
+The database runner uses an independent cluster on loopback port 55432, creates three unique test databases, applies/replays all four migrations, provisions a restricted runtime role, runs Node/Vitest tests and drops only the databases it created. It stops the test cluster if it started it. It never resets the persistent development database. Test targets must be loopback, have a `healthcare_*test_*` name, and differ from known runtime/migration targets even when credentials differ. CI can supply `TEST_DATABASE_SERVER_URL` for a fresh dedicated local PostgreSQL service; the runner refuses a preexisting application role there rather than rotating someone else's credentials.
 
 Tests exercise real queries/joins, CRUD, checks/FKs/uniqueness/enums, concurrent requests, transaction rollback through injected audit failure, seed race protection, wrong-client failure, audit minimization, prohibited DDL/role/record operations, Supabase API-role denial, safe errors, migration concurrency and history mismatch. API-role fixtures model role names/default table grants on plain PostgreSQL; they are not a running Supabase Data API test.
 
-`test:boundaries` traverses local imports from every client component and scans built browser assets for configured backend secrets. Results live under ignored `.db-results/`; do not print secret values. Existing Playwright tests verify the public demo and ensure booking/inquiry/admin endpoints remain unavailable in Phase 5.
+`test:boundaries` traverses local imports from every client component and scans built browser assets for configured backend secrets. Results live under ignored `.db-results/`; do not print secret values. Existing Playwright tests verify the disabled-mode public demo, POST 503/GET 405 on submission endpoints and unavailable admin routes. The separate Phase 6 browser harness tests active writes; see SUBMISSIONS.md.
 
 The scoped esbuild override removes the newly introduced moderate advisory in Drizzle Kit's deprecated loader dependency. Migration generation/checks are verified with the override. Existing 16 moderate ESLint/minimatch development-tool findings remain; production dependencies have no audit findings. No force downgrade is used.
 

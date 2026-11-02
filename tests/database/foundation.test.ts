@@ -62,10 +62,10 @@ describe("PostgreSQL foundation", () => {
   });
   it("migrates a fresh database and safely replays its journal", async () => {
     await migrateDatabase(admin.db);
-    expect((await admin.client`select * from drizzle.__drizzle_migrations`).length).toBe(2);
+    expect((await admin.client`select * from drizzle.__drizzle_migrations`).length).toBe(4);
     const tables =
       await admin.client`select tablename, rowsecurity from pg_tables where schemaname = 'healthcare'`;
-    expect(tables).toHaveLength(9);
+    expect(tables).toHaveLength(11);
     expect(tables.every((table) => table.rowsecurity)).toBe(true);
     expect(
       (await app.client`select key from healthcare.administrative_roles order by key`).map(
@@ -97,7 +97,7 @@ describe("PostgreSQL foundation", () => {
     } finally {
       await other.close();
     }
-    expect(await admin.client`select * from drizzle.__drizzle_migrations`).toHaveLength(2);
+    expect(await admin.client`select * from drizzle.__drizzle_migrations`).toHaveLength(4);
   });
   it("fails closed when a deployment selects another business database", async () => {
     await expect(backendForDeployment(app.db, "general-clinic")).rejects.toMatchObject({

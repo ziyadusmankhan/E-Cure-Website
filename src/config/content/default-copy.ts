@@ -1,4 +1,28 @@
 export const defaultCopy = {
+  submission_local_notice:
+    "Local test mode: fictional details only. Requests are saved to this computer’s database. No care is arranged and no email is sent.",
+  submission_live_notice:
+    "Send a request for review. A preferred date or time is not a confirmed appointment.",
+  submission_unavailable: "Online submissions are temporarily unavailable. Please try again later.",
+  submission_received: "Your request has been received.",
+  submission_inquiry_received: "Your inquiry has been received.",
+  submission_receipt_local:
+    "Your fictional request was saved to the local test database. This does not confirm an appointment or arrange care.",
+  submission_receipt_live:
+    "Your request has been saved for review. An appointment is only confirmed after the team agrees the arrangements with you.",
+  submission_send_request: "Send appointment request",
+  submission_send_inquiry: "Send inquiry",
+  submission_sending: "Sending…",
+  privacy_active_fields:
+    "Submitting an appointment request stores your contact name, phone, optional email, selected service, preferred format/date/time, general inquiry and consent timestamp in this deployment’s PostgreSQL database. Contact inquiries store your name, email, topic, message and consent timestamp. A request is not a confirmed appointment.",
+  privacy_local_records:
+    "This is local test mode. Use fictional details only: the records remain on this computer until deliberately removed by the developer. No team notification or email is sent.",
+  privacy_live_records:
+    "Requests are retained for operational review under the business’s approved retention policy.",
+  privacy_security_processing:
+    "Cloudflare Turnstile loads a security widget and processes technical browser information. Only its verification token is sent to the verification service; your form message and contact details are not included in that verification request. Temporary keyed hashes support rate limiting and duplicate protection. Retry receipts expire after seven days; expired technical records are removed in bounded batches when new requests arrive.",
+  privacy_form_memory:
+    "Form details stay in memory while you review or retry and are cleared on successful submission or leaving the form. This application does not place form contents in browser storage. This is a provisional notice and does not establish legal or operational approval for a live care service.",
   inquiry_disabled:
     "This profile uses the contact options shown here. The demo inquiry form is not enabled.",
   service_request: "Request this service",

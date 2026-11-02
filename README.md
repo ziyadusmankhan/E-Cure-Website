@@ -1,10 +1,10 @@
-# Home Health Services — frontend demonstration
+# Home Health Services
 
-A complete multi-page Next.js App Router healthcare frontend with typed business profiles and a Phase 5 PostgreSQL/Drizzle backend foundation. Public forms remain frontend demonstrations; authentication, payments and public request persistence are not activated.
+A multi-page Next.js App Router healthcare website with typed business profiles, a PostgreSQL/Drizzle backend and Phase 6 appointment/contact submissions. The default remains a frontend preview; explicitly enabled local-test mode saves fictional requests. Authentication, administration and email delivery remain later phases.
 
 ## Run locally
 
-Phases 1–5 are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Public form integration and operational admin phases require separate approval.
+Phases 1–6 are tracked in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later phases require separate approval.
 
 Use a current Node.js LTS release (Node 24 was used during development).
 
@@ -14,6 +14,8 @@ npm run dev
 ```
 
 Open http://localhost:3000. If the port is occupied, Next.js prints the selected port.
+
+This workspace has local-test submissions configured in ignored `.env.local`. Start its database before the app with `npm.cmd run db:local:start`, then open http://127.0.0.1:3000. Use fictional details: entries really persist, and receipts do not confirm care or send email. See [local submission setup and troubleshooting](docs/architecture/SUBMISSIONS.md). Stop the database with `npm.cmd run db:local:stop` before restarting Windows.
 
 The public frontend runs without database access. For the approved local PostgreSQL foundation, installed PostgreSQL binaries are required:
 
@@ -66,9 +68,9 @@ For automated browser verification, run `npx playwright install chromium`, `npm 
 - `/services/medical-equipment`
 - `/services/laboratory-services`
 - `/services/nursing-care`
-- `/book-appointment` — service selection, validated details, editable review, demo completion
-- `/contact` — configured contact information and validated demo inquiry
-- `/privacy-policy` — provisional demonstration notice
+- `/book-appointment` — selection, validated details, editable review, preview completion or persisted request receipt
+- `/contact` — configured contacts and validated preview/persisted inquiry
+- `/privacy-policy` — mode-specific processing notice
 
 All six service routes are generated from typed content and can be loaded directly. Unknown routes show a custom 404. Homepage anchors include `#about`, `#services`, `#why-home-care`, `#how-it-works`, and `#contact`.
 
@@ -118,19 +120,13 @@ Assets are local in `public/images`; photo source links and licensing notes are 
 
 Next.js Image optimizes photographs and provides responsive sizing. The small custom SVG illustrations remain vectors. Keep replacements appropriately cropped and compressed; preserve declared image containers to prevent layout shifts.
 
-## Demo forms and future backend integration
+## Public request forms
 
-`src/lib/validations.ts` holds Zod schemas. React Hook Form manages entries in component memory. There are no form fetch requests, browser storage writes, analytics events, or console logging of form contents. Completion resets the form data. Navigating away unmounts the form.
+React Hook Form keeps entries in component memory. Disabled mode retains the frontend demonstration. Local-test mode sends to protected POST endpoints with independent server validation, consent, Turnstile, durable rate limits and retry-safe duplicate protection. Completion clears personal form data; no browser storage or analytics payloads are used.
 
 The booking URL accepts a known service slug, for example `/book-appointment?service=physiotherapy`; invalid slugs leave the selection empty. The flow validates service, name, phone, optional email, future/today date, time preference, and inquiry length. Contact validates name, email, topic, and message. Example details should be used throughout.
 
-The Phase 5 internal database/service layer now exists under `src/server/`. To activate real public submissions in Phase 6:
-
-1. Establish approved care scope, identity, privacy notices, consent, retention, and operational ownership.
-2. Add the server-side booking API around the internal service layer with independent validation, appropriate access protections, anti-spam, rate limiting and idempotency. Never trust client validation alone. Match the deployment profile to its own initialized database; the backend rejects a different business identity.
-3. Replace the completion handler in `src/components/forms/booking-form.tsx` and the contact submit handler in `src/components/forms/contact-form.tsx` with a request to that API. Add real pending/error states, retry handling, and duplicate submission protection.
-4. Distinguish an acknowledged request from a confirmed appointment. Only show confirmation that the backend actually provides.
-5. Update the demonstration notices and privacy text to reflect the implemented data handling. Changing `site.demo` alone deliberately does not activate submissions.
+The server layer lives under `src/server/submissions/`. See [SUBMISSIONS.md](docs/architecture/SUBMISSIONS.md) for setup, HTTP contracts, transaction/permission boundaries, privacy, limits and test commands. `SUBMISSIONS_MODE=live` rejects dummy keys and demo profiles. Real business identity, credentials, proxy settings and operational approval remain required; changing `site.demo` alone does not activate submissions.
 
 ## Deploy to Vercel
 

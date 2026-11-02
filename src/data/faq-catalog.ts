@@ -41,7 +41,7 @@ export const faqGroups: FAQGroup[] = [
       {
         question: "Does completing the form book an appointment?",
         answer:
-          "No. This website is a frontend demonstration. Your request is not submitted or saved. In a live service, submitting a request would only start a conversation; an appointment would require a separate confirmation after suitability, availability, and practical details are agreed.",
+          "No. A saved request is not a confirmed appointment. Preview mode does not submit entries; local test mode saves fictional requests to the local database. A real appointment requires a separate agreement about suitability, availability and practical details.",
       },
       {
         question: "Is my preferred date or time guaranteed?",
@@ -73,7 +73,7 @@ export const faqGroups: FAQGroup[] = [
       {
         question: "Are form entries sent or saved?",
         answer:
-          "No. The demo forms use entries only in browser memory to display the current form and review. They do not send entries to a care team, database, or external service, or save them to localStorage. The provisional privacy notice explains the demo’s data handling and the separate role of website hosting.",
+          "Read the notice on the form. Preview mode keeps entries only in browser memory. Local test mode saves fictional requests in the local database and uses Cloudflare Turnstile for a test security check. Neither mode arranges care or sends a team notification. The privacy notice explains the active mode.",
       },
       {
         question: "Why are some business and contact details missing?",
@@ -83,7 +83,7 @@ export const faqGroups: FAQGroup[] = [
       {
         question: "Can this website provide urgent assistance?",
         answer:
-          "No. This demonstration cannot receive requests, monitor messages, or arrange urgent assistance. Do not rely on its appointment or contact forms for urgent care.",
+          "No. Test messages are not monitored for care or emergencies. This demonstration cannot arrange urgent assistance. Do not rely on its appointment or contact forms for urgent care.",
       },
     ],
   },

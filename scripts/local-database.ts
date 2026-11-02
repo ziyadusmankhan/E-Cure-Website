@@ -17,7 +17,7 @@ async function main() {
     console.log("Workspace development database stopped. Data retained.");
     return;
   }
-  const local = startLocalPostgres("development");
+  const local = await startLocalPostgres("development");
   const maintenance = postgres(local.url, { max: 1, onnotice: () => {} });
   const dbUrl = new URL(local.url);
   dbUrl.pathname = "/healthcare_development";

@@ -63,7 +63,10 @@ test("FAQ discovery, category anchors, keyboard answers and service links work",
   await expect(question).toHaveAttribute("aria-expanded", "true");
   await expect(
     page.getByRole("region", { name: "Does completing the form book an appointment?" }),
-  ).toContainText("not submitted or saved");
+  ).toContainText("not a confirmed appointment");
+  await expect(
+    page.getByRole("region", { name: "Does completing the form book an appointment?" }),
+  ).toContainText("Preview mode does not submit entries");
   await page.getByRole("main").getByRole("link", { name: "Nursing Care", exact: true }).click();
   await expect(page).toHaveURL(/\/services\/nursing-care$/);
 });

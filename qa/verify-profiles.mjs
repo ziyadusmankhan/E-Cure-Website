@@ -17,7 +17,7 @@ function run(args, env) {
 }
 try {
   for (const id of ids) {
-    const env = { NEXT_PUBLIC_SITE_PROFILE: id, SITE_THEME: "", NEXT_PUBLIC_SITE_URL: "" };
+    const env = { NEXT_PUBLIC_SITE_PROFILE: id, SITE_THEME: "", NEXT_PUBLIC_SITE_URL: "", SUBMISSIONS_MODE: "disabled" };
     console.log(`\nVerifying fictional deployment: ${id}`);
     const built = run(["node_modules/next/dist/bin/next", "build"], env),
       tested =
@@ -47,6 +47,7 @@ try {
       NEXT_PUBLIC_SITE_PROFILE: "default",
       SITE_THEME: "",
       NEXT_PUBLIC_SITE_URL: "",
+      SUBMISSIONS_MODE: "disabled",
     })
   )
     failed = true;
