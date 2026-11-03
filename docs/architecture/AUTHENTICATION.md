@@ -1,6 +1,6 @@
 # Phase 7 staff authentication and permissions
 
-Status: implementation under verification. The user selected local Supabase after a Windows restart. Docker is unavailable in the current session; no real Supabase sign-in, MFA or refresh pass is claimed yet. Native PostgreSQL remains the application database. Phase 8 has not started.
+Local Supabase Auth is running and verified: all nine real password/MFA/session/permission browser tests pass against GoTrue v2.197.0. Native PostgreSQL remains the application database. The user-authorized first local Owner is provisioned; its generated password is in an ignored local file, and authenticator enrollment is left for the user at first sign-in. Phase 8 has not started.
 
 ## Local setup after the restart
 
@@ -16,7 +16,7 @@ npm.cmd run dev
 
 Supabase startup output stays in ignored `.local/supabase/start.log` because the CLI can print local credentials. Configuration reads the local CLI status, preserves the existing session encryption key, writes local Auth settings to ignored `.env.local`, and stores the privileged provisioning credential only in `.local/supabase/provisioning.env`. Never share or commit these files. The runtime needs only the provider URL/public key, application database connection and session encryption key; it never needs an Auth admin/service key.
 
-Visit http://127.0.0.1:3000/admin/login. Sign-up is disabled. No staff account, default password or public Owner bootstrap endpoint is created. Use local Supabase Studio (http://127.0.0.1:54323) to create a confirmed staff Auth identity with a strong password, then link its UUID through the controlled CLI:
+Visit http://127.0.0.1:3000/admin/login. Sign-up is disabled. Setup does not seed staff accounts or expose a public Owner bootstrap endpoint. The first local Owner was explicitly created at the user's request, with a generated password in ignored `.local/supabase/owner-access.txt`; its Windows ACL permits only the current user and SYSTEM. For additional accounts, use local Supabase Studio (http://127.0.0.1:54323) to create a confirmed staff Auth identity with a strong password, then link its UUID through the controlled CLI:
 
 ```powershell
 npm.cmd run admin:provision -- --user-id REPLACE_WITH_VERIFIED_UUID --role owner --active true
@@ -71,6 +71,6 @@ Additive migrations 0004–0006 add private `administrative_sessions`, issuer-bo
 
 After local Auth is configured, build and run `npm.cmd run test:auth`. It creates disposable application databases and confirmed ephemeral Auth identities, then tests real password/MFA login, first enrollment, invalid/unlinked/inactive users, Owner/Receptionist direct-page/API enforcement, expiry, logout replay, refresh and responsive/accessibility states. Its TOTP helper is test-only and checked against an RFC vector. Auth identities are removed during cleanup; secrets are not printed or written to artifacts. Run this harness sequentially with other DB/submission harnesses.
 
-The existing frontend browser suite explicitly disables authentication and verifies an accessible unavailable login page and closed private routes. CI is prepared to start local Supabase, configure it and run the real Auth suite; no hosted execution or pass is claimed. Build/font/public regression/boundary checks remain required. See the current Phase 7 report for actual results and pending steps.
+The existing frontend browser suite explicitly disables authentication and verifies an accessible unavailable login page and closed private routes. The real local suite now passes, including MFA enrollment, invalid/unmapped/inactive users, refresh, logout replay denial and direct Owner/Receptionist checks. The local Owner's first factor and enforced MFA setup were separately verified without enrolling a factor on the user's behalf. Test identities are removed during cleanup. CI is prepared but no hosted execution or pass is claimed. See the Phase 7 report for evidence and limits.
 
 Primary references: installed Next.js authentication, cookies, route and headers guides; [Supabase verified user lookup](https://supabase.com/docs/reference/javascript/auth-getuser), [claims](https://supabase.com/docs/reference/javascript/auth-getclaims), [sessions/revocation](https://supabase.com/docs/guides/auth/sessions), [sign-out](https://supabase.com/docs/guides/auth/signout), [TOTP MFA](https://supabase.com/docs/guides/auth/auth-mfa/totp).

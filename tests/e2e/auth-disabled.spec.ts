@@ -4,10 +4,13 @@ test("unconfigured staff authentication fails closed and its login page stays ac
   page,
   request,
 }, info) => {
+  await page.goto("/");
+  await expect(page.locator(".whatsapp-button")).toBeVisible();
   const response = await page.goto("/admin/login?next=//evil.example");
   expect(response?.headers()["x-frame-options"]).toBe("DENY");
   expect(response?.headers()["cache-control"]).toContain("no-store");
   await expect(page.getByRole("heading", { name: "Welcome back." })).toBeVisible();
+  await expect(page.locator(".whatsapp-button")).toBeHidden();
   await expect(page.getByRole("button", { name: "Sign in securely" })).toBeDisabled();
   for (const path of ["/admin", "/admin/access", "/admin/mfa"]) {
     await page.goto(path);

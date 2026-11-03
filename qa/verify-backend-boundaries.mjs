@@ -19,7 +19,7 @@ function visit(file) {
     throw new Error("Client graph imports a private backend module.");
   const text = readFileSync(file, "utf8");
   if (
-    /process\.env\.(DATABASE_URL|DIRECT_URL|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|TURNSTILE_SECRET_KEY|SUBMISSIONS_HMAC_SECRET|ADMIN_SESSION_ENCRYPTION_KEY)/.test(
+    /process\.env\.(DATABASE_URL|DIRECT_URL|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|SUPABASE_PROVISIONING_KEY|TURNSTILE_SECRET_KEY|SUBMISSIONS_HMAC_SECRET|ADMIN_SESSION_ENCRYPTION_KEY)/.test(
       text,
     )
   )
@@ -71,12 +71,17 @@ for (const file of roots) visit(file);
 if (!existsSync(".next/static"))
   throw new Error("Build the application before checking browser bundles.");
 const env = existsSync(".env.local") ? parseEnv(readFileSync(".env.local", "utf8")) : {};
-const values = { ...env, ...process.env };
+// Verification only: this privileged key is never loaded by the Next.js runtime.
+const provisioning = existsSync(".local/supabase/provisioning.env")
+  ? parseEnv(readFileSync(".local/supabase/provisioning.env", "utf8"))
+  : {};
+const values = { ...provisioning, ...env, ...process.env };
 const secrets = [
   "DATABASE_URL",
   "DIRECT_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_SECRET_KEY",
+  "SUPABASE_PROVISIONING_KEY",
   "TURNSTILE_SECRET_KEY",
   "SUBMISSIONS_HMAC_SECRET",
   "ADMIN_SESSION_ENCRYPTION_KEY",

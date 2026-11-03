@@ -1,10 +1,10 @@
 # Home Health Services
 
-A multi-page Next.js App Router healthcare website with typed business profiles, a PostgreSQL/Drizzle backend and Phase 6 appointment/contact submissions. Phase 7 staff authentication is implemented and under verification; real local Supabase login/MFA tests await the planned Windows restart. Operational administration and email delivery remain later phases.
+A multi-page Next.js App Router healthcare website with typed business profiles, a PostgreSQL/Drizzle backend, appointment/contact submissions and verified local Supabase staff authentication with MFA and role permissions. Operational administration and email delivery remain later phases.
 
 ## Run locally
 
-Phases 1–6 are approved; Phase 7 is authorized and under verification. See `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Later phases require separate approval.
+Phases 1–6 are approved; Phase 7 implementation and verification are documented in `docs/DEVELOPMENT_STATUS.md` and `docs/phases/`. Phase 8 requires separate approval.
 
 Use a current Node.js LTS release (Node 24 was used during development).
 
@@ -17,7 +17,7 @@ Open http://localhost:3000. If the port is occupied, Next.js prints the selected
 
 This workspace has local-test submissions configured in ignored `.env.local`. Start its database before the app with `npm.cmd run db:local:start`, then open http://127.0.0.1:3000. Use fictional details: entries really persist, and receipts do not confirm care or send email. See [local submission setup and troubleshooting](docs/architecture/SUBMISSIONS.md). Stop the database with `npm.cmd run db:local:stop` before restarting Windows.
 
-For Phase 7, `/admin/login` shows an unavailable state until a real Auth service is configured. After restarting Windows and starting Docker Desktop, run `npm.cmd run supabase:start` then `npm.cmd run auth:local:configure`. Restart the app to load those settings. Create a confirmed identity in local Supabase Studio and link its UUID using the controlled provisioning command in [AUTHENTICATION.md](docs/architecture/AUTHENTICATION.md). No default staff password or public signup exists. `npm.cmd run test:auth` performs the pending real local Supabase browser checks with disposable accounts; do not treat the controlled-provider database tests as a real Auth integration pass.
+Staff access is at `/admin/login`. This workspace has local Supabase configured and a user-authorized Owner account; its generated login details remain in ignored `.local/supabase/owner-access.txt`. Enroll your authenticator on first sign-in. For a fresh setup, start Docker Desktop, run `npm.cmd run supabase:start` then `npm.cmd run auth:local:configure`, and restart the app. Create/link additional identities through the controlled steps in [AUTHENTICATION.md](docs/architecture/AUTHENTICATION.md). No default password, seeded staff identity or public signup exists. `npm.cmd run test:auth` passes all nine real local Supabase browser tests using disposable accounts. Unconfigured environments deliberately show an unavailable sign-in state.
 
 The public frontend runs without database access. For the approved local PostgreSQL foundation, installed PostgreSQL binaries are required:
 

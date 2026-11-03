@@ -78,6 +78,7 @@ test("real Owner login requires valid MFA before protected pages and direct API 
   expect((await page.request.get("/api/admin/permissions")).status()).toBe(200);
   await page.getByRole("link", { name: "Access and permissions", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Access and permissions." })).toBeVisible();
+  await expect(page.locator(".whatsapp-button")).toBeHidden();
   const cookies = await page.context().cookies();
   expect(cookies.find((c) => c.name === "healthcare-admin")).toMatchObject({
     httpOnly: true,
