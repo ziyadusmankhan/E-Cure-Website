@@ -16,8 +16,14 @@ export type ErrorCode =
   | "BAD_REQUEST"
   | "PAYLOAD_TOO_LARGE"
   | "UNSUPPORTED_MEDIA"
-  | "SUBMISSIONS_DISABLED";
+  | "SUBMISSIONS_DISABLED"
+  | "UNAUTHENTICATED"
+  | "LOGIN_FAILED"
+  | "MFA_REQUIRED";
 const messages: Record<ErrorCode, string> = {
+  UNAUTHENTICATED: "Please sign in again to continue.",
+  LOGIN_FAILED: "Sign-in failed. Check your details or contact your administrator.",
+  MFA_REQUIRED: "Complete two-step verification to continue.",
   INVALID_INPUT: "Please check the supplied information.",
   NOT_FOUND: "The requested record is unavailable.",
   CONFLICT: "The change conflicts with an existing record.",
@@ -36,6 +42,9 @@ const messages: Record<ErrorCode, string> = {
   SUBMISSIONS_DISABLED: "Online submissions are not enabled for this deployment.",
 };
 const statuses: Record<ErrorCode, number> = {
+  UNAUTHENTICATED: 401,
+  LOGIN_FAILED: 401,
+  MFA_REQUIRED: 403,
   INVALID_INPUT: 422,
   NOT_FOUND: 404,
   CONFLICT: 409,

@@ -28,6 +28,7 @@ export default defineConfig({
     env: {
       DATABASE_URL: database,
       SUBMISSIONS_MODE: "local-test",
+      ADMIN_AUTH_MODE: "disabled",
       TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
       TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
       SUBMISSIONS_HMAC_SECRET: process.env.QA_SUBMISSION_HMAC,

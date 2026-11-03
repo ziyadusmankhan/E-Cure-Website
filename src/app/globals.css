@@ -4,6 +4,7 @@
 @import "../styles/public.css";
 @import "../styles/profiles.css";
 @import "../styles/submissions.css";
+@import "../styles/admin-auth.css";
 
 @theme inline {
   --font-sans: var(--font-body);

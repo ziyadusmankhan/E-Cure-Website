@@ -200,15 +200,39 @@ export const administrativeRoles = healthcare.table(
   (t) => [check("admin_role_valid", sql`${t.key} in ('owner', 'receptionist')`)],
 );
 
-// Opaque Supabase identity mapping. Auth/session integration is Phase 7.
+// Verified Supabase Auth identity mapping. Provisioned only by trusted tooling.
 export const administrativeUsers = healthcare.table("administrative_users", {
   userId: uuid("user_id").primaryKey(),
+  authIssuer: varchar("auth_issuer", { length: 500 }).notNull().default(""),
   roleKey: varchar("role_key", { length: 20 })
     .notNull()
     .references(() => administrativeRoles.key, { onDelete: "restrict" }),
   active: boolean("active").notNull().default(false),
   createdAt: createdAt(),
 });
+
+export const administrativeSessions = healthcare.table(
+  "administrative_sessions",
+  {
+    keyHash: varchar("key_hash", { length: 64 }).primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => administrativeUsers.userId, { onDelete: "cascade" }),
+    encryptedTokens: text("encrypted_tokens").notNull(),
+    createdAt: createdAt(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    check("admin_session_hash_valid", sql`${t.keyHash} ~ '^[a-f0-9]{64}$'`),
+    check(
+      "admin_session_lifetime_valid",
+      sql`${t.expiresAt} > ${t.createdAt} and ${t.expiresAt} <= ${t.createdAt} + interval '8 hours'`,
+    ),
+    index("admin_sessions_user_idx").on(t.userId),
+    index("admin_sessions_expiry_idx").on(t.expiresAt),
+  ],
+);
 
 export const auditEvents = healthcare.table(
   "audit_events",
@@ -222,7 +246,7 @@ export const auditEvents = healthcare.table(
     entityId: varchar("entity_id", { length: 80 }).notNull(),
     // Only structural metadata. Never copy form fields, database errors or credentials here.
     metadata: jsonb("metadata")
-      .$type<{ source: "foundation" | "fixture" }>()
+      .$type<{ source: "foundation" | "fixture" | "authentication" }>()
       .notNull()
       .default({ source: "foundation" }),
     createdAt: createdAt(),
@@ -230,15 +254,15 @@ export const auditEvents = healthcare.table(
   (t) => [
     check(
       "audit_action_valid",
-      sql`${t.action} in ('created', 'updated', 'deleted', 'requested', 'seeded')`,
+      sql`${t.action} in ('created', 'updated', 'deleted', 'requested', 'seeded', 'signed_in', 'signed_out', 'mfa_verified')`,
     ),
     check(
       "audit_entity_valid",
-      sql`${t.entityType} in ('business', 'service', 'page', 'customer', 'appointment', 'inquiry')`,
+      sql`${t.entityType} in ('business', 'service', 'page', 'customer', 'appointment', 'inquiry', 'administration')`,
     ),
     check(
       "audit_metadata_redacted",
-      sql`${t.metadata} in ('{"source":"foundation"}'::jsonb, '{"source":"fixture"}'::jsonb)`,
+      sql`${t.metadata} in ('{"source":"foundation"}'::jsonb, '{"source":"fixture"}'::jsonb, '{"source":"authentication"}'::jsonb)`,
     ),
     index("audit_entity_created_idx").on(t.entityType, t.entityId, t.createdAt),
     index("audit_actor_idx").on(t.actorId),

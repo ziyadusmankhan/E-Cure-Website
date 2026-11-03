@@ -1,0 +1,92 @@
+.admin-area {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.25rem;
+}
+.admin-auth-card {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.admin-auth-card h1,
+.admin-workspace h1 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin: 0.75rem 0 1rem;
+}
+.admin-auth-form {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  min-width: 0;
+}
+.admin-auth-form input,
+.admin-auth-form select {
+  width: 100%;
+  min-width: 0;
+}
+.admin-auth-form .button {
+  justify-self: start;
+}
+.admin-mfa-setup {
+  display: grid;
+  gap: 0.75rem;
+}
+.admin-mfa-setup img {
+  max-width: 100%;
+  height: auto;
+}
+.admin-mfa-setup input {
+  font-family: monospace;
+}
+.admin-workspace {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 2.5rem;
+}
+.admin-workspace-nav {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  align-self: start;
+  background: var(--paper);
+}
+.admin-workspace-nav nav {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.admin-workspace-nav a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.admin-workspace-content {
+  min-width: 0;
+}
+.admin-security-summary,
+.admin-role-cards article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+}
+.admin-role-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 767px) {
+  .admin-area {
+    padding: 2.5rem 1rem;
+  }
+  .admin-workspace,
+  .admin-role-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .admin-workspace-nav nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

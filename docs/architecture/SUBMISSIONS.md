@@ -47,6 +47,8 @@ Run `npm.cmd run test:db` and `npm.cmd run test:submissions` sequentially: they 
 
 This environment returned challenge HTTP timestamps roughly fifteen hours ahead of its host clock, producing Turnstile 200100. For this specific network only, an explicit QA option aligns the Playwright browser clock to the official challenge response header:
 
+Phase 7 follow-up: challenge and host times are now close, and all nine submission browser tests passed without this option. The earlier issue no longer reproduces. Keep the option for explicit diagnosis only when the clock/cache error actually occurs.
+
 ```powershell
 $env:QA_TURNSTILE_CLOCK_FROM_HTTP = "1"
 npm.cmd run test:submissions

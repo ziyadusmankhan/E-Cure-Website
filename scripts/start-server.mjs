@@ -5,7 +5,7 @@ const command = process.argv[2];
 const { loadEnvConfig } = nextEnv;
 if (!["dev", "start"].includes(command)) throw new Error("Unsupported server command.");
 loadEnvConfig(process.cwd(), command === "dev");
-const localTest = process.env.SUBMISSIONS_MODE === "local-test";
+const localTest = process.env.SUBMISSIONS_MODE === "local-test" || process.env.ADMIN_AUTH_MODE === "local";
 const args = process.argv.slice(3);
 if (localTest && args.some((arg) => arg.startsWith("-H") || arg.startsWith("--hostname")))
   throw new Error("Local test submissions require the loopback-only listener.");

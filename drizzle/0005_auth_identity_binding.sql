@@ -1,0 +1,1 @@
+ALTER TABLE "healthcare"."administrative_users" ADD COLUMN "auth_issuer" varchar(500) DEFAULT '' NOT NULL;

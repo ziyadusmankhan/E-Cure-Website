@@ -2,7 +2,7 @@
 
 **Phase:** 6 — Appointment Booking and Contact Forms
 
-**Status:** PASSED_AWAITING_APPROVAL (verified local PostgreSQL/test-key scope; external-clock limitation below)
+**Status:** APPROVED by the user's Phase 7 request; checkpoint `a1076d2` (verified local PostgreSQL/test-key scope; external-clock limitation below)
 
 Authorization: The user requested Phase 6 before restarting Windows, retained local PostgreSQL and chose official Cloudflare test keys locally. Production submissions remain blocked until real credentials and approved business configuration exist. Documents supply requirements; the user's messages authorize this phase. Phase 7 is not started.
 
@@ -67,6 +67,8 @@ The environment returned Cloudflare challenge timestamps approximately fifteen h
 ## F. Remaining Issues
 
 Ordinary local preview verification remains blocked while challenge/device clocks disagree. The app explains this and fails closed. Verify consistent device/network time/cache behavior after the planned restart or on another network; no global clock change was made. Real-key/live behavior and trusted production proxy settings remain unverified.
+
+Phase 7 follow-up: all nine active form tests subsequently passed with the ordinary browser clock, without the QA override. The earlier external clock/cache issue no longer reproduces; the paragraph above records the condition at the Phase 6 checkpoint.
 
 Docker virtualization/WSL/VMP preparation needs the planned restart; Supabase remains deferred. Authentication, administration, notifications and production retention/backup/monitoring remain later phases. Phase 5's inherited moderate dev-tool audit findings were not changed; the fresh production audit is clean. No remote CI run, push or deployment is claimed.
 

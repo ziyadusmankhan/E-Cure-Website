@@ -201,7 +201,9 @@ test("API rejects invalid, disabled, cross-origin, oversized and unverified subm
     ).status(),
   ).toBe(413);
   expect((await request.get("/api/appointments")).status()).toBe(405);
-  expect((await request.get("/admin")).status()).toBe(404);
+  const admin = await request.get("/admin", { maxRedirects: 0 });
+  expect(admin.status()).toBe(307);
+  expect(admin.headers().location).toContain("/admin/login");
   expect(
     await db`select c.id from healthcare.customers c where email='invalid@example.com'`,
   ).toHaveLength(0);

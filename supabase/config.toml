@@ -33,9 +33,15 @@ port = 54323
 api_url = "http://127.0.0.1"
 
 [auth]
-enabled = false
-site_url = "http://localhost:3000"
+enabled = true
+site_url = "http://127.0.0.1:3000"
 enable_signup = false
+jwt_expiry = 900
+minimum_password_length = 12
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
 
 [storage]
 enabled = false

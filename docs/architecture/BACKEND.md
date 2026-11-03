@@ -2,6 +2,8 @@
 
 Phase 6 extends this foundation with public submission handlers, two technical tables and migrations 0002/0003. See [SUBMISSIONS.md](SUBMISSIONS.md) for the current HTTP, verification, privacy and retry contract. Authentication and administrative authorization remain later phases.
 
+Phase 7 now implements Supabase Auth, opaque server-managed sessions and Owner/Receptionist authorization with migrations 0004–0006. Real local Auth verification awaits the user's selected restart/Supabase setup; see [AUTHENTICATION.md](AUTHENTICATION.md). Application data remains in native PostgreSQL; no managed database migration is implied.
+
 One independent deployment and database per client. PostgreSQL access lives in `src/server/` and uses Drizzle ORM 0.45.4, Drizzle Kit 0.31.11 and Postgres.js 3.4.9. These versions are pinned in the lockfile. No request-based tenant switching is introduced.
 
 The user explicitly chose **local PostgreSQL for now** when Docker Desktop returned an engine HTTP 500 and could not start local Supabase. Supabase CLI 3.0.0 and its configuration are prepared; neither a running Supabase stack nor a hosted project connection is claimed. The local database foundation is verified against PostgreSQL 18.4. CI is configured for PostgreSQL 17 but has not been executed remotely.

@@ -8,8 +8,10 @@ Phase 4: APPROVED by the user's Phase 5 request. Checkpoint 7da31f3. Typed publi
 
 Phase 5: APPROVED by the user's Phase 6 request, checkpoint 78f037a. Local PostgreSQL scope verified; see docs/phases/PHASE_05.md. Supabase runtime remains deferred until after the user's planned restart.
 
-Phase 6: PASSED_AWAITING_APPROVAL for local PostgreSQL and official test keys. Booking/contact persistence, duplicate protection, durable limits and server-side verification implemented. 42 backend, 32 unit, 9 active-form, 12 frontend and 9 profile browser tests pass; build/lint/types/security checks pass. Active browser tests use the documented external-clock QA adjustment; ordinary preview verification remains blocked while challenge/device clocks disagree. See the full Phase 6 report. Real production credentials and approved business settings are required for live mode.
+Phase 6: APPROVED by the user's Phase 7 request, checkpoint a1076d2. Verified local PostgreSQL and official test-key scope. During Phase 7 follow-up all nine form browser tests passed without clock adjustment; the earlier challenge-clock issue no longer reproduces.
 
-Phases 7–12: NOT_STARTED. Do not begin Phase 7 without explicit user approval.
+Phase 7: TESTING, authorized by the user's explicit request. Supabase adapter, server-managed sessions, MFA, private Owner/Receptionist guards and controlled provisioning implemented. 62 SQL/backend tests (including 20 controlled-provider Auth tests), 32 unit tests, 13 frontend tests, nine active form tests and nine profile tests pass; lint/types/build/secret/audit checks pass. The user selected local Supabase after restarting Windows. Actual Supabase password/MFA/refresh/logout verification has NOT RUN because Docker/Auth remains unavailable; do not mark the phase passed yet.
 
-See docs/phases/PHASE_06.md for the active phase report. Preview mode retains frontend-only forms; local-test mode saves fictional requests in PostgreSQL. No production care service, authentication, operational admin or email notifications are activated.
+Phases 8–12: NOT_STARTED. Do not begin Phase 8 without explicit user approval.
+
+See docs/phases/PHASE_07.md for the active phase report. Preview mode retains frontend-only forms; local-test mode saves fictional requests in PostgreSQL. Production authentication remains disabled until configured and verified. Operational management and notifications remain later phases.

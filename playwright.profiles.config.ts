@@ -20,6 +20,6 @@ export default defineConfig({
     url: "http://127.0.0.1:3200",
     reuseExistingServer: false,
     timeout: 120_000,
-    env: { SUBMISSIONS_MODE: "disabled" },
+    env: { SUBMISSIONS_MODE: "disabled", ADMIN_AUTH_MODE: "disabled" },
   },
 });

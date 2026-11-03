@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import postgres from "postgres";
 import { openDatabase } from "../src/server/db/connection";
@@ -8,17 +8,20 @@ import { assertTestDatabase, connectionSettings } from "../src/server/env";
 import { safeError } from "../src/server/errors";
 import { startLocalPostgres } from "../scripts/local-postgres";
 import { seedDemoProfile } from "../src/server/db/fixtures";
+import { createAuthFixture } from "./auth-fixture";
 
 function runTests(env: NodeJS.ProcessEnv) {
   return new Promise<number>((done, reject) => {
     const child = spawn(
       process.execPath,
-      process.argv.includes("--browser")
+      process.argv.includes("--browser") || process.argv.includes("--auth")
         ? [
             "node_modules/@playwright/test/cli.js",
             "test",
             "--config",
-            "playwright.submissions.config.ts",
+            process.argv.includes("--auth")
+              ? "playwright.auth.config.ts"
+              : "playwright.submissions.config.ts",
           ]
         : ["node_modules/vitest/vitest.mjs", "run", "--config", "vitest.database.config.mts"],
       { env, stdio: "inherit", windowsHide: true },
@@ -32,13 +35,35 @@ async function main() {
   let serverUrl = process.env.TEST_DATABASE_SERVER_URL;
   let local: Awaited<ReturnType<typeof startLocalPostgres>> | undefined;
   const suffix = randomBytes(6).toString("hex");
-  const browser = process.argv.includes("--browser");
+  const auth = process.argv.includes("--auth");
+  if (auth && !existsSync(".local/supabase/provisioning.env")) {
+    writeFileSync(
+      ".db-results/auth-summary.json",
+      JSON.stringify(
+        {
+          passed: false,
+          executed: false,
+          reason:
+            "Local Supabase Auth is not configured; restart Windows, start Docker/Supabase and run auth:local:configure.",
+        },
+        null,
+        2,
+      ),
+    );
+    console.error(
+      "Real Auth tests did not run: local Supabase Auth is not configured. After restarting Windows and starting Docker, run supabase:start and auth:local:configure.",
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const browser = process.argv.includes("--browser") || auth;
   const names = browser
     ? [`healthcare_browser_test_${suffix}`]
     : [
         `healthcare_phase5_test_${suffix}`,
         `healthcare_isolation_test_${suffix}`,
         `healthcare_submissions_test_${suffix}`,
+        `healthcare_auth_test_${suffix}`,
       ];
   const appPassword = randomBytes(32).toString("hex");
   if (!serverUrl) {
@@ -55,6 +80,7 @@ async function main() {
   const migrations: ReturnType<typeof openDatabase>[] = [];
   let exitCode = 1;
   let ownsExternalRole = false;
+  let authFixture: Awaited<ReturnType<typeof createAuthFixture>> | undefined;
   try {
     if (process.env.TEST_DATABASE_SERVER_URL) {
       const [role] = await maintenance`select 1 from pg_roles where rolname = 'healthcare_app'`;
@@ -92,6 +118,7 @@ async function main() {
     // Only a freshly created CI role or our own isolated workspace role is changed.
     await maintenance.unsafe(`ALTER ROLE healthcare_app LOGIN PASSWORD '${appPassword}'`);
     if (browser) await seedDemoProfile(migrations[0].db, "default");
+    if (auth) authFixture = await createAuthFixture(migrations[0], suffix);
     exitCode = await runTests({
       ...process.env,
       NODE_ENV: "test",
@@ -102,13 +129,20 @@ async function main() {
       TEST_SUBMISSION_MIGRATION_URL: names[2]
         ? new URL(`/${names[2]}`, serverUrl).toString()
         : undefined,
+      TEST_AUTH_DATABASE_URL: appUrls[3],
+      TEST_AUTH_MIGRATION_URL: names[3] ? new URL(`/${names[3]}`, serverUrl).toString() : undefined,
       QA_SUBMISSION_DB: browser ? appUrls[0] : undefined,
       QA_SUBMISSION_ADMIN: browser ? new URL(`/${names[0]}`, serverUrl).toString() : undefined,
       QA_SUBMISSION_HMAC: browser ? randomBytes(32).toString("hex") : undefined,
       NEXT_PUBLIC_SITE_PROFILE: "default",
+      ...authFixture?.env,
     });
     writeFileSync(
-      browser ? ".db-results/browser-summary.json" : ".db-results/summary.json",
+      auth
+        ? ".db-results/auth-summary.json"
+        : browser
+          ? ".db-results/browser-summary.json"
+          : ".db-results/summary.json",
       JSON.stringify(
         {
           passed: exitCode === 0,
@@ -122,11 +156,18 @@ async function main() {
       ),
     );
   } finally {
+    let cleanupFailure: unknown;
+    try {
+      await authFixture?.cleanup();
+    } catch (error) {
+      cleanupFailure = error;
+    }
     for (const connection of migrations) await connection.close();
     for (const name of created.reverse()) await maintenance`drop database ${maintenance(name)}`;
     if (ownsExternalRole) await maintenance.unsafe("DROP ROLE IF EXISTS healthcare_app");
     await maintenance.end({ timeout: 5 });
     if (local?.started) local.stop();
+    if (cleanupFailure) throw cleanupFailure;
   }
   process.exitCode = exitCode;
 }

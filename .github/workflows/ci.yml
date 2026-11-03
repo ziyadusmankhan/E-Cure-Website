@@ -39,7 +39,14 @@ jobs:
       - run: npm run test:submissions
         env:
           TEST_DATABASE_SERVER_URL: postgresql://postgres:ci-only-password@127.0.0.1:5432/postgres
+      - run: npm run supabase:start
+      - run: npm run auth:local:configure
+      - run: npm run test:auth
+        env:
+          TEST_DATABASE_SERVER_URL: postgresql://postgres:ci-only-password@127.0.0.1:5432/postgres
       - run: npm run test:profiles
+      - run: npm run supabase:stop
+        if: always()
       - uses: actions/upload-artifact@v4
         if: always()
         with:
