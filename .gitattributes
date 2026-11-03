@@ -1,0 +1,2 @@
+# Drizzle hashes raw SQL bytes. Preserve applied migration checksums on Windows.
+drizzle/*.sql text eol=lf

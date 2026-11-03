@@ -1,4 +1,5 @@
 "use client";
+import { isAdminNavigation } from "@/lib/admin-navigation";
 import { useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -49,12 +50,7 @@ function useAuthRequest() {
   return { send, pending, error };
 }
 const navigate = (next: unknown) => {
-  if (
-    typeof next === "string" &&
-    (/^\/admin(?:\/(?:login|access))?$/.test(next) ||
-      /^\/admin\/mfa\?next=%2Fadmin(?:%2Faccess)?$/.test(next))
-  )
-    window.location.replace(next);
+  if (isAdminNavigation(next)) window.location.replace(next);
 };
 export function LoginForm({
   enabled,

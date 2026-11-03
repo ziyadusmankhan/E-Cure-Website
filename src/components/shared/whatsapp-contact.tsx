@@ -1,9 +1,9 @@
 "use client";
+import { useWebsite } from "@/components/website-provider";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { ArrowUpRight, X } from "lucide-react";
-import { site } from "@/config/site";
 
 function WhatsAppIcon() {
   return (
@@ -24,6 +24,7 @@ function WhatsAppIcon() {
 }
 
 export function WhatsAppContact() {
+  const { site } = useWebsite();
   if (!site.features.whatsapp) return null;
   if (site.contact.whatsappUrl) {
     return (

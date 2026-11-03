@@ -4,6 +4,7 @@ import { and, eq, gt, lt, sql } from "drizzle-orm";
 import type { Database } from "../db/connection";
 import {
   appointments,
+  workflowEvents,
   auditEvents,
   businessSettings,
   contactInquiries,
@@ -112,7 +113,8 @@ export async function persistSubmission(args: {
         const input = values as AppointmentSubmission;
         if (
           !site.features.booking ||
-          !configuredServices.some((service) => service.slug === input.service)
+          (process.env.CMS_MODE !== "database" &&
+            !configuredServices.some((service) => service.slug === input.service))
         )
           throw new BackendError("SERVICE_UNAVAILABLE");
         validatePreferredDate(input.date, input.time, business.timezone, now);
@@ -162,6 +164,7 @@ export async function persistSubmission(args: {
         await tx
           .insert(auditEvents)
           .values({ entityType: "appointment", entityId: row.id, action: "requested" });
+        await tx.insert(workflowEvents).values({ appointmentId: row.id, toStatus: "new" });
         receipt = { reference: row.reference, status: "new" };
         recordId = row.id;
       } else {
@@ -186,19 +189,18 @@ export async function persistSubmission(args: {
         await tx
           .insert(auditEvents)
           .values({ entityType: "inquiry", entityId: row.id, action: "created" });
+        await tx.insert(workflowEvents).values({ inquiryId: row.id, toStatus: "new" });
         receipt = { reference: row.reference, status: "new" };
         recordId = row.id;
       }
-      await tx
-        .insert(submissionReceipts)
-        .values({
-          keyHash,
-          fingerprint,
-          kind,
-          reference: receipt.reference,
-          appointmentId: kind === "appointment" ? recordId : null,
-          inquiryId: kind === "inquiry" ? recordId : null,
-        });
+      await tx.insert(submissionReceipts).values({
+        keyHash,
+        fingerprint,
+        kind,
+        reference: receipt.reference,
+        appointmentId: kind === "appointment" ? recordId : null,
+        inquiryId: kind === "inquiry" ? recordId : null,
+      });
       return { receipt, replayed: false };
     });
   });

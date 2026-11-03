@@ -19,14 +19,23 @@ export type ErrorCode =
   | "SUBMISSIONS_DISABLED"
   | "UNAUTHENTICATED"
   | "LOGIN_FAILED"
-  | "MFA_REQUIRED";
+  | "MFA_REQUIRED"
+  | "INVALID_TRANSITION"
+  | "INVALID_IMAGE"
+  | "PUBLICATION_INVALID";
 const messages: Record<ErrorCode, string> = {
+  INVALID_TRANSITION:
+    "This status change is not permitted. Refresh the record and check its current status.",
+  INVALID_IMAGE: "Use a PNG, JPEG or WebP image up to 2 MB and 4096 pixels per side.",
+  PUBLICATION_INVALID:
+    "Complete the required content, keep at least one enabled service, and check image references before publishing.",
   UNAUTHENTICATED: "Please sign in again to continue.",
   LOGIN_FAILED: "Sign-in failed. Check your details or contact your administrator.",
   MFA_REQUIRED: "Complete two-step verification to continue.",
   INVALID_INPUT: "Please check the supplied information.",
   NOT_FOUND: "The requested record is unavailable.",
-  CONFLICT: "The change conflicts with an existing record.",
+  CONFLICT:
+    "Another change was saved or a matching record already exists. Reload the latest version and try again.",
   UNAVAILABLE: "The service is temporarily unavailable.",
   CONFIGURATION: "The backend is not configured for this operation.",
   INTERNAL: "The operation could not be completed.",
@@ -42,6 +51,9 @@ const messages: Record<ErrorCode, string> = {
   SUBMISSIONS_DISABLED: "Online submissions are not enabled for this deployment.",
 };
 const statuses: Record<ErrorCode, number> = {
+  INVALID_TRANSITION: 422,
+  INVALID_IMAGE: 422,
+  PUBLICATION_INVALID: 422,
   UNAUTHENTICATED: 401,
   LOGIN_FAILED: 401,
   MFA_REQUIRED: 403,

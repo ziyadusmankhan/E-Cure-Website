@@ -1,3 +1,4 @@
+"use client";
 import {
   Video,
   Activity,
@@ -7,7 +8,7 @@ import {
   Stethoscope,
   type LucideIcon,
 } from "lucide-react";
-import { getService } from "@/data/services";
+import { useWebsite } from "@/components/website-provider";
 const icons: Record<string, LucideIcon> = {
   "online-consultation": Video,
   physiotherapy: Activity,
@@ -17,6 +18,7 @@ const icons: Record<string, LucideIcon> = {
   "nursing-care": Stethoscope,
 };
 export function ServiceIcon({ slug, size = 28 }: { slug: string; size?: number }) {
-  const Icon = icons[getService(slug)?.icon || slug] || HandHeart;
+  const {services}=useWebsite();
+  const Icon = icons[services.find(s=>s.slug===slug)?.icon || slug] || HandHeart;
   return <Icon size={size} strokeWidth={1.5} aria-hidden="true" />;
 }

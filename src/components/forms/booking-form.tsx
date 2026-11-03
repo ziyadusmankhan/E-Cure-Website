@@ -1,12 +1,11 @@
 "use client";
-import { site } from "@/config/site";
+import { useWebsite } from "@/components/website-provider";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, ArrowLeft, Check, CheckCircle2, Pencil, Info } from "lucide-react";
-import { services } from "@/data/services";
 import { Button } from "@/components/ui/button";
 import { ServiceIcon } from "@/components/shared/service-icon";
 import { createBookingSchema, localToday, type BookingValues } from "@/lib/validations";
@@ -24,6 +23,7 @@ export function BookingForm({
 }: {
   submissions?: SubmissionConfig;
 }) {
+  const { site, services } = useWebsite();
   const availableServices = submissions.enabled
     ? services.filter((service) => submissions.serviceSlugs.includes(service.slug))
     : services;

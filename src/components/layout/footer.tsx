@@ -1,10 +1,12 @@
+"use client";
+import { useWebsite } from "@/components/website-provider";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
-import { footerNavigation } from "@/config/navigation";
-import { services } from "@/data/services";
-import { site } from "@/config/site";
+import { visibleLinks } from "@/config/profile-utils";
 export function Footer() {
+  const { site, services } = useWebsite();
+ const footerNavigation = visibleLinks(site.navigation.footer,site);
   return (
     <footer className="site-footer">
       <div className="container">

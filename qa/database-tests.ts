@@ -8,20 +8,25 @@ import { assertTestDatabase, connectionSettings } from "../src/server/env";
 import { safeError } from "../src/server/errors";
 import { startLocalPostgres } from "../scripts/local-postgres";
 import { seedDemoProfile } from "../src/server/db/fixtures";
+import { initializeCms } from "../src/server/cms/store";
 import { createAuthFixture } from "./auth-fixture";
 
 function runTests(env: NodeJS.ProcessEnv) {
   return new Promise<number>((done, reject) => {
     const child = spawn(
       process.execPath,
-      process.argv.includes("--browser") || process.argv.includes("--auth")
+      process.argv.includes("--browser") ||
+        process.argv.includes("--auth") ||
+        process.argv.includes("--management")
         ? [
             "node_modules/@playwright/test/cli.js",
             "test",
             "--config",
-            process.argv.includes("--auth")
-              ? "playwright.auth.config.ts"
-              : "playwright.submissions.config.ts",
+            process.argv.includes("--management")
+              ? "playwright.management.config.ts"
+              : process.argv.includes("--auth")
+                ? "playwright.auth.config.ts"
+                : "playwright.submissions.config.ts",
           ]
         : ["node_modules/vitest/vitest.mjs", "run", "--config", "vitest.database.config.mts"],
       { env, stdio: "inherit", windowsHide: true },
@@ -35,7 +40,8 @@ async function main() {
   let serverUrl = process.env.TEST_DATABASE_SERVER_URL;
   let local: Awaited<ReturnType<typeof startLocalPostgres>> | undefined;
   const suffix = randomBytes(6).toString("hex");
-  const auth = process.argv.includes("--auth");
+  const management = process.argv.includes("--management");
+  const auth = process.argv.includes("--auth") || management;
   if (auth && !existsSync(".local/supabase/provisioning.env")) {
     writeFileSync(
       ".db-results/auth-summary.json",
@@ -64,6 +70,7 @@ async function main() {
         `healthcare_isolation_test_${suffix}`,
         `healthcare_submissions_test_${suffix}`,
         `healthcare_auth_test_${suffix}`,
+        `healthcare_management_test_${suffix}`,
       ];
   const appPassword = randomBytes(32).toString("hex");
   if (!serverUrl) {
@@ -118,6 +125,7 @@ async function main() {
     // Only a freshly created CI role or our own isolated workspace role is changed.
     await maintenance.unsafe(`ALTER ROLE healthcare_app LOGIN PASSWORD '${appPassword}'`);
     if (browser) await seedDemoProfile(migrations[0].db, "default");
+    if (management) await initializeCms(migrations[0].db);
     if (auth) authFixture = await createAuthFixture(migrations[0], suffix);
     exitCode = await runTests({
       ...process.env,
@@ -129,6 +137,11 @@ async function main() {
       TEST_SUBMISSION_MIGRATION_URL: names[2]
         ? new URL(`/${names[2]}`, serverUrl).toString()
         : undefined,
+      CMS_MODE: "disabled",
+      TEST_MANAGEMENT_DATABASE_URL: appUrls[4],
+      TEST_MANAGEMENT_MIGRATION_URL: names[4]
+        ? new URL(`/${names[4]}`, serverUrl).toString()
+        : undefined,
       TEST_AUTH_DATABASE_URL: appUrls[3],
       TEST_AUTH_MIGRATION_URL: names[3] ? new URL(`/${names[3]}`, serverUrl).toString() : undefined,
       QA_SUBMISSION_DB: browser ? appUrls[0] : undefined,
@@ -138,11 +151,13 @@ async function main() {
       ...authFixture?.env,
     });
     writeFileSync(
-      auth
-        ? ".db-results/auth-summary.json"
-        : browser
-          ? ".db-results/browser-summary.json"
-          : ".db-results/summary.json",
+      management
+        ? ".db-results/management-summary.json"
+        : auth
+          ? ".db-results/auth-summary.json"
+          : browser
+            ? ".db-results/browser-summary.json"
+            : ".db-results/summary.json",
       JSON.stringify(
         {
           passed: exitCode === 0,

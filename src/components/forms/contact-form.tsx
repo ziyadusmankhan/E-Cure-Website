@@ -1,5 +1,5 @@
 "use client";
-import { site } from "@/config/site";
+import { useWebsite } from "@/components/website-provider";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,7 @@ export function ContactForm({
 }: {
   submissions?: SubmissionConfig;
 }) {
+  const { site } = useWebsite();
   const submission = useSubmission("inquiry");
   const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
   const [consent, setConsent] = useState(false);

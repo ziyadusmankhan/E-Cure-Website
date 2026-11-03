@@ -4,7 +4,7 @@
 
 **Status:** PASSED_AWAITING_APPROVAL — verified local Supabase Auth with native PostgreSQL application data.
 
-Authorization: The user explicitly requested Phase 7, selected local Supabase after restarting Windows, confirmed Docker was running and requested completion. They also authorized the first local Owner using their supplied email and a privately saved generated password. Application data remains in native PostgreSQL. Phase 6 checkpoint: `a1076d2`; Phase 7 implementation checkpoint: `14fbbbf`. Phase 8 is not started.
+Authorization: The user explicitly requested Phase 7, selected local Supabase after restarting Windows, confirmed Docker was running and requested completion. They also authorized the first local Owner using their supplied email and a privately saved generated password. Application data remains in native PostgreSQL. Phase 6 checkpoint: `a1076d2`; Phase 7 implementation checkpoint: `14fbbbf`. Phase 8 was not started at this checkpoint; the user subsequently approved it.
 
 ## A. Implemented Features
 

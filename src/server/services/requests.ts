@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { and, desc, eq } from "drizzle-orm";
 import type { Database } from "../db/connection";
-import { appointments, contactInquiries, customers, services } from "../db/schema";
+import { workflowEvents, appointments, contactInquiries, customers, services } from "../db/schema";
 import { BackendError, operation } from "../errors";
 import {
   appointmentSchema,
@@ -96,6 +96,9 @@ export function requestService(db: Database) {
               status: appointments.status,
             });
           await audit(tx, "created", "customer", customer.id);
+          await tx
+            .insert(workflowEvents)
+            .values({ appointmentId: appointment.id, toStatus: "new" });
           await audit(tx, "requested", "appointment", appointment.id);
           return appointment;
         });
@@ -118,6 +121,7 @@ export function requestService(db: Database) {
             .insert(contactInquiries)
             .values(values)
             .returning({ id: contactInquiries.id, status: contactInquiries.status });
+          await tx.insert(workflowEvents).values({ inquiryId: row.id, toStatus: row.status });
           await audit(tx, "created", "inquiry", row.id);
           return row;
         });

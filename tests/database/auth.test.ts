@@ -281,6 +281,13 @@ describe("authentication HTTP boundary", () => {
     ])
       expect(safeAdminNext(value)).toBe("/admin");
     expect(safeAdminNext("/admin/access")).toBe("/admin/access");
+    for (const path of [
+      "/admin/appointments",
+      "/admin/customers",
+      "/admin/inquiries",
+      "/admin/website",
+    ])
+      expect(safeAdminNext(path)).toBe(path);
   });
   it("enforces Owner permissions on direct API calls independently of the UI", async () => {
     const login = await store.signIn("owner-api@example.com", "example");

@@ -136,3 +136,7 @@ The scoped esbuild override removes the newly introduced moderate advisory in Dr
 - [Supabase connections and pooler settings](https://supabase.com/docs/guides/database/connecting-to-postgres), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [CLI configuration](https://supabase.com/docs/guides/local-development/cli/config).
 - [Supabase Docker/native runtime requirements](https://supabase.com/docs/guides/local-development/docker-and-native-runtimes): native local runtime does not support Windows.
 - [PostgreSQL error codes](https://www.postgresql.org/docs/current/errcodes-appendix.html), [relational constraints](https://www.postgresql.org/docs/18/ddl-constraints.html).
+
+Phase 8 additive migrations 0007–0008 bring the private schema to fifteen tables: versioned draft/published CMS state, bounded website media and append-only request activity. Assignment indexes and non-negative versions are enforced in the custom security migration. All tables have RLS; Supabase API roles retain no table privileges. Management transactions use verified staff permissions and per-record assignment scopes. Runtime cannot edit staff mappings, rewrite history or replace published image bytes. See CONTENT_MANAGEMENT.md.
+
+Migration SQL is pinned to LF in `.gitattributes`: Drizzle hashes raw file bytes, so Windows checkout conversion must not change an applied migration checksum. Existing SQL content remains immutable.

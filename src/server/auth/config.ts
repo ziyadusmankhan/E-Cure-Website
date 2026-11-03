@@ -94,8 +94,4 @@ export const cookieName = (policy: AuthPolicy) =>
   policy.secure ? "__Host-healthcare-admin" : "healthcare-admin";
 export const sessionHours = 8;
 export const idleMinutes = 30;
-export function safeAdminNext(value: unknown): string {
-  return typeof value === "string" && ["/admin", "/admin/access"].includes(value)
-    ? value
-    : "/admin";
-}
+export { safeAdminNext } from "@/lib/admin-navigation";

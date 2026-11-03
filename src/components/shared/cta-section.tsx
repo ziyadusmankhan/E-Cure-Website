@@ -1,8 +1,10 @@
-import { site } from "@/config/site";
+"use client";
+import { useWebsite } from "@/components/website-provider";
 import Link from "next/link";
 import { ArrowUpRight, HousePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 export function CTASection({ service }: { service?: string }) {
+  const { site } = useWebsite();
   if (!site.sections.cta) return null;
   return (
     <section className="cta-section">

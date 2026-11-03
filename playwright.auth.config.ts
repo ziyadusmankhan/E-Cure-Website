@@ -32,7 +32,7 @@ export default defineConfig({
     timeout: 120000,
     env: {
       DATABASE_URL: database,
-      ADMIN_AUTH_MODE: "local",
+      ADMIN_AUTH_MODE: "local", CMS_MODE: "disabled",
       SUPABASE_URL: process.env.QA_AUTH_URL,
       SUPABASE_PUBLISHABLE_KEY: process.env.QA_AUTH_PUBLIC_KEY!,
       ADMIN_SESSION_ENCRYPTION_KEY: process.env.QA_AUTH_ENCRYPTION_KEY,

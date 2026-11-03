@@ -1,5 +1,5 @@
 "use client";
-import { site } from "@/config/site";
+import { useWebsite } from "@/components/website-provider";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,13 +8,13 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowUpRight, ChevronDown, Menu, X, House } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
 import { Button } from "@/components/ui/button";
-import { mainNavigation } from "@/config/navigation";
-import { services } from "@/data/services";
+import { visibleLinks } from "@/config/profile-utils";
 import { ServiceIcon } from "@/components/shared/service-icon";
 
-const navLinks = mainNavigation;
-const serviceIndex = Math.max(1, navLinks.findIndex((link) => link.section === "about") + 1);
 export function Header() {
+  const { site, services } = useWebsite();
+  const navLinks = visibleLinks(site.navigation.main, site);
+  const serviceIndex = Math.max(1, navLinks.findIndex(link=>link.section==="about")+1);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

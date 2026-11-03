@@ -1,6 +1,8 @@
+"use client";
+import { useWebsite } from "@/components/website-provider";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
-import { site } from "@/config/site";
 export function ContactDetails() {
+  const { site } = useWebsite();
   return (
     <div className="contact-details">
       <div>

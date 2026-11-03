@@ -50,6 +50,20 @@
       "when": 1793704781584,
       "tag": "0006_admin_session_security",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793716267081,
+      "tag": "0007_famous_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793716268081,
+      "tag": "0008_management_security",
+      "breakpoints": true
     }
   ]
 }

@@ -30,7 +30,9 @@
     "test:submissions": "node --conditions=react-server --import tsx qa/database-tests.ts --browser",
     "auth:local:configure": "node --import tsx scripts/configure-local-auth.ts",
     "admin:provision": "node --conditions=react-server --import tsx scripts/provision-admin.ts",
-    "test:auth": "node --conditions=react-server --import tsx qa/database-tests.ts --auth"
+    "test:auth": "node --conditions=react-server --import tsx qa/database-tests.ts --auth",
+    "cms:local:initialize": "node --conditions=react-server --import tsx scripts/initialize-cms.ts",
+    "test:management": "node --conditions=react-server --import tsx qa/database-tests.ts --management"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
@@ -50,6 +52,7 @@
     "react-dom": "19.3.1",
     "react-hook-form": "7.90.0",
     "server-only": "0.0.1",
+    "sharp": "0.35.5",
     "tailwind-merge": "3.7.0",
     "zod": "4.6.7"
   },

@@ -1,4 +1,5 @@
 import { relations, sql } from "drizzle-orm";
+import type { CmsDocument } from "@/types/cms";
 import {
   pgSchema,
   uuid,
@@ -107,6 +108,7 @@ export const customers = healthcare.table(
     phone: varchar("phone", { length: 24 }).notNull(),
     email: varchar("email", { length: 254 }),
     consentAt: timestamp("consent_at", { withTimezone: true }),
+    version: integer("version").notNull().default(0),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -139,6 +141,10 @@ export const appointments = healthcare.table(
     status: appointmentStatus("status").notNull().default("new"),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
     inquiry: varchar("inquiry", { length: 500 }).notNull().default(""),
+    version: integer("version").notNull().default(0),
+    assignedTo: uuid("assigned_to").references(() => administrativeUsers.userId, {
+      onDelete: "set null",
+    }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -175,6 +181,10 @@ export const contactInquiries = healthcare.table(
     message: text("message").notNull(),
     status: inquiryStatus("status").notNull().default("new"),
     consentAt: timestamp("consent_at", { withTimezone: true }),
+    version: integer("version").notNull().default(0),
+    assignedTo: uuid("assigned_to").references(() => administrativeUsers.userId, {
+      onDelete: "set null",
+    }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -246,7 +256,7 @@ export const auditEvents = healthcare.table(
     entityId: varchar("entity_id", { length: 80 }).notNull(),
     // Only structural metadata. Never copy form fields, database errors or credentials here.
     metadata: jsonb("metadata")
-      .$type<{ source: "foundation" | "fixture" | "authentication" }>()
+      .$type<{ source: "foundation" | "fixture" | "authentication" | "administration" }>()
       .notNull()
       .default({ source: "foundation" }),
     createdAt: createdAt(),
@@ -254,15 +264,15 @@ export const auditEvents = healthcare.table(
   (t) => [
     check(
       "audit_action_valid",
-      sql`${t.action} in ('created', 'updated', 'deleted', 'requested', 'seeded', 'signed_in', 'signed_out', 'mfa_verified')`,
+      sql`${t.action} in ('created', 'updated', 'deleted', 'requested', 'seeded', 'signed_in', 'signed_out', 'mfa_verified', 'published')`,
     ),
     check(
       "audit_entity_valid",
-      sql`${t.entityType} in ('business', 'service', 'page', 'customer', 'appointment', 'inquiry', 'administration')`,
+      sql`${t.entityType} in ('business', 'service', 'page', 'customer', 'appointment', 'inquiry', 'administration', 'publication', 'media')`,
     ),
     check(
       "audit_metadata_redacted",
-      sql`${t.metadata} in ('{"source":"foundation"}'::jsonb, '{"source":"fixture"}'::jsonb, '{"source":"authentication"}'::jsonb)`,
+      sql`${t.metadata} in ('{"source":"foundation"}'::jsonb, '{"source":"fixture"}'::jsonb, '{"source":"authentication"}'::jsonb, '{"source":"administration"}'::jsonb)`,
     ),
     index("audit_entity_created_idx").on(t.entityType, t.entityId, t.createdAt),
     index("audit_actor_idx").on(t.actorId),
@@ -308,6 +318,75 @@ export const submissionLimits = healthcare.table(
     check("limit_attempts_positive", sql`${t.attempts} > 0`),
     check("limit_hash_valid", sql`${t.keyHash} ~ '^[a-f0-9]{64}$'`),
     index("limit_expiry_idx").on(t.resetsAt),
+  ],
+);
+
+export const cmsState = healthcare.table(
+  "cms_state",
+  {
+    id: smallint("id").primaryKey().default(1),
+    draft: jsonb("draft").$type<CmsDocument>().notNull(),
+    published: jsonb("published").$type<CmsDocument>().notNull(),
+    revision: integer("revision").notNull().default(0),
+    publishedRevision: integer("published_revision").notNull().default(0),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    check("cms_singleton", sql`${t.id}=1`),
+    check(
+      "cms_revision_valid",
+      sql`${t.revision}>=0 and ${t.publishedRevision}>=0 and ${t.publishedRevision}<=${t.revision}`,
+    ),
+  ],
+);
+export const mediaAssets = healthcare.table(
+  "media_assets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    data: text("data").notNull(),
+    digest: varchar("digest", { length: 64 }).notNull(),
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check(
+      "media_dimensions",
+      sql`${t.width} between 1 and 1600 and ${t.height} between 1 and 1600`,
+    ),
+    check("media_bounded", sql`length(${t.data}) between 1 and 2000000`),
+  ],
+);
+export const workflowEvents = healthcare.table(
+  "workflow_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    appointmentId: uuid("appointment_id").references(() => appointments.id, {
+      onDelete: "restrict",
+    }),
+    inquiryId: uuid("inquiry_id").references(() => contactInquiries.id, { onDelete: "restrict" }),
+    actorId: uuid("actor_id").references(() => administrativeUsers.userId, {
+      onDelete: "set null",
+    }),
+    kind: varchar("kind", { length: 20 }).notNull().default("status"),
+    fromStatus: varchar("from_status", { length: 20 }),
+    toStatus: varchar("to_status", { length: 20 }).notNull(),
+    note: varchar("note", { length: 1000 }).notNull().default(""),
+    assignedTo: uuid("assigned_to").references(() => administrativeUsers.userId, {
+      onDelete: "set null",
+    }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check(
+      "workflow_record",
+      sql`(${t.appointmentId} is not null)::int+(${t.inquiryId} is not null)::int=1`,
+    ),
+    check("workflow_kind", sql`${t.kind} in ('status','note','assignment')`),
+    index("workflow_appointment_created_idx").on(t.appointmentId, t.createdAt),
+    index("workflow_inquiry_created_idx").on(t.inquiryId, t.createdAt),
   ],
 );
 

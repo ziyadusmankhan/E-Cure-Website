@@ -1,11 +1,13 @@
+"use client";
+import { useWebsite } from "@/components/website-provider";
 import Image from "next/image";
 import Link from "next/link";
-import { site } from "@/config/site";
 export function Brand() {
+  const { site } = useWebsite();
   return (
     <Link href="/" className="brand" aria-label={`${site.name} home`}>
       {site.logo.src ? (
-        <Image src={site.logo.src} alt={site.logo.alt} width={42} height={42} />
+        <Image src={site.logo.src} unoptimized={site.logo.src.startsWith("/api/admin/media/")} alt={site.logo.alt} width={42} height={42} />
       ) : (
         <svg
           className="brand-mark"

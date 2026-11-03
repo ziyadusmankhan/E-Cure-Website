@@ -141,6 +141,7 @@ export function authStore(
         return {
           principal: {
             userId: row.userId,
+            issuer: `${policy.url}/auth/v1`,
             role,
             aal: identity.aal,
             expiresAt: row.expiresAt.toISOString(),

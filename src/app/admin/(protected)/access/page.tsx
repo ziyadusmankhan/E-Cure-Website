@@ -18,8 +18,8 @@ export default async function AccessPage() {
         <article>
           <h2>Receptionist</h2>
           <p>
-            Access to the staff workspace. This role is for appointment and inquiry workflows. Owner
-            settings and user administration remain restricted.
+            Access to assigned appointment and inquiry workflows, including their customer contact
+            records. Owner settings and user administration remain restricted.
           </p>
         </article>
       </div>
