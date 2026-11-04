@@ -1,0 +1,217 @@
+/* Client presentation only. Persisted CMS theme names and other profiles stay intact. */
+html[data-presentation="ecure"] {
+  /* Colors are supplied by the configurable client-presentation preset. */
+  --radius-button: 6px;
+  --radius-panel: 8px;
+  --font-heading: var(--font-ecure-heading), Arial, sans-serif;
+  --font-body: var(--font-ecure-body), Arial, sans-serif;
+  scroll-padding-top: 148px;
+}
+
+[data-presentation="ecure"] body { font-size: 16px; color: var(--body-text); }
+[data-presentation="ecure"] h1,
+[data-presentation="ecure"] h2,
+[data-presentation="ecure"] h3 { overflow-wrap: break-word; color: var(--heading-color, var(--ink)); }
+[data-presentation="ecure"] ::selection { background: #dceef7; color: var(--ink); }
+[data-presentation="ecure"] :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .button {
+  min-height: 46px;
+  gap: 10px;
+  font-weight: 650;
+  padding: 12px 20px;
+}
+[data-presentation="ecure"] .button-small { min-height: 44px; font-size: 12px; padding: 11px 15px; }
+[data-presentation="ecure"] .button-primary { background: var(--green); border-color: var(--green); color: #fff; }
+[data-presentation="ecure"] .button-primary:hover { background: color-mix(in srgb, var(--green) 85%, #000); }
+[data-presentation="ecure"] .button-outline { border-color: var(--control-border); color: var(--ink); }
+[data-presentation="ecure"] .button:disabled:hover { transform: none; }
+[data-presentation="ecure"] .field input,
+[data-presentation="ecure"] .field select,
+[data-presentation="ecure"] .field textarea {
+  border-radius: 6px;
+  border-color: var(--control-border);
+  font-size: 16px;
+  min-height: 48px;
+}
+[data-presentation="ecure"] .field [aria-invalid="true"] { border-color: var(--error-text); }
+[data-presentation="ecure"] .field label { font-weight: 600; }
+[data-presentation="ecure"] .field-hint,
+[data-presentation="ecure"] .field-error { font-size: 13px; }
+
+/* The official JPEG stays intact. Only its surrounding white space is framed. */
+[data-presentation="ecure"] .brand-lockup { display: inline-flex; flex-direction: column; gap: 3px; justify-content: center; width: 180px; max-width: 100%; background: #fff; border-radius: 4px; }
+[data-presentation="ecure"] .brand-lockup .brand-tagline { width: 100%; margin: 0; color: var(--ink); font-size: 9px; font-weight: 700; line-height: 1.4; letter-spacing: 0.07em; text-align: center; text-transform: uppercase; }
+[data-presentation="ecure"] .brand-lockup img { display: block; width: 100%; height: auto; object-fit: contain; }
+[data-presentation="ecure"] .brand-artwork { display: block; position: relative; overflow: hidden; width: 100%; flex-shrink: 0; }
+[data-presentation="ecure"] .brand-lockup .brand-artwork img { position: absolute; inset: 0 auto auto 0; width: var(--logo-image-width); max-width: none; height: auto; transform: translate(var(--logo-shift-x), var(--logo-shift-y)); }
+[data-presentation="ecure"] :is(.staff-sidebar, .staff-nav-dialog, .admin-auth-brand) .brand-lockup { padding: 8px; }
+[data-presentation="ecure"] .site-header .brand-lockup { max-width: 164px; flex: 0 1 164px; }
+[data-presentation="ecure"] .utility-bar {
+  background: var(--deep);
+  color: #fff;
+  border-bottom: 1px solid #ffffff20;
+}
+[data-presentation="ecure"] .utility-inner { min-height: 34px; gap: 16px; }
+[data-presentation="ecure"] .utility-inner > span { min-width: 0; font-size: 11px; }
+[data-presentation="ecure"] .utility-inner > span:first-child svg { color: #fff; }
+[data-presentation="ecure"] .demo-label { white-space: nowrap; }
+[data-presentation="ecure"] .demo-label i { background: #fff; }
+[data-presentation="ecure"] .utility-contact { margin-left: auto; display: flex; gap: 20px; }
+[data-presentation="ecure"] .utility-contact a { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; min-height: 32px; }
+[data-presentation="ecure"] .site-header {
+  color: var(--ink);
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+[data-presentation="ecure"] .site-header.is-scrolled { box-shadow: 0 3px 12px #0b325f0d; }
+[data-presentation="ecure"] .header-inner { height: 112px; gap: 22px; }
+[data-presentation="ecure"] .nav-list { gap: 24px; }
+[data-presentation="ecure"] .nav-link { color: var(--ink); min-height: 44px; font-size: 12px; }
+[data-presentation="ecure"] .nav-link:hover,
+[data-presentation="ecure"] .nav-link.active,
+[data-presentation="ecure"] .nav-trigger[data-state="open"] { color: var(--green); }
+[data-presentation="ecure"] .nav-link.active::after { background: var(--brand-accent); left: 0; right: 0; width: auto; }
+[data-presentation="ecure"] .header-cta svg,
+[data-presentation="ecure"] .mobile-drawer > .button svg { order: -1; }
+[data-presentation="ecure"] .header-cta:hover svg,
+[data-presentation="ecure"] .mobile-drawer > .button:hover svg { transform: none; }
+[data-presentation="ecure"] .site-header :focus-visible,
+[data-presentation="ecure"] .utility-bar :focus-visible,
+[data-presentation="ecure"] .mobile-drawer :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .utility-bar :focus-visible,
+[data-presentation="ecure"] .site-footer :focus-visible { outline-color: #fff; }
+[data-presentation="ecure"] .services-dropdown {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 8px 20px #0b325f12;
+}
+[data-presentation="ecure"] .services-dropdown .eyebrow,
+[data-presentation="ecure"] .dropdown-grid a > svg:first-child,
+[data-presentation="ecure"] .dropdown-all { color: var(--green); }
+[data-presentation="ecure"] .dropdown-grid a { border-radius: 4px; min-height: 48px; }
+[data-presentation="ecure"] .dropdown-grid a:hover { background: var(--paper); }
+[data-presentation="ecure"] .dropdown-all { border-color: var(--line); min-height: 44px; }
+[data-presentation="ecure"] .mobile-menu-button,
+[data-presentation="ecure"] .mobile-call { color: var(--ink); width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 5px; flex-shrink: 0; }
+[data-presentation="ecure"] .mobile-menu-button:hover,
+[data-presentation="ecure"] .mobile-call:hover { background: var(--paper); }
+.mobile-call,
+.mobile-booking-row { display: none; }
+[data-presentation="ecure"] .drawer-overlay { background: #0b325f80; }
+[data-presentation="ecure"] .mobile-drawer {
+  width: min(410px, 100vw);
+  padding: 24px;
+  color: var(--body-text);
+  background: #fff;
+  overscroll-behavior: contain;
+}
+[data-presentation="ecure"] .drawer-heading { gap: 16px; margin-bottom: 24px; }
+[data-presentation="ecure"] .drawer-heading .brand-lockup { width: 160px; }
+[data-presentation="ecure"] .mobile-drawer .icon-button { background: var(--paper); color: var(--ink); border-radius: 5px; flex-shrink: 0; }
+[data-presentation="ecure"] .mobile-drawer nav > a,
+[data-presentation="ecure"] .mobile-services-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+  padding: 14px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  font-size: 15px;
+}
+[data-presentation="ecure"] .mobile-drawer nav > a[aria-current="page"] { color: var(--green); background: var(--mint); }
+[data-presentation="ecure"] .mobile-services-trigger[aria-expanded="true"] { color: var(--green); }
+[data-presentation="ecure"] .mobile-services-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+[data-presentation="ecure"] .mobile-services-list { padding: 8px 12px 8px 18px; background: var(--paper); }
+[data-presentation="ecure"] .mobile-services-list a { display: flex; align-items: center; gap: 12px; padding: 12px 0; min-height: 48px; color: var(--ink); font-size: 14px; }
+[data-presentation="ecure"] .mobile-services-list svg { color: var(--blue); }
+[data-presentation="ecure"] .mobile-services-list > a:last-child { color: var(--green); border-top: 1px solid var(--line); }
+[data-presentation="ecure"] .mobile-drawer > p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+/* Refined shared cards; catalog content, ordering and destinations remain data driven. */
+[data-presentation="ecure"] .services-grid { gap: 14px; border: 0; }
+[data-presentation="ecure"] .service-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+[data-presentation="ecure"] .service-card:hover { background: var(--paper); border-color: var(--control-border); }
+[data-presentation="ecure"] .service-card-top { margin-bottom: 18px; }
+[data-presentation="ecure"] .card-number { display: none; }
+[data-presentation="ecure"] .service-card h3 { font-size: 18px; line-height: 1.4; margin-bottom: 8px; }
+[data-presentation="ecure"] .service-card p { font-size: 14px; margin-bottom: 18px; }
+[data-presentation="ecure"] .card-link { min-height: 32px; font-size: 12px; }
+
+[data-presentation="ecure"] .site-footer { background: var(--deep); color: #fff; padding-top: 56px; }
+[data-presentation="ecure"] .site-footer .brand-lockup { width: 210px; padding: 10px; }
+[data-presentation="ecure"] .footer-grid { gap: 40px; padding-bottom: 36px; }
+[data-presentation="ecure"] .footer-brand > p { color: #e0eaf2; font-size: 14px; line-height: 1.7; margin-block: 20px 12px; }
+[data-presentation="ecure"] .footer-brand > span { color: #c3d4e3; font-size: 11px; }
+[data-presentation="ecure"] .footer-grid h2 { font-size: 14px; color: #fff; margin-block: 12px 20px; }
+[data-presentation="ecure"] .footer-grid > div:not(:first-child) > a { color: #e0eaf2; font-size: 13px; min-height: 24px; line-height: 1.6; }
+[data-presentation="ecure"] .footer-grid > div:not(:first-child) > a:hover { color: #fff; text-decoration: underline; }
+[data-presentation="ecure"] .footer-grid > div:not(:first-child) p { color: #e0eaf2; font-size: 13px; }
+[data-presentation="ecure"] .footer-grid > div:not(:first-child) .footer-contact { color: #fff; min-height: 44px; margin-block: 6px; }
+[data-presentation="ecure"] .footer-grid > div:last-child > span { color: #c3d4e3; }
+[data-presentation="ecure"] .footer-location { display: flex; gap: 8px; align-items: flex-start; }
+[data-presentation="ecure"] .footer-location svg { color: #fff; margin-top: 3px; }
+[data-presentation="ecure"] .footer-bottom { border-color: #ffffff30; color: #c3d4e3; padding-block: 18px; }
+[data-presentation="ecure"] .footer-bottom a { min-height: 32px; }
+
+@media (min-width: 1024px) {
+  [data-presentation="ecure"] .desktop-nav { display: block; }
+  [data-presentation="ecure"] .mobile-menu-button { display: none; }
+}
+@media (min-width: 1024px) and (max-width: 1150px) {
+  [data-presentation="ecure"] .header-inner { gap: 16px; }
+  [data-presentation="ecure"] .site-header .brand-lockup { max-width: 156px; }
+  [data-presentation="ecure"] .nav-list { gap: 16px; }
+  [data-presentation="ecure"] .nav-link { font-size: 11px; }
+}
+@media (max-width: 1023px) {
+  [data-presentation="ecure"] .desktop-nav { display: none; }
+  [data-presentation="ecure"] .header-inner { height: 112px; gap: 12px; }
+  [data-presentation="ecure"] .header-cta { margin-left: auto; }
+  [data-presentation="ecure"] .mobile-menu-button { display: inline-flex; margin-left: 0; }
+  [data-presentation="ecure"] .mobile-call { display: inline-flex; }
+  [data-presentation="ecure"] .footer-grid { gap: 28px; }
+}
+@media (max-width: 760px) {
+  [data-presentation="ecure"] .utility-contact { display: none; }
+  [data-presentation="ecure"] .footer-grid { gap: 30px 24px; }
+  [data-presentation="ecure"] .footer-grid > div:not(:first-child) > a { min-height: 32px; }
+}
+@media (max-width: 600px) {
+  html[data-presentation="ecure"] { scroll-padding-top: 172px; }
+  [data-presentation="ecure"] .header-inner { height: 104px; }
+  [data-presentation="ecure"] .site-header .brand-lockup { max-width: 138px; }
+  [data-presentation="ecure"] .header-cta { display: none; }
+  [data-presentation="ecure"] .mobile-menu-button { margin-left: auto; }
+  [data-presentation="ecure"] .mobile-call { margin-left: auto; }
+  [data-presentation="ecure"] .mobile-call + [data-state] { margin-left: 0; }
+  [data-presentation="ecure"] .mobile-booking-row { display: block; border-top: 1px solid var(--green); background: var(--green); }
+  [data-presentation="ecure"] .mobile-booking-row a { display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; font-size: 12px; font-weight: 600; min-height: 44px; }
+  [data-presentation="ecure"] .mobile-booking-row a:focus-visible { outline-color: #fff; outline-offset: -5px; }
+  [data-presentation="ecure"] .mobile-booking-row a svg:last-child { margin-left: auto; }
+  [data-presentation="ecure"] .mobile-booking-row a svg:first-child { margin-right: auto; }
+  [data-presentation="ecure"] .service-card { padding: 22px; }
+  [data-presentation="ecure"] .footer-grid { grid-template-columns: 1fr 1fr; }
+  [data-presentation="ecure"] .footer-brand { grid-column: 1 / -1; }
+  [data-presentation="ecure"] .footer-grid > div:last-child { grid-column: 1 / -1; }
+  [data-presentation="ecure"] .footer-bottom { align-items: flex-start; flex-direction: column; gap: 8px; font-size: 11px; }
+}
+@media (max-width: 375px) {
+  [data-presentation="ecure"] .site-header .brand-lockup { max-width: 138px; }
+  [data-presentation="ecure"] .mobile-drawer { padding: 20px; }
+  [data-presentation="ecure"] .drawer-heading .brand-lockup { width: 150px; }
+  [data-presentation="ecure"] .utility-inner { gap: 10px; }
+  [data-presentation="ecure"] .utility-inner > span { font-size: 10px; }
+}

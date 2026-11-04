@@ -16,7 +16,7 @@ export default async function Page({
       <h1>{data.record.name}</h1>
       <CustomerEditor data={data} />
       <h2>Appointment requests</h2>
-      <ul>
+      <ul className="admin-recent admin-customer-requests">
         {data.appointments.map((a) => (
           <li key={a.id}>
             <Link href={`/admin/appointments/${a.id}`}>{a.reference}</Link> · {a.date} · {a.status}

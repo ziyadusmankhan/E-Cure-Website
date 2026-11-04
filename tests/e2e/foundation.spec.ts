@@ -32,6 +32,7 @@ test("mobile navigation closes after following a service", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Open navigation" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("dialog").getByRole("button", { name: "Services", exact: true }).click();
   await page.getByRole("dialog").getByRole("link", { name: "Physiotherapy", exact: true }).click();
   await expect(page).toHaveURL(/services\/physiotherapy$/);
   await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -55,6 +56,7 @@ test("booking retains service context and completes truthfully", async ({ page }
   await page.getByLabel("Preferred time window").selectOption("No preference");
   await page.getByRole("button", { name: "Review request", exact: true }).click();
   await expect(page.getByText("Example Person", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Complete demo", exact: true }).scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "Complete demo", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText(
     "This is a demonstration. Your request has not been submitted or saved.",

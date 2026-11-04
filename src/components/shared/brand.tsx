@@ -2,12 +2,28 @@
 import { useWebsite } from "@/components/website-provider";
 import Image from "next/image";
 import Link from "next/link";
-export function Brand() {
+import { brandArtwork, ecureLogo } from "@/config/branding";
+export function Brand({ onNavigate }: { onNavigate?: () => void }) {
   const { site } = useWebsite();
+  const { src, official } = brandArtwork(site);
+  const fullLogo = official || (site.presentation === "ecure" && Boolean(src));
+  const image = src && <Image
+    src={src}
+    unoptimized={src.startsWith("/api/admin/media/")}
+    alt={site.logo.alt}
+    width={official ? ecureLogo.width : fullLogo ? 220 : 42}
+    height={official ? ecureLogo.height : fullLogo ? 120 : 42}
+    sizes={fullLogo ? "(max-width: 600px) 180px, 240px" : "42px"}
+  />;
   return (
-    <Link href="/" className="brand" aria-label={`${site.name} home`}>
-      {site.logo.src ? (
-        <Image src={site.logo.src} unoptimized={site.logo.src.startsWith("/api/admin/media/")} alt={site.logo.alt} width={42} height={42} />
+    <Link href="/" onClick={onNavigate} className={`brand${fullLogo ? " brand-lockup" : ""}`} aria-label={`${site.name} home`}>
+      {src ? (
+        official ? <span className="brand-artwork" style={{
+          aspectRatio: `${ecureLogo.frame.width} / ${ecureLogo.frame.height}`,
+          "--logo-image-width": `${ecureLogo.width / ecureLogo.frame.width * 100}%`,
+          "--logo-shift-x": `${-ecureLogo.frame.left / ecureLogo.width * 100}%`,
+          "--logo-shift-y": `${-ecureLogo.frame.top / ecureLogo.height * 100}%`,
+        } as React.CSSProperties}>{image}</span> : image
       ) : (
         <svg
           className="brand-mark"
@@ -27,10 +43,11 @@ export function Brand() {
           <path d="M10 40h28" stroke="var(--green)" strokeWidth="2.4" />
         </svg>
       )}
-      <span>
+      {official && site.brandLine && <small className="brand-tagline">{site.brandLine}</small>}
+      {!fullLogo && <span>
         {site.shortName}
         <small>{site.brandLine}</small>
-      </span>
+      </span>}
     </Link>
   );
 }

@@ -19,6 +19,6 @@ export default defineConfig({
     url: "http://127.0.0.1:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: { ENABLE_DESIGN_SYSTEM: "true", SUBMISSIONS_MODE: "disabled", ADMIN_AUTH_MODE: "disabled", CMS_MODE: "disabled" },
+    env: { SUBMISSIONS_MODE: "disabled", ADMIN_AUTH_MODE: "disabled", CMS_MODE: "disabled" },
   },
 });

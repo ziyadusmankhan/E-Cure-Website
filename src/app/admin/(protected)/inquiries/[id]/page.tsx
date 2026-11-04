@@ -17,12 +17,13 @@ export default async function Page({
     <>
       <Link href="/admin/inquiries">← Inquiries</Link>
       <h1>{r.reference || "Inquiry"}</h1>
-      <section className="admin-card">
+      <section className="admin-card admin-record-summary">
         <h2>{r.name}</h2>
-        <p>
-          {r.subject} · {r.email || "No email"}
-        </p>
-        <p className="preserve-lines">{r.message}</p>
+        <dl className="admin-detail-fields">
+          <div><dt>Subject</dt><dd>{r.subject}</dd></div>
+          <div><dt>Email</dt><dd>{r.email || "No email"}</dd></div>
+        </dl>
+        <p className="preserve-lines admin-request-message">{r.message}</p>
       </section>
       <RecordEditor area="inquiries" data={data} owner={principal.role === "owner"} />
     </>

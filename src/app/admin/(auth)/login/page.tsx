@@ -1,3 +1,5 @@
+import { Brand } from "@/components/shared/brand";
+import { ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/admin/auth-forms";
 import { authPolicy, safeAdminNext } from "@/server/auth/config";
@@ -34,10 +36,15 @@ export default async function LoginPage({
   if (destination) redirect(destination);
   return (
     <div className="admin-auth-card">
+      <div className="admin-auth-brand"><Brand /></div>
+      <div className="admin-auth-body">
+      <span className="admin-auth-symbol"><ShieldCheck size={25} aria-hidden="true" /></span>
       <span className="eyebrow">STAFF ACCESS</span>
       <h1>Welcome back.</h1>
       <p>Sign in to your secure staff workspace.</p>
       <LoginForm enabled={enabled} next={next} unavailable={unavailable} />
+      </div>
+      <p className="admin-auth-footer">Authorized staff access</p>
     </div>
   );
 }

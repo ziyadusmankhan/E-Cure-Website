@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { site } from "@/config/site";
 import { activeServices } from "@/config/profile-utils";
 import type { WebsiteSnapshot } from "@/types/cms";
+import { presentationStyle, presentationTokenNames } from "@/config/client-presentation";
 type ContextValue = WebsiteSnapshot & { onUpdate?: (value: WebsiteSnapshot) => void };
 const Context = createContext<ContextValue>({
   site,
@@ -23,14 +24,19 @@ export function WebsiteProvider({
   const [snapshot, onUpdate] = useState(value);
   useEffect(() => {
     document.documentElement.dataset.theme = snapshot.theme;
-    for (const [key, color] of [
-      ["--blue", snapshot.colors.primary],
-      ["--green", snapshot.colors.secondary],
-    ]) {
+    if (snapshot.site.presentation)
+      document.documentElement.dataset.presentation = snapshot.site.presentation;
+    else delete document.documentElement.dataset.presentation;
+    const tokens = presentationStyle(snapshot.site.presentation, {
+      primary: snapshot.colors.primary,
+      secondary: snapshot.colors.secondary,
+    });
+    for (const key of presentationTokenNames) {
+      const color = tokens[key as `--${string}`];
       if (color) document.documentElement.style.setProperty(key, color);
       else document.documentElement.style.removeProperty(key);
     }
-  }, [snapshot.theme, snapshot.colors.primary, snapshot.colors.secondary]);
+  }, [snapshot.theme, snapshot.site.presentation, snapshot.colors.primary, snapshot.colors.secondary]);
   return <Context.Provider value={{ ...snapshot, onUpdate }}>{children}</Context.Provider>;
 }
 // Server pages supply fresh data on client navigation, including persistent

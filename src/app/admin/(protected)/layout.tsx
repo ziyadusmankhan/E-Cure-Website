@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { LogoutButton } from "@/components/admin/auth-forms";
+import { StaffFrame, StaffNavigationLink } from "@/components/admin/staff-frame";
 import { requireAdminPage } from "@/server/auth/pages";
 import { headers } from "next/headers";
 import { safeAdminNext } from "@/lib/admin-navigation";
@@ -8,39 +7,31 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
   const next = safeAdminNext(path.split("/").slice(0, 3).join("/"));
   const { principal } = await requireAdminPage("workspace:read", next);
   return (
-    <div className="admin-workspace">
-      <aside className="admin-workspace-nav">
-        <strong>Staff workspace</strong>
-        <details className="admin-nav-disclosure" open>
-          <summary>Workspace navigation</summary>
+    <StaffFrame roleLabel={principal.role === "owner" ? "Owner" : "Receptionist"} navigation={
           <nav aria-label="Staff sections">
-            <Link href="/admin" prefetch={false}>
+            <StaffNavigationLink href="/admin">
               Overview
-            </Link>
-            <Link href="/admin/appointments" prefetch={false}>
+            </StaffNavigationLink>
+            <StaffNavigationLink href="/admin/appointments">
               Appointments
-            </Link>
-            <Link href="/admin/customers" prefetch={false}>
+            </StaffNavigationLink>
+            <StaffNavigationLink href="/admin/customers">
               Customers
-            </Link>
-            <Link href="/admin/inquiries" prefetch={false}>
+            </StaffNavigationLink>
+            <StaffNavigationLink href="/admin/inquiries">
               Inquiries
-            </Link>
+            </StaffNavigationLink>
             {principal.role === "owner" && (
               <>
-                <Link href="/admin/website" prefetch={false}>
+                <StaffNavigationLink href="/admin/website">
                   Website editor
-                </Link>
-                <Link href="/admin/access" prefetch={false}>
+                </StaffNavigationLink>
+                <StaffNavigationLink href="/admin/access">
                   Access and permissions
-                </Link>
+                </StaffNavigationLink>
               </>
             )}
           </nav>
-        </details>
-        <LogoutButton />
-      </aside>
-      <div className="admin-workspace-content">{children}</div>
-    </div>
+    }>{children}</StaffFrame>
   );
 }

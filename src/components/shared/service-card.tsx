@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Service } from "@/types/service";
 import { ServiceIcon } from "./service-icon";
-export function ServiceCard({ service, index = 0 }: { service: Service; index?: number }) {
+export function ServiceCard({ service, index = 0, compact = false }: { service: Service; index?: number; compact?: boolean }) {
   return (
-    <Link href={`/services/${service.slug}`} className="service-card">
+    <Link href={`/services/${service.slug}`} className={`service-card${compact ? " service-card--compact" : ""}`}>
       <div className="service-card-top">
         <span className="service-icon">
           <ServiceIcon slug={service.slug} />
@@ -14,7 +14,7 @@ export function ServiceCard({ service, index = 0 }: { service: Service; index?: 
       <h3>{service.title}</h3>
       <p>{service.description}</p>
       <span className="card-link">
-        Explore service <ArrowUpRight size={18} aria-hidden="true" />
+        {compact ? <ArrowRight size={17} aria-hidden="true" /> : <>Explore service <ArrowUpRight size={18} aria-hidden="true" /></>}
       </span>
     </Link>
   );

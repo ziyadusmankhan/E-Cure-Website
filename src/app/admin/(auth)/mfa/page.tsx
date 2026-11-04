@@ -1,3 +1,5 @@
+import { Brand } from "@/components/shared/brand";
+import { ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import { MfaForm } from "@/components/admin/auth-forms";
 import { requireAdminPage } from "@/server/auth/pages";
@@ -13,9 +15,14 @@ export default async function MfaPage({
   if (principal.aal === "aal2" && factors.some((f) => f.status === "verified")) redirect(next);
   return (
     <div className="admin-auth-card">
+      <div className="admin-auth-brand"><Brand /></div>
+      <div className="admin-auth-body">
+      <span className="admin-auth-symbol"><ShieldCheck size={25} aria-hidden="true" /></span>
       <span className="eyebrow">ACCOUNT SECURITY</span>
       <h1>Two-step verification.</h1>
       <MfaForm factors={factors} next={next} />
+      </div>
+      <p className="admin-auth-footer">Authorized staff access</p>
     </div>
   );
 }

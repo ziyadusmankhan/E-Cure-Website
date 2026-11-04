@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
+  // Cloud images use traced runtime files; local npm start keeps its usual build.
+  output: process.env.ECURE_STANDALONE_BUILD === "true" ? "standalone" : undefined,
   poweredByHeader: false,
   headers() {
     const headers = [

@@ -1,17 +1,25 @@
-# Phase 2 design foundation
+# Website design system
 
-Preserve the approved Lora/Source Sans pairing, 10px buttons, photo effects and WhatsApp control. Tokens live in `src/styles/tokens.css`; new component styles live in `src/styles/components.css`. Existing public layout styles remain in `globals.css`.
+The current E-Cure website uses the supplied official blue/green logo, navy headings, white/off-white surfaces and green actions, with Manrope headings and Inter body text. The earlier black/green design reports are historical. The client palette is configured in `src/config/client-presentation.ts` and applied consistently by the root layout and WebsiteProvider; CMS primary/secondary color overrides retain their existing precedence. Shared base tokens live in `src/styles/tokens.css`; E-Cure foundation, public and staff styles live in `src/styles/ecure.css`, `ecure-public.css` and `ecure-admin.css`. Global layout and supported profile styles remain in `src/app/globals.css`.
 
-Three controlled presets are provided: Clinical Blue, Soft Teal and Warm Neutral. Set `SITE_THEME` before building to choose a deployment palette. The typed catalog in `src/config/themes.ts` matches the CSS data-theme scopes. Unit tests check text/action contrast on white, canvas and tint surfaces; browser axe checks validate rendered samples. Semantic status colors remain independent from brand settings. Full client content configuration belongs to Phase 4.
+| Purpose | E-Cure default |
+| --- | --- |
+| Headings/selected dark surfaces | Navy `#0B325F` |
+| Links, navigation selection and focus | Blue `#075A9E` |
+| Primary actions | Green `#247D29` |
+| Brand accents | Green `#329B32`, secondary blue `#1376B9` |
+| Backgrounds | White, off-white `#F4F8FB` |
+| Body/muted text | `#34465A`, `#526579` |
+| Decorative borders / control borders | `#DFE7ED` / `#75899D` |
 
-Reusable components: existing Button, FAQ, service cards, public navigation; new Field, AccessibleDialog, StatusBadge, DataTable and AdminShell. Field consumers connect input aria-describedby to its hint/error IDs and set aria-invalid. Tables preserve captions and column headers while presenting stacked rows on phones. Dialogs manage focus and Escape. AdminShell is only a visual component, with no data access or permissions implementation.
+The darker action green supports white labels; the brighter brand accent is reserved for suitable accents rather than small white text. Client-scoped selectors prevent E-Cure presentation from replacing alternate-profile typography/colors. Existing semantic status/error colors remain independent of marketing branding.
 
-## Opt-in review route
+`src/config/branding.ts` owns the official asset paths and default-only photo resolution. The supplied JPEG is preserved intact and framed with CSS to remove surrounding white margins without stretching or redrawing the artwork. The favicon is derived from that artwork. Custom CMS uploads remain authoritative. A saved CMS brand can override the source business name/logo; edit the CMS content rather than hardcoding a replacement into shared components. See the [5 November branding correction](../deployment/ORACLE_BLUE_GREEN_UPDATE_2026-11-05.md).
 
-Set ENABLE_DESIGN_SYSTEM=true to access `/design-system`. With the flag absent or false the route returns 404. It is always noindex, absent from the sitemap and omitted from public navigation. Leave disabled on customer deployments. The fixture uses only fictional records and does not provide operational admin access.
+The typed theme catalog in `src/config/themes.ts` retains the supported Clinical Blue, Soft Teal and Warm Neutral presets for alternate profiles. Unit tests check readable text/action contrast and theme validation. The default E-Cure profile applies its approved brand settings through the existing profile/provider architecture.
 
-The review page exercises themes, buttons, errors, dialogs, service cards, FAQs, statuses, tables and workspace navigation. No authentication, CRUD, database, or real submissions are added in Phase 2.
+Reusable production components include Button, FAQ, service cards, public navigation, Brand and ServicesMenu. The actual staff dashboard uses StaffFrame, RecordTable, the operations views and CMS editor. Their authentication, authorization and data access remain in the existing server layers.
 
-## Verification scope
+The opt-in `/design-system` review route, fictional AdminShell and demo-only Field, AccessibleDialog, StatusBadge and DataTable were removed during hosting cleanup. The route now returns 404 regardless of the former environment flag. Historical phase reports describe the earlier review milestone; they are not deployment instructions.
 
-Unit/component tests cover contrast, theme validation, dialog interactions, empty tables, textual status and FAQ keyboard use. Browser tests cover all seven widths, each preset, axe checks, errors, keyboard focus, reduced motion and public-flow regressions. Screenshots are produced for visual review. These checks do not constitute WCAG certification, physical-device testing, cross-browser certification or a Lighthouse audit.
+Tests retain theme contrast, FAQ keyboard interaction, actual public pages, responsive layouts, reduced motion and operational admin flows. Browser/accessibility checks describe automated coverage only and do not constitute physical-device testing or accessibility certification. See `docs/deployment/CLEANUP_REPORT.md` for checks executed after cleanup.

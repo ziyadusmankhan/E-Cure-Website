@@ -7,10 +7,13 @@ import { HeartHandshake, House, MessagesSquare } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { CTASection } from "@/components/shared/cta-section";
+import { clientPhoto } from "@/config/branding";
+import { EcureStaff } from "./ecure-staff";
 export const metadata: Metadata = pageMetadata("about");
 export default async function AboutPage() {
   const snapshot = await getPublicWebsite();
   const { site } = snapshot;
+  const aboutPhoto = clientPhoto(site.presentation, site.media.about, "about");
   return (
     <WebsitePage value={snapshot}>
       <>
@@ -30,9 +33,9 @@ export default async function AboutPage() {
           <div className="container editorial-grid">
             <div className="about-image">
               <Image
-                src={site.media.about.src}
-                unoptimized={site.media.about.src.startsWith("/api/admin/media/")}
-                alt={site.media.about.alt}
+                src={aboutPhoto.src}
+                unoptimized={aboutPhoto.src.startsWith("/api/admin/media/")}
+                alt={aboutPhoto.alt}
                 fill
                 sizes="(max-width: 760px) 100vw, 45vw"
               />
@@ -114,6 +117,7 @@ export default async function AboutPage() {
             </dl>
           </div>
         </section>
+        {site.presentation === "ecure" && site.demo && <EcureStaff />}
         <CTASection />
       </>
     </WebsitePage>

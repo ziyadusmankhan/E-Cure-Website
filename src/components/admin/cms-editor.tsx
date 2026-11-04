@@ -15,6 +15,10 @@ const label = (key: string) =>
     .replace(/_\d+$/, "")
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
+const contentLabels: Record<string, string> = {
+  home_0_34: "Benefit number prefix",
+  home_0_39: "Process step number prefix",
+};
 function Field({
   title,
   value,
@@ -473,7 +477,7 @@ export function CmsEditor({ initial }: { initial: CmsEditorState }) {
             {copyKeysFor(page, doc.copy).map((key) => (
               <Field
                 key={key}
-                title={label(
+                title={contentLabels[key] || label(
                   key.replace(
                     /^(home|about|services|service|contact|faq|book_appointment|shared|layout)_/,
                     "",

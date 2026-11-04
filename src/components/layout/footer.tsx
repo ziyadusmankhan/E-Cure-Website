@@ -1,12 +1,12 @@
 "use client";
 import { useWebsite } from "@/components/website-provider";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
 import { visibleLinks } from "@/config/profile-utils";
 export function Footer() {
   const { site, services } = useWebsite();
- const footerNavigation = visibleLinks(site.navigation.footer,site);
+  const footerNavigation = visibleLinks(site.navigation.footer, site);
   return (
     <footer className="site-footer">
       <div className="container">
@@ -42,7 +42,7 @@ export function Footer() {
               <p>{site.copy.layout_footer_contact_details_coming_soon_12}</p>
             )}
             {site.contact.phone && <a href={`tel:${site.contact.phone}`}>{site.contact.phone}</a>}
-            <p>{site.contact.serviceArea || "Service areas to be confirmed."}</p>
+            <p className="footer-location">{site.presentation === "ecure" && <MapPin size={16} aria-hidden="true" />}{site.contact.serviceArea || "Service areas to be confirmed."}</p>
             <Link href="/contact" className="footer-contact">
               {site.copy.layout_footer_explore_contact_options_13}
               <ArrowUpRight size={16} />
@@ -53,7 +53,7 @@ export function Footer() {
                   {link.label}
                 </a>
               ))
-            ) : (
+            ) : site.presentation === "ecure" ? null : (
               <span className="small muted">
                 {site.copy.layout_footer_social_profiles_to_be_added_14}
               </span>

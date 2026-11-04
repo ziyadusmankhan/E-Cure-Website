@@ -101,7 +101,7 @@ export function RecordEditor({
       <section className="admin-card">
         <h2>Update request</h2>
         <p>
-          Current status: <strong className="status-chip">{r.status}</strong>
+          Current status: <strong className="status-chip" data-status={r.status}>{r.status}</strong>
         </p>
         <form
           onSubmit={(e) => {

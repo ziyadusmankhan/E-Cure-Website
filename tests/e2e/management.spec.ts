@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type TestInfo } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import postgres from "postgres";
 import sharp from "sharp";
@@ -20,6 +20,29 @@ async function login(page: Page, role = "OWNER", next = "") {
     .fill(totp(process.env[`QA_AUTH_${role}_SECRET`]!));
   await page.getByRole("button", { name: "Verify and continue", exact: true }).click();
   await expect(page).toHaveURL(`http://127.0.0.1:3104${next || "/admin"}`);
+}
+async function verifyStaffPresentation(page: Page, info: TestInfo, name: string) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), name + " at " + width).toBe(true);
+    const sidebar = page.locator(".staff-sidebar");
+    await expect(sidebar).toBeVisible({ visible: width >= 1024 });
+    if (width >= 1024) {
+      expect(await sidebar.evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+      const active = sidebar.locator('nav a[aria-current]');
+      await expect(active).toHaveCount(1);
+      expect(await active.evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(7, 90, 158)");
+    }
+    if (width === 390 || width === 1440) {
+      await page.evaluate(() => {
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      });
+      await page.screenshot({ path: info.outputPath(name + "-" + width + ".png"), fullPage: true });
+    }
+    if (width === 320 || width === 1440)
+      expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()).violations, name + " accessibility at " + width).toEqual([]);
+  }
 }
 async function api(page: Page, path: string, body: unknown) {
   return page.request.post(`/api/admin/${path}`, { data: body, headers });
@@ -47,6 +70,7 @@ test("inquiries support assigned follow-up, history, search and mobile navigatio
   const receipt = await response.json();
   await login(page);
   await page.goto("/admin/inquiries");
+  await verifyStaffPresentation(page, info, "owner-inquiries");
   await page.getByLabel("Search", { exact: true }).fill("inquiry-workflow");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("link", { name: receipt.reference, exact: true }).click();
@@ -70,10 +94,24 @@ test("inquiries support assigned follow-up, history, search and mobile navigatio
   await expect(staff.getByText("Return call tomorrow morning.", { exact: true })).toBeVisible();
   await staff.setViewportSize({ width: 320, height: 900 });
   expect(await staff.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await staff.getByText("Workspace navigation", { exact: true }).click();
+  const navigationTrigger = staff.getByRole("button", { name: "Workspace navigation", exact: true });
   await expect(staff.getByRole("link", { name: "Customers", exact: true })).toBeHidden();
-  await staff.getByText("Workspace navigation", { exact: true }).click();
-  await expect(staff.getByRole("link", { name: "Customers", exact: true })).toBeVisible();
+  await navigationTrigger.click();
+  const navigation = staff.getByRole("dialog", { name: "Workspace navigation", exact: true });
+  await expect(navigation).toBeVisible();
+  expect(await navigation.evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+  await expect(navigation.getByRole("link", { name: "Inquiries", exact: true })).toHaveAttribute("aria-current", "location");
+  await expect(navigation.getByRole("link", { name: "Website editor", exact: true })).toHaveCount(0);
+  await expect(navigation.getByRole("link", { name: "Access and permissions", exact: true })).toHaveCount(0);
+  await staff.keyboard.press("Escape");
+  await expect(navigation).toBeHidden();
+  await expect(navigationTrigger).toBeFocused();
+  await navigationTrigger.click();
+  await navigation.getByRole("link", { name: "Customers", exact: true }).click();
+  await expect(navigation).toBeHidden();
+  await expect(staff.getByRole("heading", { level: 1 })).toHaveText("Customers");
+  await staff.goto(path);
+  await verifyStaffPresentation(staff, info, "receptionist-inquiry");
   expect(
     (
       await new AxeBuilder({ page: staff })
@@ -108,7 +146,9 @@ test("public booking appears in dashboard; Owner assigns and staff manage status
   const receipt = await booking.json();
   await login(page);
   await expect(page.getByRole("link", { name: receipt.reference, exact: true })).toBeVisible();
+  await verifyStaffPresentation(page, info, "owner-dashboard");
   await page.getByRole("link", { name: "Appointments", exact: true }).click();
+  await verifyStaffPresentation(page, info, "owner-appointments");
   await page.getByLabel("Search", { exact: true }).fill("Management");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("link", { name: receipt.reference, exact: true }).click();
@@ -116,6 +156,7 @@ test("public booking appears in dashboard; Owner assigns and staff manage status
   await page.getByLabel("Assigned staff").selectOption(process.env.QA_AUTH_RECEPTIONIST_ID!);
   await page.getByRole("button", { name: "Save assignment", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Saved.");
+  await verifyStaffPresentation(page, info, "owner-appointment-detail");
   const path = new URL(page.url()).pathname;
   const staffContext = await browser.newContext();
   const staffPage = await staffContext.newPage();
@@ -132,6 +173,7 @@ test("public booking appears in dashboard; Owner assigns and staff manage status
   await expect(
     staffPage.getByText("Call tomorrow to arrange a suitable time.", { exact: true }),
   ).toBeVisible();
+  await verifyStaffPresentation(staffPage, info, "receptionist-appointment-detail");
   await staffPage.getByRole("link", { name: "View customer", exact: true }).click();
   await staffPage.getByLabel("Name", { exact: true }).fill("Updated Fictional Management Person");
   await staffPage.getByRole("button", { name: "Save customer", exact: true }).click();
@@ -139,6 +181,7 @@ test("public booking appears in dashboard; Owner assigns and staff manage status
   await expect(staffPage.getByRole("heading", { level: 1 })).toHaveText(
     "Updated Fictional Management Person",
   );
+  await verifyStaffPresentation(staffPage, info, "receptionist-customer");
   for (const width of [320, 390, 768, 1440]) {
     await staffPage.setViewportSize({ width, height: 900 });
     expect(await staffPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
@@ -153,6 +196,36 @@ test("public booking appears in dashboard; Owner assigns and staff manage status
     ).violations,
   ).toEqual([]);
   await staffPage.screenshot({ path: info.outputPath("mobile-customer.png"), fullPage: true });
+  // Reuse the existing Owner session so visual checks respect sign-in limits.
+  await page.goto("/admin/customers");
+  await verifyStaffPresentation(page, info, "owner-customers");
+  await page.getByLabel("Search", { exact: true }).fill("no-such-fictional-person-493");
+  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await expect(page.getByText("No matching customers.", { exact: true })).toBeVisible();
+  await verifyStaffPresentation(page, info, "owner-empty-customers");
+  await page.goto("/admin/access");
+  await verifyStaffPresentation(page, info, "owner-access");
+  await expect(page.getByRole("link", { name: "Access and permissions", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.getByRole("button", { name: "Workspace navigation", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Workspace navigation", exact: true });
+  await expect(dialog.getByRole("link", { name: "Website editor", exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: info.outputPath("owner-mobile-navigation.png"), fullPage: true });
+  // Tab and Shift+Tab remain inside the modal, including across either end.
+  for (let n = 0; n < 12; n++) {
+    await page.keyboard.press("Tab");
+    expect(await dialog.evaluate(el => el.contains(document.activeElement))).toBe(true);
+  }
+  for (let n = 0; n < 12; n++) {
+    await page.keyboard.press("Shift+Tab");
+    expect(await dialog.evaluate(el => el.contains(document.activeElement))).toBe(true);
+  }
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await page.getByRole("button", { name: "Workspace navigation", exact: true }).click();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(dialog).toBeHidden();
   await staffContext.close();
 });
 test("Owner edits branding, uploads a logo, previews a private draft, publishes and updates public navigation", async ({
@@ -161,6 +234,7 @@ test("Owner edits branding, uploads a logo, previews a private draft, publishes 
 }, info) => {
   await login(page, "OWNER", "/admin/website");
   await page.getByRole("link", { name: "Website editor", exact: true }).click();
+  await verifyStaffPresentation(page, info, "owner-brand-editor");
   await page.getByLabel("Name", { exact: true }).fill("Fictional Care Published");
   await page.getByLabel("Short Name", { exact: true }).fill("Fictional Care Published");
   await page.getByLabel("Phone", { exact: true }).fill("+12025550155");
@@ -182,7 +256,8 @@ test("Owner edits branding, uploads a logo, previews a private draft, publishes 
   const anon = await browser.newContext();
   const publicPage = await anon.newPage();
   await publicPage.goto("/");
-  await expect(publicPage.locator(".site-header")).not.toContainText("Fictional Care Published");
+  const publicBrand = publicPage.locator(".site-header").getByRole("link", { name: "Fictional Care Published home", exact: true });
+  await expect(publicBrand).toHaveCount(0);
   await anon.addCookies([
     {
       name: "healthcare-cms-preview",
@@ -194,21 +269,24 @@ test("Owner edits branding, uploads a logo, previews a private draft, publishes 
   ]);
   await publicPage.reload();
   await expect(publicPage.locator(".cms-preview-banner")).toHaveCount(0);
-  await expect(publicPage.locator(".site-header")).not.toContainText("Fictional Care Published");
+  await expect(publicBrand).toHaveCount(0);
   const state = await (await page.request.get("/api/admin/cms")).json();
   const path = state.draft.brand.logo.src;
   expect((await publicPage.request.get(path)).status()).toBe(404);
   await page.getByRole("button", { name: "Preview saved draft", exact: true }).click();
   await expect(page).toHaveURL("http://127.0.0.1:3104/");
   await expect(page.locator(".cms-preview-banner")).toBeVisible();
-  await expect(page.locator(".site-header")).toContainText("Fictional Care Published");
+  const previewBrand = page.locator(".site-header").getByRole("link", { name: "Fictional Care Published home", exact: true });
+  await expect(previewBrand).toBeVisible();
+  await expect(previewBrand.locator("img")).toHaveAttribute("src", path.replace("/api/media/", "/api/admin/media/"));
   await expect(page.getByAltText(state.draft.brand.logo.alt).first()).toBeVisible();
   await page.getByRole("link", { name: "Return to editor", exact: true }).click();
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Publish website", exact: true }).click();
   await expect(page.locator(".admin-publication").getByRole("status")).toContainText("Published.");
   await publicPage.reload();
-  await expect(publicPage.locator(".site-header")).toContainText("Fictional Care Published");
+  await expect(publicBrand).toBeVisible();
+  await expect.poll(async () => decodeURIComponent(await publicBrand.locator("img").getAttribute("src") || "")).toContain(path);
   await expect(publicPage.locator("html")).toHaveAttribute("data-theme", "soft-teal");
   expect((await publicPage.request.get(path)).status()).toBe(200);
   const [settings] =
@@ -218,6 +296,8 @@ test("Owner edits branding, uploads a logo, previews a private draft, publishes 
     contact_email: "fictional-care@example.com",
   });
   await page.getByRole("button", { name: "Content", exact: true }).click();
+  await expect(page.getByLabel("Benefit number prefix", { exact: true })).toHaveValue("0");
+  await expect(page.getByLabel("Process step number prefix", { exact: true })).toHaveValue("0");
   const copyState = await (await page.request.get("/api/admin/cms")).json();
   const key = Object.keys(copyState.draft.copy).find(
     (k) => k.startsWith("home_") && copyState.draft.copy[k].length > 40,
@@ -243,6 +323,7 @@ test("Owner edits branding, uploads a logo, previews a private draft, publishes 
       exact: true,
     }),
   ).toBeVisible();
+  await verifyStaffPresentation(page, info, "owner-content-editor");
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

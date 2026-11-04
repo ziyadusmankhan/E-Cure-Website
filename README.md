@@ -1,6 +1,16 @@
-# Home Health Services
+# E-Cure Home Health Services
 
-A multi-page Next.js App Router healthcare website with typed business profiles, a PostgreSQL/Drizzle backend, appointment/contact submissions and verified local Supabase staff authentication with MFA and role permissions. Operational administration and email delivery remain later phases.
+A multi-page Next.js App Router healthcare website with typed business profiles, E-Cure branding, a PostgreSQL/Drizzle backend, appointment/contact submissions, local Supabase staff authentication with MFA, role-scoped administration and a website editor. Outbound email delivery is not enabled.
+
+## E-Cure redesign review
+
+The five redesign stages are separate from the platform development phases below. The blue/green redesign is recorded in [the design reports](docs/design/), the [completed Stage 5 report](docs/design/ECURE_BLUE_GREEN_STAGE_5_REPORT.md), the subsequent [client logo/interaction refinement](docs/design/ECURE_LOGO_AND_MOTION_REFINEMENT.md) and [current handoff](docs/design/ECURE_BLUE_GREEN_HANDOFF.md). Earlier `ECURE_STAGE_*` reports describe the previous black/green milestone. The approved redesign is deployed at [the Oracle HTTPS preview](https://144.24.117.229/); see [deployment status](docs/deployment/ORACLE_INSTANCE_STATUS.md) for the current release and production-service limitations.
+
+The configured local staff app uses `http://127.0.0.1:3000/admin/login`. A visual preview started with authentication disabled cannot accept staff credentials. Use the configured app for sign-in; preview screenshots use fictional test records.
+
+## Oracle Cloud deployment
+
+Use the production Docker build described in [ORACLE_CLOUD.md](docs/deployment/ORACLE_CLOUD.md). The allowlisted build context excludes local databases, credentials, development dependencies, tests, reports and old preview copies. The runtime image contains the standalone Next.js server, traced dependencies, public assets and compiled static assets. Build on Linux/Docker for the Oracle VM architecture; do not upload Windows `node_modules` or a Windows build.
 
 ## Run locally
 
@@ -45,22 +55,15 @@ npm run test:routes
 
 The check defaults to `http://localhost:3000`. Set `QA_BASE_URL` when testing another port. See `qa/VERIFICATION.md` for the executed checks and their scope.
 
-The lockfile records the resolved dependency versions. Use `npm ci` for reproducible installations. Next.js font optimization downloads Lora (bold, classic headings) and Source Sans 3 (clean, modern body text) at build time, then serves them locally. The first build needs access to Google Fonts.
+The lockfile records the resolved dependency versions. Use `npm ci` for reproducible installations. Next.js font optimization uses Manrope and Inter for E-Cure, retaining Lora and Source Sans 3 for other profiles, and serves the fonts locally. The first build needs access to Google Fonts.
 
 ## Routes
 
-The opt-in `/design-system` review page demonstrates three theme presets, shared forms/dialogs, status chips, responsive tables and an admin layout using fictional records. It returns 404 unless `ENABLE_DESIGN_SYSTEM=true`. To review it in PowerShell:
+The component-review sandbox and mock admin page were removed during hosting cleanup. The operational staff workspace remains at `/admin`. Shared runtime buttons, navigation, forms, FAQs and theme/profile support remain in place.
 
-```powershell
-$env:ENABLE_DESIGN_SYSTEM = "true"
-npm run dev
-```
+For automated browser verification, run `node node_modules/playwright/cli.js install chromium`, `npm run build`, then `npm run test:e2e`. Playwright starts its own production server on port 3100 with external service modes disabled. Run dev and build sequentially to avoid generated-type file races. See `docs/testing/README.md` for details.
 
-Then open http://localhost:3000/design-system. Use `SITE_THEME=clinical-blue`, `soft-teal`, or `warm-neutral` before a build to choose a deployment preset. Keep the review flag disabled on customer deployments.
-
-For automated browser verification, run `npx playwright install chromium`, `npm run build`, then `npm run test:e2e`. Playwright starts its own production server on port 3100 and enables the review fixture only for that process. Run dev and build sequentially to avoid generated-type file races. See `docs/testing/README.md` for details.
-
-- `/` — hero, services, about, home care benefits, process, clearly labeled testimonial placeholder, CTA, contact preview
+- `/` — hero, services, about, home care benefits, process, CTA and contact options; testimonials remain hidden for E-Cure until approved content is configured
 - `/about` — home care philosophy and editable company placeholders
 - `/services` — all six care categories
 - `/faq` — grouped general questions, accessible answers, and service-specific cross-links

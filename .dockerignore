@@ -1,0 +1,18 @@
+# Allow only build inputs into the cloud build context.
+**
+!Dockerfile
+!.dockerignore
+!package.json
+!package-lock.json
+!next.config.ts
+!tsconfig.json
+!next-env.d.ts
+!postcss.config.mjs
+!src/
+!src/**
+!public/
+!public/**
+# Preserve the source logo in the repository without shipping its unused original.
+public/images/branding/ecure-original.jpg
+!deploy/
+!deploy/start.mjs

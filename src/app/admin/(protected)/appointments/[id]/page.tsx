@@ -17,15 +17,17 @@ export default async function Page({
     <>
       <Link href="/admin/appointments">← Appointments</Link>
       <h1>{r.reference || "Inquiry"}</h1>
-      <section className="admin-card">
-        <h2>{r.name}</h2>
-        <p>
-          {r.phone} · {r.email || "No email"}
-        </p>
-        <p>
-          {r.service} · {r.date} · {r.time} · {r.visitMode}
-        </p>
-        <p>{r.inquiry}</p>
+      <section className="admin-card admin-record-summary">
+        <div className="admin-summary-heading"><h2>{r.name}</h2><Link href={`/admin/customers/${r.customerId}`}>View customer</Link></div>
+        <dl className="admin-detail-fields">
+          <div><dt>Phone</dt><dd>{r.phone}</dd></div>
+          <div><dt>Email</dt><dd>{r.email || "No email"}</dd></div>
+          <div><dt>Service</dt><dd>{r.service}</dd></div>
+          <div><dt>Requested date</dt><dd>{r.date}</dd></div>
+          <div><dt>Time preference</dt><dd>{r.time}</dd></div>
+          <div><dt>Visit mode</dt><dd>{r.visitMode}</dd></div>
+        </dl>
+        <p className="preserve-lines admin-request-message">{r.inquiry}</p>
         {r.confirmedAt && (
           <p>
             Confirmed visit:{" "}
@@ -37,7 +39,6 @@ export default async function Page({
             ({data.timezone})
           </p>
         )}
-        <Link href={`/admin/customers/${r.customerId}`}>View customer</Link>
       </section>
       <RecordEditor area="appointments" data={data} owner={principal.role === "owner"} />
     </>

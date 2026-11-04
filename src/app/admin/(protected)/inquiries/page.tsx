@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { pageOperations } from "@/server/admin/page-data";
 import { Search, Pager } from "@/components/admin/operations-ui";
+import { RecordTable, WorkflowStatus } from "@/components/admin/record-table";
 export default async function Page({
   searchParams,
 }: {
@@ -15,32 +16,12 @@ export default async function Page({
       <h1>Inquiries</h1>
       {principal.role === "receptionist" && <p>Showing requests assigned to you.</p>}
       <Search area="inquiries" q={f.q || ""} status={f.status || ""} />
-      <div className="admin-table-wrap">
-        <table>
-          <caption className="sr-only">Inquiries search results</caption>
-          <thead>
-            <tr>
-              <th scope="col">Reference</th>
-              <th scope="col">Name</th>
-              <th scope="col">Subject</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.items.map((r) => (
-              <tr key={r.id}>
-                <td>
-                  <Link href={`/admin/inquiries/${r.id}`}>{r.reference || "—"}</Link>
-                </td>
-                <td>{r.name || "—"}</td>
-                <td>{r.subject || "—"}</td>
-                <td>{r.status || "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {!data.items.length && <p className="admin-empty">No matching inquiries.</p>}
+      <RecordTable
+        caption="Inquiries search results"
+        headings={["Reference","Name","Subject","Status"]}
+        rows={data.items.map(r => ({ id: r.id, cells: [<Link key="link" href={`/admin/inquiries/${r.id}`}>{r.reference || "—"}</Link>, r.name || "—", r.subject || "—", <WorkflowStatus key="status" status={r.status || "—"} />] }))}
+        emptyMessage="No matching inquiries."
+      />
       <Pager total={data.total} page={data.page} q={f.q} status={f.status} />
     </>
   );

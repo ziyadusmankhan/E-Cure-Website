@@ -29,7 +29,7 @@ test("every public page is complete, responsive and free of runtime errors", asy
     await page.goto(route);
     await expect(page.locator("main h1")).toBeVisible();
     expect((await page.locator("main").innerText()).length, route).toBeGreaterThan(200);
-    for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
+    for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -102,9 +102,9 @@ test("contact form validates and resets without sending a message", async ({ pag
   await expect(page.getByLabel("Your name", { exact: true })).toHaveValue("");
   expect(submissions).toEqual([]);
 });
-test("core public pages pass scoped accessibility checks", async ({ page }) => {
-  test.setTimeout(120_000);
-  for (const route of ["/", "/faq", "/contact", "/book-appointment"]) {
+test("all public pages pass scoped accessibility checks", async ({ page }) => {
+  test.setTimeout(180_000);
+  for (const route of routes) {
     await page.goto(route);
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });

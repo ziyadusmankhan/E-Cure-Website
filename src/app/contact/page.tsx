@@ -8,6 +8,8 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ContactDetails } from "@/components/shared/contact-details";
 import { ContactForm } from "@/components/forms/contact-form";
 import { submissionPageConfig } from "@/server/submissions/config";
+import Image from "next/image";
+import { ecurePhotography } from "@/config/branding";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata("contact");
 export default async function ContactPage() {
@@ -35,6 +37,10 @@ export default async function ContactPage() {
               <h2>{site.copy.contact_ways_to_connect_5}</h2>
               <p className="muted">{site.copy.contact_real_contact_details_and_service_6}</p>
               <ContactDetails />
+              {site.presentation === "ecure" && <figure className="contact-location-photo">
+                <div><Image src={ecurePhotography.panorama.src} alt={ecurePhotography.panorama.alt} fill sizes="(max-width: 760px) 100vw, 42vw" /></div>
+                <figcaption>{site.contact.serviceArea}</figcaption>
+              </figure>}
               <div className="contact-booking">
                 <span className="eyebrow">{site.copy.contact_already_have_a_service_in_7}</span>
                 <h3>{site.copy.contact_try_the_appointment_experience_8}</h3>

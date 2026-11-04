@@ -1,0 +1,412 @@
+/* Public-page composition for the E-Cure client presentation. */
+html[data-presentation="ecure"] { --page-gutter: max(40px, calc((100vw - 1240px) / 2)); }
+[data-presentation="ecure"] main .section { padding-block: 72px; }
+[data-presentation="ecure"] main .section-heading h2 { font-size: clamp(1.7rem, 2.6vw, 2.4rem); line-height: 1.2; text-wrap: balance; }
+[data-presentation="ecure"] main .section-heading p { margin-top: 16px; font-size: 15px; line-height: 1.7; }
+[data-presentation="ecure"] main .eyebrow { letter-spacing: 0.07em; font-size: 11px; margin-bottom: 14px; }
+
+/* Copy and photography stay separate and readable on every viewport. */
+[data-presentation="ecure"] .hero { background: var(--paper); color: var(--ink); overflow: clip; padding: 0; border-bottom: 1px solid var(--line); }
+[data-presentation="ecure"] .hero .hero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+[data-presentation="ecure"] .hero .hero-copy { min-width: 0; padding: 64px 40px 52px var(--page-gutter); }
+[data-presentation="ecure"] .hero .eyebrow { color: var(--green); font-size: 11px; letter-spacing: 0.035em; }
+[data-presentation="ecure"] .hero .eyebrow-line { background: var(--brand-accent); }
+[data-presentation="ecure"] .hero h1 { font-size: clamp(2.5rem, 4.2vw, 3.9rem); line-height: 1.13; letter-spacing: -0.045em; max-width: 650px; }
+[data-presentation="ecure"] .hero h1 em { color: inherit; font-style: normal; }
+[data-presentation="ecure"] .hero-care-line { color: var(--green); }
+[data-presentation="ecure"] .hero h1 > span { display: block; }
+[data-presentation="ecure"] .hero-copy > p { color: var(--body-text); font-size: 17px; line-height: 1.7; max-width: 470px; margin-top: 22px; }
+[data-presentation="ecure"] .hero-actions { gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+[data-presentation="ecure"] .hero-actions > .button { min-height: 48px; font-size: 14px; padding-inline: 20px; }
+[data-presentation="ecure"] .hero .button-outline { color: var(--ink); border-color: var(--control-border); background: #fff; }
+[data-presentation="ecure"] .hero .button-outline:hover { background: #e7f0f7; }
+[data-presentation="ecure"] .hero :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .hero-assurances { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 32px; max-width: 490px; }
+[data-presentation="ecure"] .hero-assurances > div { display: flex; gap: 10px; align-items: center; font-size: 12px; line-height: 1.5; color: var(--body-text); }
+[data-presentation="ecure"] .hero-assurances svg { color: var(--green); flex-shrink: 0; }
+[data-presentation="ecure"] .hero-visual { position: relative; height: auto; min-height: 480px; min-width: 0; padding: 0; margin: 0; }
+[data-presentation="ecure"] .hero-visual::before { content: ""; position: absolute; inset: 0; background: var(--brand-accent); border-radius: 100px 0 0; }
+[data-presentation="ecure"] .hero .hero-image { position: absolute; inset: 0 0 0 8px; width: calc(100% - 8px); height: 100%; border-radius: 100px 0 0; overflow: hidden; }
+[data-presentation="ecure"] .hero .hero-image img { object-position: 50% center; }
+[data-presentation="ecure"] .hero .photo-note { position: absolute; z-index: 2; right: 14px; bottom: 12px; color: var(--body-text); background: #fff; border: 1px solid var(--line); padding: 6px 9px; margin: 0; font-size: 10px; }
+
+/* A compact overview; the directory and related-service cards keep their full description treatment. */
+[data-presentation="ecure"] .services-section.section { padding-block: 52px; }
+[data-presentation="ecure"] .home-services-layout { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
+[data-presentation="ecure"] .home-services-layout .section-top { display: block; margin: 0; }
+[data-presentation="ecure"] .home-services-layout .section-heading h2 { font-size: clamp(1.7rem, 2.7vw, 2.3rem); }
+[data-presentation="ecure"] .home-services-layout .section-heading p { font-size: 14px; }
+[data-presentation="ecure"] .home-services-layout .services-grid { gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+[data-presentation="ecure"] .service-card--compact { display: grid; grid-template-columns: 42px minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 8px 16px; padding: 24px 36px 24px 20px; border-radius: 8px; background: #fff; }
+[data-presentation="ecure"] .service-card--compact .service-card-top { grid-column: 1; grid-row: 1 / 3; margin: 0; align-items: flex-start; padding-top: 2px; }
+[data-presentation="ecure"] .service-card--compact .service-icon { display: grid; place-items: center; width: 42px; height: 44px; color: var(--blue); background: var(--paper); border-radius: 6px; }
+[data-presentation="ecure"] .service-card--compact .service-icon svg { width: 28px; height: 28px; }
+[data-presentation="ecure"] .service-card--compact h3 { grid-column: 2; font-size: 17px; margin: 0; padding-right: 2px; }
+[data-presentation="ecure"] .service-card--compact p { grid-column: 2; font-size: 14px; line-height: 1.6; margin: 0; color: var(--body-text); }
+[data-presentation="ecure"] .service-card--compact .card-link { position: absolute; right: 12px; top: 0; bottom: 0; display: grid; place-items: center; color: var(--green); }
+[data-presentation="ecure"] .services-section .section-bottom { margin-top: 22px; font-size: 13px; }
+[data-presentation="ecure"] .services-section .section-bottom p { color: var(--muted); }
+
+[data-presentation="ecure"] .about-preview.section { background: var(--paper); color: var(--body-text); padding-block: 64px; }
+[data-presentation="ecure"] .about-preview .editorial-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 60px; align-items: center; }
+[data-presentation="ecure"] .about-preview .about-image { height: 340px; min-height: 0; border-radius: 8px; order: 2; }
+[data-presentation="ecure"] .about-preview .about-image img { object-position: center 42%; }
+[data-presentation="ecure"] .about-preview .image-label { display: none; }
+[data-presentation="ecure"] .about-preview .editorial-copy { padding-block: 0; }
+[data-presentation="ecure"] .about-preview .eyebrow { color: var(--green); }
+[data-presentation="ecure"] .about-preview .editorial-copy > p { color: var(--body-text); font-size: 15px; margin-top: 16px; line-height: 1.75; }
+[data-presentation="ecure"] .about-preview .text-link { color: var(--blue); border-color: var(--control-border); margin-top: 20px; min-height: 44px; }
+[data-presentation="ecure"] .about-preview :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .why-section { background: #fff; }
+[data-presentation="ecure"] .why-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 72px; }
+[data-presentation="ecure"] .why-intro { margin-top: 18px; font-size: 15px; }
+[data-presentation="ecure"] .why-illustration { display: none; }
+[data-presentation="ecure"] .benefits-list article { padding: 18px 0; gap: 16px; }
+[data-presentation="ecure"] .benefits-list article:first-child { padding-top: 0; }
+[data-presentation="ecure"] .benefits-list article h3 { font-size: 17px; }
+[data-presentation="ecure"] .benefits-list article p { font-size: 14px; margin-top: 7px; line-height: 1.65; }
+[data-presentation="ecure"] .benefit-marker { display: inline-grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: var(--mint); color: var(--green); }
+[data-presentation="ecure"] .benefits-list > p { font-size: 12px; margin-top: 16px; }
+[data-presentation="ecure"] .process-section > .container > .section-heading { max-width: 660px; }
+[data-presentation="ecure"] .process-section { background: var(--paper); border-block: 1px solid var(--line); }
+[data-presentation="ecure"] .steps-grid { gap: 36px; margin-top: 32px; }
+[data-presentation="ecure"] .steps-grid article { position: relative; min-width: 0; }
+[data-presentation="ecure"] .step-symbol { display: grid; place-items: center; width: 54px; height: 54px; color: var(--blue); background: #fff; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 18px; }
+[data-presentation="ecure"] .step-number { position: absolute; top: 14px; right: 0; font-size: 12px; color: #617167; margin: 0; padding: 0; border: 0; }
+[data-presentation="ecure"] .step-number > span { display: none; }
+[data-presentation="ecure"] .steps-grid h3 { font-size: 17px; line-height: 1.4; margin-top: 0; }
+[data-presentation="ecure"] .steps-grid p { font-size: 14px; line-height: 1.65; margin-top: 8px; }
+[data-presentation="ecure"] .process-section .demo-inline { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; }
+[data-presentation="ecure"] .process-section .demo-inline > span { background: var(--green); }
+
+[data-presentation="ecure"] .faq-section { background: #fff; }
+[data-presentation="ecure"] .faq-grid { gap: 64px; }
+[data-presentation="ecure"] .faq-trigger { min-height: 60px; font-size: 15px; padding-block: 20px; gap: 18px; }
+[data-presentation="ecure"] .faq-trigger svg { color: var(--green); }
+[data-presentation="ecure"] .faq-content p { font-size: 14px; line-height: 1.8; }
+[data-presentation="ecure"] .homepage-faq-link { font-size: 13px; min-height: 44px; margin-top: 20px; }
+[data-presentation="ecure"] .cta-section { background: var(--paper); color: var(--ink); border-block: 1px solid var(--line); }
+[data-presentation="ecure"] .cta-inner { padding-block: 38px; gap: 32px; }
+[data-presentation="ecure"] .cta-inner h2 { max-width: 720px; font-size: clamp(1.5rem, 2.3vw, 2rem); }
+[data-presentation="ecure"] .cta-inner .eyebrow { color: var(--green); }
+[data-presentation="ecure"] .cta-inner p { color: var(--muted); font-size: 14px; margin-top: 12px; }
+[data-presentation="ecure"] .cta-actions { gap: 6px; }
+[data-presentation="ecure"] .cta-actions .light-link { color: var(--green); min-height: 44px; font-size: 12px; }
+[data-presentation="ecure"] .cta-watermark { display: none; }
+[data-presentation="ecure"] .contact-preview-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 64px; }
+[data-presentation="ecure"] .contact-preview-grid > div > p { font-size: 14px; margin-top: 16px; }
+[data-presentation="ecure"] .contact-preview-grid .text-link { margin-top: 16px; font-size: 13px; min-height: 44px; }
+[data-presentation="ecure"] .contact-details { gap: 24px; }
+[data-presentation="ecure"] .contact-details > div { gap: 12px; min-width: 0; }
+[data-presentation="ecure"] .contact-details > div > div { min-width: 0; }
+[data-presentation="ecure"] .contact-details h3 { font-size: 14px; }
+[data-presentation="ecure"] .contact-details p,
+[data-presentation="ecure"] .contact-details a { font-size: 13px; overflow-wrap: anywhere; line-height: 1.7; }
+
+/* Shared inner-page hierarchy. Form state and submission logic are untouched. */
+[data-presentation="ecure"] .page-intro { background: var(--paper); color: var(--body-text); padding-bottom: 52px; border-bottom: 1px solid var(--line); }
+[data-presentation="ecure"] .page-intro .breadcrumbs { color: var(--muted); padding-block: 26px 30px; }
+[data-presentation="ecure"] .page-intro .breadcrumbs [aria-current],
+[data-presentation="ecure"] .service-hero .breadcrumbs [aria-current] { color: var(--ink); }
+[data-presentation="ecure"] .page-intro .eyebrow { color: var(--green); }
+[data-presentation="ecure"] .page-intro h1 { max-width: 860px; font-size: clamp(2rem, 3.6vw, 3.1rem); line-height: 1.15; }
+[data-presentation="ecure"] .page-intro p { color: var(--body-text); max-width: 720px; font-size: 16px; margin-top: 20px; line-height: 1.7; }
+[data-presentation="ecure"] .page-intro :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .intro-icon { color: var(--blue); width: 80px; height: 80px; }
+[data-presentation="ecure"] .directory-heading { margin-bottom: 28px; gap: 20px; }
+[data-presentation="ecure"] .directory-heading h2 { font-size: 27px; }
+[data-presentation="ecure"] .directory-heading > span { color: var(--muted); font-size: 12px; }
+[data-presentation="ecure"] .directory-note { font-size: 13px; margin-top: 26px; }
+[data-presentation="ecure"] .editorial-grid { gap: 64px; align-items: center; }
+[data-presentation="ecure"] .editorial-grid .about-image { height: 360px; border-radius: 8px; }
+[data-presentation="ecure"] .editorial-copy > p { font-size: 15px; line-height: 1.8; margin-top: 18px; }
+[data-presentation="ecure"] .values-section { background: var(--paper); }
+[data-presentation="ecure"] .inclusion-grid { gap: 24px; margin-top: 28px; }
+[data-presentation="ecure"] .inclusion-grid article { padding: 24px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+[data-presentation="ecure"] .inclusion-grid h3 { font-size: 18px; margin-block: 16px 10px; }
+[data-presentation="ecure"] .inclusion-grid p { font-size: 14px; line-height: 1.8; }
+[data-presentation="ecure"] .inclusion-grid svg { color: var(--green); }
+[data-presentation="ecure"] .inclusion-number { font-size: 12px; color: var(--green); }
+[data-presentation="ecure"] .company-details { gap: 64px; }
+[data-presentation="ecure"] .company-details dt { font-size: 16px; }
+[data-presentation="ecure"] .company-details dd { font-size: 14px; line-height: 1.8; }
+[data-presentation="ecure"] .ecure-staff {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+[data-presentation="ecure"] .ecure-staff-grid {
+  display: grid;
+  gap: 18px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+[data-presentation="ecure"] .ecure-staff-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+[data-presentation="ecure"] .ecure-staff-portrait { position: relative; aspect-ratio: 6 / 5; background: var(--paper); }
+[data-presentation="ecure"] .ecure-staff-portrait img { object-fit: cover; }
+[data-presentation="ecure"] .ecure-staff-details { padding: 16px; }
+[data-presentation="ecure"] .ecure-staff-details h3 { font-size: 18px; line-height: 1.3; }
+[data-presentation="ecure"] .ecure-staff-details p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+[data-presentation="ecure"] .ecure-staff-details svg { color: var(--blue); flex-shrink: 0; }
+@media (min-width: 560px) {
+  [data-presentation="ecure"] .ecure-staff-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 980px) {
+  [data-presentation="ecure"] .ecure-staff-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+[data-presentation="ecure"] .service-hero { background: var(--paper); color: var(--body-text); padding-bottom: 52px; border-bottom: 1px solid var(--line); }
+[data-presentation="ecure"] .service-hero .breadcrumbs { color: var(--muted); padding-block: 26px 32px; }
+[data-presentation="ecure"] .service-hero .eyebrow { color: var(--green); }
+[data-presentation="ecure"] .service-hero .eyebrow svg { color: var(--green); }
+[data-presentation="ecure"] .service-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 64px; align-items: center; }
+[data-presentation="ecure"] .service-hero h1 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; max-width: 620px; text-wrap: balance; }
+[data-presentation="ecure"] .service-hero-grid > div > p { color: var(--body-text); font-size: 16px; line-height: 1.8; margin-top: 22px; }
+[data-presentation="ecure"] .service-hero .service-availability { color: var(--muted); font-size: 12px; line-height: 1.7; }
+[data-presentation="ecure"] .service-hero-image,
+[data-presentation="ecure"] .service-hero-image.is-illustration { height: 350px; border-radius: 8px; overflow: hidden; }
+[data-presentation="ecure"] .service-hero-image.is-illustration { background: #fff; border: 1px solid var(--line); }
+[data-presentation="ecure"] .service-hero-image.is-illustration img { filter: none; padding: 30px; }
+[data-presentation="ecure"] .service-hero-image img[src*="medical-equipment.jpg"] { object-position: 50% 12%; }
+[data-presentation="ecure"] .hero .hero-image img[src*="home-care-companion.png"] { object-position: 50% 30%; }
+[data-presentation="ecure"] .service-hero-image figcaption { left: 16px; right: auto; bottom: 16px; padding: 8px 12px; border-radius: 4px; font-size: 11px; line-height: 1.6; background: #fff; color: var(--body-text); border: 1px solid var(--line); max-width: calc(100% - 32px); }
+[data-presentation="ecure"] .service-hero :focus-visible { outline-color: var(--blue); }
+[data-presentation="ecure"] .service-expect { background: var(--paper); }
+[data-presentation="ecure"] .two-column { gap: 64px; }
+[data-presentation="ecure"] .expect-panel { padding: 28px; border-radius: 8px; border-color: var(--line); }
+[data-presentation="ecure"] .expect-panel h2 { font-size: 24px; }
+[data-presentation="ecure"] .expect-panel p,
+[data-presentation="ecure"] .expect-panel li,
+[data-presentation="ecure"] .check-list li { font-size: 14px; line-height: 1.8; }
+[data-presentation="ecure"] .request-steps { gap: 24px; margin-block: 26px; }
+[data-presentation="ecure"] .request-steps li { font-size: 14px; }
+[data-presentation="ecure"] .related-grid { gap: 16px; }
+[data-presentation="ecure"] .faq-page-layout { grid-template-columns: 250px minmax(0, 1fr); gap: 64px; }
+[data-presentation="ecure"] .faq-index { top: 124px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+[data-presentation="ecure"] .faq-index h2 { font-size: 19px; margin-bottom: 20px; }
+[data-presentation="ecure"] .faq-index nav a { font-size: 13px; padding-block: 15px; gap: 12px; min-height: 44px; }
+[data-presentation="ecure"] .faq-index p { font-size: 13px; margin-top: 20px; }
+[data-presentation="ecure"] .faq-index .text-link { font-size: 12px; }
+[data-presentation="ecure"] .faq-group + .faq-group { margin-top: 44px; }
+[data-presentation="ecure"] .faq-group .section-heading { margin-bottom: 20px; }
+[data-presentation="ecure"] .faq-group .section-heading h2 { font-size: 26px; }
+[data-presentation="ecure"] .faq-service-links { border: 0; gap: 12px; margin-top: 26px; }
+[data-presentation="ecure"] .faq-service-links a { border: 1px solid var(--line); border-radius: 6px; padding: 20px; font-size: 14px; }
+[data-presentation="ecure"] .faq-help-note p { font-size: 13px; }
+
+[data-presentation="ecure"] .booking-page { background: var(--paper); padding-bottom: 64px; }
+[data-presentation="ecure"] .booking-page .breadcrumbs { padding-block: 28px 32px; }
+[data-presentation="ecure"] .booking-layout { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 64px; }
+[data-presentation="ecure"] .booking-aside { display: block; position: sticky; top: 124px; }
+[data-presentation="ecure"] .booking-aside h1 { font-size: clamp(2rem, 3.4vw, 2.7rem); line-height: 1.2; }
+[data-presentation="ecure"] .booking-aside > p { max-width: 430px; font-size: 15px; line-height: 1.8; margin-top: 20px; }
+[data-presentation="ecure"] .booking-aside-art { display: none; }
+[data-presentation="ecure"] .demo-info { margin-top: 28px; padding: 22px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+[data-presentation="ecure"] .demo-info p { font-size: 13px; margin-top: 8px; }
+[data-presentation="ecure"] .demo-info a { font-size: 12px; min-height: 32px; line-height: 1.6; }
+[data-presentation="ecure"] .booking-form,
+[data-presentation="ecure"] .contact-form { padding: 32px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+[data-presentation="ecure"] .form-progress { gap: 12px; padding-bottom: 24px; margin-bottom: 26px; }
+[data-presentation="ecure"] .form-progress li { font-size: 12px; }
+[data-presentation="ecure"] .form-progress li > span { width: 28px; height: 28px; }
+[data-presentation="ecure"] .booking-form h2,
+[data-presentation="ecure"] .contact-form h2 { font-size: 23px; line-height: 1.4; }
+[data-presentation="ecure"] .form-subtitle { font-size: 14px; line-height: 1.7; margin-block: 12px 24px; }
+[data-presentation="ecure"] .service-options { gap: 12px; }
+[data-presentation="ecure"] .service-option { border-radius: 6px; min-height: 82px; padding: 20px 14px; gap: 10px; border-color: var(--control-border); font-size: 14px; }
+[data-presentation="ecure"] .service-option:has(input:checked) { background: var(--mint); border-color: var(--green); }
+[data-presentation="ecure"] .radio-indicator { width: 14px; height: 14px; }
+[data-presentation="ecure"] .form-actions { margin-top: 26px; padding-top: 22px; }
+[data-presentation="ecure"] .review-section { border-radius: 6px; padding: 20px; }
+[data-presentation="ecure"] .review-details { gap: 16px; }
+[data-presentation="ecure"] .contact-page-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 64px; }
+[data-presentation="ecure"] .contact-page-grid > div > h2 { font-size: 26px; }
+[data-presentation="ecure"] .contact-page-grid > div > p { font-size: 14px; line-height: 1.8; margin-top: 12px; }
+[data-presentation="ecure"] .contact-page-grid .contact-details { grid-template-columns: 1fr; padding-top: 26px; gap: 22px; }
+[data-presentation="ecure"] .contact-page-grid .contact-details > div { padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+[data-presentation="ecure"] .contact-booking { margin-top: 28px; padding: 24px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); }
+[data-presentation="ecure"] .contact-location-photo { margin: 28px 0 0; }
+[data-presentation="ecure"] .contact-location-photo > div { position: relative; height: 210px; overflow: hidden; border-radius: 8px; }
+[data-presentation="ecure"] .contact-location-photo img { object-fit: cover; object-position: center 80%; }
+[data-presentation="ecure"] .contact-location-photo figcaption { font-size: 13px; color: var(--muted); margin-top: 10px; }
+[data-presentation="ecure"] .contact-booking h3 { font-size: 20px; }
+[data-presentation="ecure"] .contact-booking .text-link { font-size: 13px; min-height: 44px; }
+[data-presentation="ecure"] .legal-page { padding-bottom: 64px; }
+[data-presentation="ecure"] .legal-page h1 { font-size: clamp(2rem, 3.6vw, 3rem); }
+[data-presentation="ecure"] .legal-page .lead { font-size: 16px; line-height: 1.8; }
+[data-presentation="ecure"] .legal-page section { padding-top: 30px; margin-top: 30px; border-top: 1px solid var(--line); }
+[data-presentation="ecure"] .legal-page h2 { font-size: 23px; }
+[data-presentation="ecure"] .legal-page section p { font-size: 15px; line-height: 1.9; }
+
+@media (max-width: 1150px) {
+  html[data-presentation="ecure"] { --page-gutter: 32px; }
+  [data-presentation="ecure"] .hero .hero-copy { padding-block: 48px; padding-right: 24px; }
+  [data-presentation="ecure"] .hero-assurances { gap: 10px; }
+  [data-presentation="ecure"] .hero-assurances > div { flex-direction: column; align-items: flex-start; gap: 8px; }
+  [data-presentation="ecure"] .home-services-layout { grid-template-columns: 1fr; gap: 26px; }
+  [data-presentation="ecure"] .home-services-layout .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-presentation="ecure"] .editorial-grid,
+  [data-presentation="ecure"] .why-grid,
+  [data-presentation="ecure"] .two-column,
+  [data-presentation="ecure"] .faq-grid,
+  [data-presentation="ecure"] .company-details,
+  [data-presentation="ecure"] .contact-preview-grid,
+  [data-presentation="ecure"] .contact-page-grid { gap: 40px; }
+  [data-presentation="ecure"] .service-hero-grid { gap: 40px; }
+  [data-presentation="ecure"] .booking-layout { gap: 36px; }
+  [data-presentation="ecure"] .booking-form,
+  [data-presentation="ecure"] .contact-form { padding: 26px; }
+}
+@media (max-width: 980px) {
+  [data-presentation="ecure"] .hero .hero-grid { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .hero h1 { font-size: 42px; }
+  [data-presentation="ecure"] .hero .hero-copy { padding: 38px var(--page-gutter) 32px; }
+  [data-presentation="ecure"] .hero-copy > p { max-width: 650px; }
+  [data-presentation="ecure"] .hero-actions { flex-direction: row; align-items: stretch; max-width: none; }
+  [data-presentation="ecure"] .hero-assurances { margin-top: 24px; }
+  [data-presentation="ecure"] .hero-visual { min-height: 360px; }
+  [data-presentation="ecure"] .hero-visual::before { display: none; }
+  [data-presentation="ecure"] .hero .hero-image { inset: 0; width: 100%; border-radius: 0; }
+  [data-presentation="ecure"] .hero .hero-image img { object-position: 50% 42%; }
+  [data-presentation="ecure"] .booking-layout { grid-template-columns: 1fr; gap: 28px; }
+  [data-presentation="ecure"] .booking-aside { position: static; }
+  [data-presentation="ecure"] .booking-aside > p { max-width: 650px; }
+  [data-presentation="ecure"] .demo-info { margin-top: 20px; }
+  [data-presentation="ecure"] .faq-page-layout { grid-template-columns: 220px minmax(0, 1fr); gap: 36px; }
+}
+@media (max-width: 760px) {
+  html[data-presentation="ecure"] { --page-gutter: 20px; }
+  [data-presentation="ecure"] main .section { padding-block: 48px; }
+  [data-presentation="ecure"] main .section-heading h2 { font-size: 29px; }
+  [data-presentation="ecure"] .hero .hero-grid { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .hero .hero-copy { padding: 36px var(--page-gutter) 32px; }
+  [data-presentation="ecure"] .hero h1 { font-size: 42px; max-width: 550px; }
+  [data-presentation="ecure"] .hero-copy > p { font-size: 15px; max-width: 560px; margin-top: 20px; }
+  [data-presentation="ecure"] .hero-actions { flex-direction: column; margin-top: 24px; max-width: none; }
+  [data-presentation="ecure"] .hero-assurances { max-width: 550px; gap: 16px; }
+  [data-presentation="ecure"] .hero-assurances > div { font-size: 11px; }
+  [data-presentation="ecure"] .hero-visual { min-height: 300px; }
+  [data-presentation="ecure"] .hero-visual::before { display: none; }
+  [data-presentation="ecure"] .hero .hero-image { inset: 0; width: 100%; border-radius: 0; }
+  [data-presentation="ecure"] .hero .hero-image img { object-position: 50% 42%; }
+  [data-presentation="ecure"] .home-services-layout { grid-template-columns: 1fr; gap: 26px; }
+  [data-presentation="ecure"] .home-services-layout .section-heading { max-width: 550px; }
+  [data-presentation="ecure"] .home-services-layout .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-presentation="ecure"] .about-preview.section { padding-block: 48px; }
+  [data-presentation="ecure"] .about-preview .editorial-grid { grid-template-columns: 1fr; gap: 28px; }
+  [data-presentation="ecure"] .about-preview .about-image { min-height: 0; height: 260px; border-radius: 8px; }
+  [data-presentation="ecure"] .about-preview .editorial-copy { padding-block: 0; }
+  [data-presentation="ecure"] .editorial-grid,
+  [data-presentation="ecure"] .why-grid,
+  [data-presentation="ecure"] .two-column,
+  [data-presentation="ecure"] .faq-grid,
+  [data-presentation="ecure"] .company-details,
+  [data-presentation="ecure"] .contact-preview-grid,
+  [data-presentation="ecure"] .contact-page-grid { grid-template-columns: 1fr; gap: 30px; }
+  [data-presentation="ecure"] .editorial-grid .about-image { height: 280px; }
+  [data-presentation="ecure"] .why-intro { max-width: 550px; }
+  [data-presentation="ecure"] .benefits-list article { padding-block: 16px; }
+  [data-presentation="ecure"] .steps-grid { grid-template-columns: 1fr; gap: 26px; }
+  [data-presentation="ecure"] .steps-grid article { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 6px 18px; }
+  [data-presentation="ecure"] .step-symbol { grid-column: 1; grid-row: 1 / 3; width: 48px; height: 48px; margin: 0; }
+  [data-presentation="ecure"] .step-number { grid-column: 2; grid-row: 1; position: static; justify-self: start; align-self: baseline; line-height: 1.4; padding-top: 3px; }
+  [data-presentation="ecure"] .steps-grid h3 { grid-column: 2; grid-row: 1; padding-left: 28px; font-size: 17px; }
+  [data-presentation="ecure"] .steps-grid p { grid-column: 2; margin: 0; font-size: 14px; }
+  [data-presentation="ecure"] .cta-inner { padding-block: 32px; flex-direction: column; align-items: flex-start; gap: 22px; }
+  [data-presentation="ecure"] .cta-actions { align-items: flex-start; }
+  [data-presentation="ecure"] .cta-inner h2 { font-size: 27px; }
+  [data-presentation="ecure"] .contact-details { grid-template-columns: 1fr 1fr; gap: 22px; }
+  [data-presentation="ecure"] .page-intro { padding-bottom: 36px; }
+  [data-presentation="ecure"] .page-intro .breadcrumbs { padding-block: 22px 26px; }
+  [data-presentation="ecure"] .page-intro h1 { font-size: 36px; }
+  [data-presentation="ecure"] .page-intro p { font-size: 15px; }
+  [data-presentation="ecure"] .intro-icon { display: none; }
+  [data-presentation="ecure"] .directory-heading h2 { font-size: 24px; }
+  [data-presentation="ecure"] .service-hero { padding-bottom: 36px; }
+  [data-presentation="ecure"] .service-hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  [data-presentation="ecure"] .service-hero h1 { font-size: 36px; }
+  [data-presentation="ecure"] .service-hero-image,
+  [data-presentation="ecure"] .service-hero-image.is-illustration { height: 300px; }
+  [data-presentation="ecure"] .inclusion-grid { grid-template-columns: 1fr; gap: 16px; }
+  [data-presentation="ecure"] .inclusion-grid article { padding: 22px; }
+  [data-presentation="ecure"] .request-steps { grid-template-columns: 1fr; gap: 18px; }
+  [data-presentation="ecure"] .request-steps li { padding-top: 16px; }
+  [data-presentation="ecure"] .request-steps li > svg { transform: rotate(90deg); }
+  [data-presentation="ecure"] .faq-page-layout { grid-template-columns: 1fr; gap: 36px; }
+  [data-presentation="ecure"] .faq-index { position: static; }
+  [data-presentation="ecure"] .faq-group .section-heading h2 { font-size: 25px; }
+  [data-presentation="ecure"] .faq-service-links { grid-template-columns: 1fr 1fr; }
+  [data-presentation="ecure"] .faq-service-links a { padding: 18px; font-size: 13px; }
+  [data-presentation="ecure"] .faq-help-note { align-items: flex-start; }
+  [data-presentation="ecure"] .faq-help-note .text-link { font-size: 13px; }
+  [data-presentation="ecure"] .booking-aside h1 { font-size: 36px; }
+  [data-presentation="ecure"] .booking-aside h1 br { display: initial; }
+  [data-presentation="ecure"] .booking-form,
+  [data-presentation="ecure"] .contact-form { padding: 24px; }
+  [data-presentation="ecure"] .form-progress li { font-size: 11px; gap: 8px; }
+  [data-presentation="ecure"] .form-progress li > span { width: 26px; height: 26px; }
+  [data-presentation="ecure"] .contact-page-grid .contact-details { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  html[data-presentation="ecure"] { --page-gutter: 18px; }
+  [data-presentation="ecure"] .hero h1 { font-size: 38px; }
+  [data-presentation="ecure"] .hero .hero-copy { padding-top: 32px; }
+  [data-presentation="ecure"] .hero .hero-image img { object-position: 47% 42%; }
+  [data-presentation="ecure"] .home-services-layout .services-grid { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .service-card--compact { grid-template-columns: 34px minmax(0, 1fr); gap: 6px 14px; padding: 20px 42px 20px 20px; }
+  [data-presentation="ecure"] .service-card--compact h3 { font-size: 16px; }
+  [data-presentation="ecure"] .service-card--compact p { font-size: 13px; }
+  [data-presentation="ecure"] .service-card--compact .card-link { display: grid; place-items: center; top: 0; bottom: 0; }
+  [data-presentation="ecure"] .services-section .section-bottom { flex-direction: column; align-items: flex-start; gap: 6px; }
+  [data-presentation="ecure"] .services-section .section-bottom .text-link { padding-block: 10px; }
+  [data-presentation="ecure"] .hero-visual { min-height: 270px; }
+  [data-presentation="ecure"] .contact-details,
+  [data-presentation="ecure"] .contact-page-grid .contact-details { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .page-intro h1,
+  [data-presentation="ecure"] .service-hero h1,
+  [data-presentation="ecure"] .booking-aside h1 { font-size: 32px; }
+  [data-presentation="ecure"] .page-intro .breadcrumbs,
+  [data-presentation="ecure"] .service-hero .breadcrumbs { padding-bottom: 24px; }
+  [data-presentation="ecure"] .service-hero-image,
+  [data-presentation="ecure"] .service-hero-image.is-illustration { height: 260px; }
+  [data-presentation="ecure"] .related-grid { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .faq-service-links { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .booking-form,
+  [data-presentation="ecure"] .contact-form { padding: 22px 18px; }
+  [data-presentation="ecure"] .service-options { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .service-option { min-height: 68px; padding: 18px; }
+  [data-presentation="ecure"] .form-progress { gap: 8px; }
+  [data-presentation="ecure"] .form-progress li { flex-direction: column; align-items: flex-start; gap: 6px; }
+  [data-presentation="ecure"] .fields-grid,
+  [data-presentation="ecure"] .contact-form .fields-grid { grid-template-columns: 1fr; }
+  [data-presentation="ecure"] .demo-info { padding: 18px; }
+  [data-presentation="ecure"] .contact-booking { padding: 22px; }
+}
+@media (max-width: 375px) {
+  [data-presentation="ecure"] .hero h1 { font-size: 34px; }
+  [data-presentation="ecure"] main .section-heading h2 { font-size: 27px; }
+  [data-presentation="ecure"] .hero-assurances { gap: 12px; }
+  [data-presentation="ecure"] .hero-assurances > div { font-size: 10px; }
+}

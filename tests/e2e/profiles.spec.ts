@@ -10,7 +10,12 @@ test("selected deployment has its own brand, content, theme and feature visibili
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-profile", profile.id);
   await expect(page.locator("html")).toHaveAttribute("data-theme", profile.theme);
+  await expect(page.locator("html")).not.toHaveAttribute("data-presentation", "ecure");
+  expect(await page.locator("html").evaluate(el => (el as HTMLElement).style.getPropertyValue("--body-text"))).toBe("");
+  expect(await page.locator("h1").evaluate(el => getComputedStyle(el).fontFamily)).not.toContain("Manrope");
   await expect(page).toHaveTitle(new RegExp(profile.shortName));
+  const iconHref = await page.locator('link[rel="icon"]').first().getAttribute("href");
+  expect((await page.request.get(iconHref!)).headers()["content-type"]).toContain("image/png");
   await expect(
     page.getByRole("banner").getByRole("link", { name: `${profile.name} home` }),
   ).toBeVisible();
@@ -33,7 +38,7 @@ test("selected deployment has its own brand, content, theme and feature visibili
   await expect(page.getByRole("button", { name: "WhatsApp contact information" })).toHaveCount(
     profile.features.whatsapp ? 1 : 0,
   );
-  for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -62,7 +67,7 @@ test("disabled services cannot leak into directories, related links, routes or i
   page.on("pageerror", (e) => errors.push(e.message));
   for (const route of publicPaths(profile)) {
     expect((await page.goto(route))?.status(), route).toBe(200);
-    for (const width of [320, 768, 1440]) {
+    for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

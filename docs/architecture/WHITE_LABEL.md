@@ -1,6 +1,6 @@
-# Phase 4 white-label foundation
+# White-label foundation
 
-One master application builds one independent public website per deployment. There is no request-based tenant switching, shared customer database, backend, or authentication in this phase. Business configuration contains public content only.
+One master application builds one independent website per deployment. There is no request-based tenant switching. Current database-backed CMS, submissions and staff authentication use the existing deployment identity and isolated environment/services; business profile files contain public content only. The original Phase 4 foundation has since been extended by the platform backend and client redesign stages.
 
 ## Selection and defaults
 
@@ -8,12 +8,12 @@ Set `NEXT_PUBLIC_SITE_PROFILE` before starting dev or building production. Suppo
 
 | Identifier | Branding | Theme | Enabled services |
 | --- | --- | --- | --- |
-| default | Existing Home Health Services placeholder | Clinical Blue | Original six home health categories |
+| default | E-Cure Home Health Services | Configurable E-Cure blue/green presentation on the existing theme contract | Original six home health categories |
 | general-clinic | Willow Clinic — Demo | Clinical Blue | General consultation, follow-up consultation, laboratory services |
 | home-care | Harbor Home Care — Demo | Soft Teal | Nursing, caretaker support, physiotherapy, online consultation, laboratory services |
 | physiotherapy-center | Stride Physiotherapy — Demo | Warm Neutral | Physiotherapy, mobility assessment, rehabilitation support |
 
-The three named businesses are fictional examples, with `.example` contact domains and explicit demonstration labeling. They do not represent real professionals, operational contacts or available services. All remain noindex demonstrations. The existing default is preserved rather than replaced with invented branding.
+The three alternate businesses are fictional examples, with `.example` contact domains and explicit demonstration labeling. They do not represent real professionals, operational contacts or available services. All remain noindex demonstrations. E-Cure keeps the original `default` deployment ID to preserve database/CMS associations; its approved client branding is applied by `withEcureBranding` without replacing the master platform's other profiles.
 
 ```powershell
 $env:NEXT_PUBLIC_SITE_PROFILE = "general-clinic"
@@ -27,13 +27,14 @@ Stop dev with Ctrl+C before switching. Restart dev after changing the profile. F
 ## Editing configuration
 
 - `src/config/profiles.ts`: typed business profiles, identity, business type, logo/brand line, contacts/social links, theme, service activation and order, navigation, media, benefit/process copy, FAQ groups, visibility and SEO defaults.
+- `src/config/branding.ts` and `src/config/client-presentation.ts`: E-Cure-specific source identity/assets and presentation tokens. The root layout/provider applies the preset only for that presentation. CMS color/logo overrides retain precedence; other client profiles keep their existing styles.
 - `src/config/content/default-copy.ts`: typed public text fields shared by default. Keys identify the page/component and original text. Profiles override only the fields that differ. Keep mandatory demo acknowledgments truthful; real submissions belong to later phases.
 - `src/data/service-catalog.ts`: original service descriptions. `src/config/service-templates.ts`: additional fictional clinic/physiotherapy content. A profile may also replace the entire typed service collection; UI components do not assume particular slugs or six services.
 - `src/config/profile-utils.ts`: active catalog, filtered related links, visible navigation, public paths and configuration validation.
-- `src/config/navigation.ts`: selected and filtered navigation exports.
+- Header/footer read the selected navigation through `visibleLinks` in `src/config/profile-utils.ts`; the unused navigation adapter was removed during hosting cleanup.
 - `src/config/metadata.ts`: selected per-page metadata. Service metadata comes from that service's configured title/description.
 
-`src/data/services.ts`, `site-content.ts`, and `faqs.ts` expose the active profile to the existing templates and client forms. Their sources do not import presentation components. The original public layouts, typography, button radii, image hover, and WhatsApp behavior are preserved.
+`src/config/site.ts` resolves the selected source profile; the existing CMS public resolver and WebsiteProvider supply the authorized published/draft snapshot to templates and forms. Profile utilities preserve configured catalogs and visibility. Client-specific CSS applies the approved presentation without changing backend eligibility, access checks or request processing.
 
 ## Visibility and consistency
 
@@ -49,4 +50,4 @@ The fixtures demonstrate variation: the clinic omits the home-care benefits sect
 
 Run the normal default regression suite after the matrix. Unit tests validate all configurations, local assets, mandatory copy, unique slugs, safe URLs, navigation filtering and disabled-service intake rejection. Use fictional details only.
 
-For client upgrades, pin a reviewed master Git release and lockfile, keep approved public profile overrides in version control, apply the next release in a staging checkout, resolve configuration/type changes there, rebuild with the client's identifier, run its matrix/regression checks, obtain content/operational signoff, and then deploy. Keep the prior artifact/release for rollback. Never copy production credentials into profile files. Database migration/restore procedures will be added with the backend phase; this phase does not invent them.
+For client upgrades, pin a reviewed master Git release and lockfile, keep approved public profile overrides in version control, apply the next release in a staging checkout, resolve configuration/type changes there, rebuild with the client's identifier, run its matrix/regression checks, obtain content/operational signoff, and then deploy. Keep the prior artifact/release for rollback. Keep production credentials outside profile files and follow the existing [backend procedures](BACKEND.md) for the selected environment.

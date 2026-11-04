@@ -12,6 +12,7 @@ import { ServiceIcon } from "@/components/shared/service-icon";
 import { CTASection } from "@/components/shared/cta-section";
 import { Button } from "@/components/ui/button";
 import { FAQ } from "@/components/ui/accordion";
+import { clientPhoto } from "@/config/branding";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
@@ -19,10 +20,14 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { services } = await getPublicWebsite();
+  const { site, services } = await getPublicWebsite();
   const service = services.find((s) => s.slug === slug);
   return {
-    title: service?.title || "Service not found",
+    title: service
+      ? site.presentation === "ecure" && site.contact.serviceArea
+        ? `${service.title} in ${site.contact.serviceArea.split(",")[0]}`
+        : service.title
+      : "Service not found",
     description: service?.description,
     openGraph: { title: service?.title, description: service?.description },
   };
@@ -33,6 +38,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const { site, services } = snapshot;
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
+  const photo = clientPhoto(site.presentation, { src: service.image, alt: service.imageAlt }, slug);
   return (
     <WebsitePage value={snapshot}>
       <>
@@ -59,15 +65,15 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <span className="service-availability">{site.copy.service_availability}</span>
               </div>
               <figure
-                className={`service-hero-image ${service.image.endsWith("svg") ? "is-illustration" : ""}`}
+                className={`service-hero-image ${photo.src.endsWith("svg") ? "is-illustration" : ""}`}
               >
                 <Image
-                  src={service.image}
-                  unoptimized={service.image.startsWith("/api/admin/media/")}
-                  alt={service.imageAlt}
+                  src={photo.src}
+                  unoptimized={photo.src.startsWith("/api/admin/media/")}
+                  alt={photo.alt}
                   fill
-                  priority
-                  sizes="(max-width: 760px) 100vw, 46vw"
+                  preload
+                  sizes={site.presentation === "ecure" ? "(max-width: 760px) 100vw, (max-width: 1280px) 42vw, 540px" : "(max-width: 760px) 100vw, 46vw"}
                 />
                 <figcaption>{service.label}</figcaption>
               </figure>

@@ -62,6 +62,14 @@ test("real Owner login requires valid MFA before protected pages and direct API 
   page,
 }, info) => {
   await firstFactor(page, "OWNER");
+  expect(await page.locator(".admin-auth-brand").evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+  expect(await page.locator("h1").evaluate(el => getComputedStyle(el).color)).toBe("rgb(11, 50, 95)");
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: info.outputPath("staff-verification-1440.png"), fullPage: true });
   expect((await page.request.get("/api/admin/session")).status()).toBe(403);
   const secret = process.env.QA_AUTH_OWNER_SECRET!;
   const valid = [-30000, 0, 30000].map((offset) => totp(secret, Date.now() + offset));
@@ -88,7 +96,7 @@ test("real Owner login requires valid MFA before protected pages and direct API 
   expect(
     await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length })),
   ).toEqual({ local: 0, session: 0 });
-  for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
@@ -228,7 +236,9 @@ test("login layout is responsive and accessible without exposing staff records",
   page,
 }, info) => {
   await page.goto("/admin/login?next=https://evil.example");
-  for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
+  expect(await page.locator(".admin-auth-brand").evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+  expect(await page.getByLabel("Staff email", { exact: true }).evaluate(el => getComputedStyle(el).fontSize)).toBe("16px");
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,

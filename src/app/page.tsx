@@ -1,7 +1,7 @@
 import { WebsitePage } from "@/components/website-provider";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ArrowDown, House, HandHeart, Heart, Quote } from "lucide-react";
+import { ArrowUpRight, ArrowDown, CalendarDays, Check, ClipboardCheck, House, HandHeart, Heart, HeartHandshake, MapPin, MessagesSquare, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ServiceCard } from "@/components/shared/service-card";
@@ -9,12 +9,17 @@ import { CTASection } from "@/components/shared/cta-section";
 import { ContactDetails } from "@/components/shared/contact-details";
 import { getPublicWebsite } from "@/server/cms/public";
 import { FAQ } from "@/components/ui/accordion";
+import { clientPhoto } from "@/config/branding";
 
 export default async function Home() {
   const snapshot = await getPublicWebsite();
   const { site, services } = snapshot;
+  const ecure = site.presentation === "ecure";
   const { benefits, steps } = site;
+  const stepIcons = [CalendarDays, MessagesSquare, ClipboardCheck, House];
   const homepageFAQs = site.faqGroups.flatMap((group) => group.items).slice(0, 3);
+  const aboutPhoto = clientPhoto(site.presentation, site.media.about, "about");
+  const heroPhoto = clientPhoto(site.presentation, site.media.hero, "home");
   return (
     <WebsitePage value={snapshot}>
       <>
@@ -25,52 +30,58 @@ export default async function Home() {
                 <span className="eyebrow-line" />
                 {site.copy.home_care_that_feels_closer_1}
               </span>
-              <h1>
+              <h1>{ecure ? <>
+                {site.copy.home_compassionate_2}{" "}<br />
+                <span className="hero-care-line">{site.copy.home_healthcare_3} <em>{site.copy.home_closer_to_home_4}</em></span>
+              </> : <>
                 {site.copy.home_compassionate_2}
                 <br className="desktop-break" />
                 {site.copy.home_healthcare_3}
                 <br />
                 <em>{site.copy.home_closer_to_home_4}</em>
-              </h1>
+              </>}</h1>
               <p>{site.copy.home_for_the_everyday_moments_for_5}</p>
               <div className="hero-actions">
                 <Button asChild>
-                  <Link href="/services">
-                    {site.copy.home_explore_our_services_6}
-                    <ArrowUpRight size={18} />
+                  <Link href={ecure && site.features.booking ? "/book-appointment" : "/services"}>
+                    {ecure && site.features.booking ? <><CalendarDays size={18} aria-hidden="true" />{site.copy.home_request_an_appointment_7}</> : <>{site.copy.home_explore_our_services_6}<ArrowUpRight size={18} aria-hidden="true" /></>}
                   </Link>
                 </Button>
                 <Link
-                  href={site.features.booking ? "/book-appointment" : "/contact"}
-                  className="text-link"
+                  href={ecure ? "/services" : site.features.booking ? "/book-appointment" : "/contact"}
+                  className={ecure ? "button button-outline" : "text-link"}
                 >
-                  {site.copy.home_request_an_appointment_7}
-                  <ArrowUpRight size={17} />
+                  {ecure ? site.copy.home_explore_our_services_6 : site.copy.home_request_an_appointment_7}
+                  <ArrowUpRight size={17} aria-hidden="true" />
                 </Link>
               </div>
-              <div className="hero-note">
+              {ecure ? <div className="hero-assurances">
+                <div><House size={22} aria-hidden="true" /><span>{site.copy.home_familiar_surroundings_11}</span></div>
+                <div><HeartHandshake size={22} aria-hidden="true" /><span>{site.copy.home_a_more_personal_care_experience_12}</span></div>
+                <div><MapPin size={22} aria-hidden="true" /><span>{site.contact.serviceArea || site.copy.home_discover_the_possibilities_of_home_13}</span></div>
+              </div> : <div className="hero-note">
                 <HandHeart size={23} strokeWidth={1.4} aria-hidden="true" />
                 <span>
                   {site.copy.home_for_you_for_your_family_8}
                   <br />
                   <strong>{site.copy.home_for_the_place_you_call_9}</strong>
                 </span>
-              </div>
+              </div>}
             </div>
             <div className="hero-visual">
               <div
-                className={`hero-image ${site.media.hero.src.endsWith("svg") ? "is-illustration" : ""}`}
+                className={`hero-image ${heroPhoto.src.endsWith("svg") ? "is-illustration" : ""}`}
               >
                 <Image
-                  src={site.media.hero.src}
-                  unoptimized={site.media.hero.src.startsWith("/api/admin/media/")}
-                  alt={site.media.hero.alt}
+                  src={heroPhoto.src}
+                  unoptimized={heroPhoto.src.startsWith("/api/admin/media/")}
+                  alt={heroPhoto.alt}
                   fill
-                  priority
-                  sizes="(max-width: 760px) 100vw, 52vw"
+                  preload
+                  sizes={ecure ? "(max-width: 980px) 100vw, 48vw" : "(max-width: 760px) 100vw, 52vw"}
                 />
               </div>
-              <div className="image-caption">
+              {!ecure && <div className="image-caption">
                 <span className="caption-icon">
                   <House size={23} strokeWidth={1.5} />
                 </span>
@@ -82,11 +93,11 @@ export default async function Home() {
                   </strong>
                   <span>{site.copy.home_discover_the_possibilities_of_home_13}</span>
                 </div>
-              </div>
+              </div>}
               <span className="photo-note">{site.copy.home_care_imagery_for_illustration_14}</span>
             </div>
           </div>
-          <div className="container hero-foot">
+          {!ecure && <div className="container hero-foot">
             <span>{site.copy.home_clinical_care_everyday_support_one_15}</span>
             <a
               href={site.sections.services ? "#services" : "/services"}
@@ -94,27 +105,29 @@ export default async function Home() {
             >
               <ArrowDown size={18} />
             </a>
-          </div>
+          </div>}
         </section>
         {site.sections.services && (
           <section className="services-section section" id="services">
             <div className="container">
+              <div className={ecure ? "home-services-layout" : undefined}>
               <div className="section-top">
                 <SectionHeading
                   eyebrow={site.copy.home_our_services_16}
                   title={site.copy.home_different_needs_thoughtful_care_17}
                   description={site.copy.home_from_professional_care_to_everyday_18}
                 />
-                <span className="section-aside">
+                {!ecure && <span className="section-aside">
                   {site.copy.home_support_for_life_19}
                   <br />
                   {site.copy.home_at_home_20}
-                </span>
+                </span>}
               </div>
               <div className="services-grid">
                 {services.map((service, i) => (
-                  <ServiceCard service={service} index={i} key={service.slug} />
+                  <ServiceCard service={service} index={i} compact={ecure} key={service.slug} />
                 ))}
+              </div>
               </div>
               <div className="section-bottom">
                 <p>{site.copy.home_not_sure_where_to_start_21}</p>
@@ -131,9 +144,9 @@ export default async function Home() {
             <div className="container editorial-grid">
               <div className="about-image">
                 <Image
-                  src={site.media.about.src}
-                  unoptimized={site.media.about.src.startsWith("/api/admin/media/")}
-                  alt={site.media.about.alt}
+                  src={aboutPhoto.src}
+                  unoptimized={aboutPhoto.src.startsWith("/api/admin/media/")}
+                  alt={aboutPhoto.alt}
                   fill
                   sizes="(max-width: 760px) 100vw, 45vw"
                 />
@@ -174,9 +187,11 @@ export default async function Home() {
               <div className="benefits-list">
                 {benefits.map((benefit, i) => (
                   <article key={benefit.title}>
-                    <span>
+                    <span className="benefit-marker">
+                      {ecure ? <Check size={21} aria-hidden="true" /> : <>
                       {site.copy.home_0_34}
                       {i + 1}
+                      </>}
                     </span>
                     <div>
                       <h3>{benefit.title}</h3>
@@ -200,8 +215,10 @@ export default async function Home() {
                 description={site.copy.home_a_simple_introduction_to_how_38}
               />
               <div className="steps-grid">
-                {steps.map((step, i) => (
-                  <article key={step.title}>
+                {steps.map((step, i) => {
+                  const Icon = stepIcons[i] || HandHeart;
+                  return <article key={step.title}>
+                    {ecure && <span className="step-symbol"><Icon size={26} aria-hidden="true" /></span>}
                     <div className="step-number">
                       {site.copy.home_0_39}
                       {i + 1}
@@ -209,8 +226,8 @@ export default async function Home() {
                     </div>
                     <h3>{step.title}</h3>
                     <p>{step.text}</p>
-                  </article>
-                ))}
+                  </article>;
+                })}
               </div>
               <p className="demo-inline">
                 <span />

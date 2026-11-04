@@ -18,6 +18,8 @@ export type PageKey = "about" | "services" | "contact" | "booking" | "faq" | "pr
 export type ServiceEntry = Service & { enabled: boolean; order: number };
 export type PublicProfile = SiteConfig & {
   id: string;
+  /** Frontend-only presentation; independent of the persisted CMS theme. */
+  presentation?: "ecure";
   businessType: "home-healthcare" | "general-clinic" | "physiotherapy";
   brandLine: string;
   fixture: boolean;

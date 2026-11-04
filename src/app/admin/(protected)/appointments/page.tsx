@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { pageOperations } from "@/server/admin/page-data";
 import { Search, Pager } from "@/components/admin/operations-ui";
+import { RecordTable, WorkflowStatus } from "@/components/admin/record-table";
 export default async function Page({
   searchParams,
 }: {
@@ -16,7 +17,7 @@ export default async function Page({
       {principal.role === "receptionist" && <p>Showing requests assigned to you.</p>}
       <Search area="appointments" q={f.q || ""} status={f.status || ""} />
       {principal.role === "owner" && (
-        <p>
+        <p className="admin-export">
           <a
             href={
               "/api/admin/appointments/export?" +
@@ -27,34 +28,12 @@ export default async function Page({
           </a>
         </p>
       )}
-      <div className="admin-table-wrap">
-        <table>
-          <caption className="sr-only">Appointments search results</caption>
-          <thead>
-            <tr>
-              <th scope="col">Reference</th>
-              <th scope="col">Name</th>
-              <th scope="col">Service</th>
-              <th scope="col">Date</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.items.map((r) => (
-              <tr key={r.id}>
-                <td>
-                  <Link href={`/admin/appointments/${r.id}`}>{r.reference || "—"}</Link>
-                </td>
-                <td>{r.name || "—"}</td>
-                <td>{r.service || "—"}</td>
-                <td>{r.date || "—"}</td>
-                <td>{r.status || "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {!data.items.length && <p className="admin-empty">No matching appointments.</p>}
+      <RecordTable
+        caption="Appointments search results"
+        headings={["Reference","Name","Service","Date","Status"]}
+        rows={data.items.map(r => ({ id: r.id, cells: [<Link key="link" href={`/admin/appointments/${r.id}`}>{r.reference || "—"}</Link>, r.name || "—", r.service || "—", r.date || "—", <WorkflowStatus key="status" status={r.status || "—"} />] }))}
+        emptyMessage="No matching appointments."
+      />
       <Pager total={data.total} page={data.page} q={f.q} status={f.status} />
     </>
   );

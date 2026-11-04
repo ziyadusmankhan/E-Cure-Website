@@ -4,6 +4,7 @@ import { serviceCatalog } from "@/data/service-catalog";
 import { additionalServices } from "./service-templates";
 import { faqGroups } from "@/data/faq-catalog";
 import { benefits, steps } from "@/data/default-site-content";
+import { withEcureBranding } from "./branding";
 
 const catalog = [...serviceCatalog, ...additionalServices];
 function entries(
@@ -348,7 +349,7 @@ physio.services = entries(["physiotherapy", "mobility-assessment", "rehabilitati
 });
 
 export const profiles: Record<string, PublicProfile> = {
-  default: defaultProfile,
+  default: withEcureBranding(defaultProfile),
   "general-clinic": clinic,
   "home-care": homeCare,
   "physiotherapy-center": physio,

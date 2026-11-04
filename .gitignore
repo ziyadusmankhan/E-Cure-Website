@@ -8,6 +8,7 @@ qa/screenshots/
 test-results/
 playwright-report/
 coverage/
+dist/
 .profile-results/
 .local/
 .db-results/

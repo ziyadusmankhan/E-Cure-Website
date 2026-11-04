@@ -15,7 +15,7 @@ export function CTASection({ service }: { service?: string }) {
           <p>{site.copy.shared_cta_section_explore_the_options_and_share_3}</p>
         </div>
         <div className="cta-actions">
-          <Button asChild variant="light">
+          <Button asChild variant={site.presentation === "ecure" ? "default" : "light"}>
             <Link
               href={
                 !site.features.booking
