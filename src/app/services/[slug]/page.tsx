@@ -14,6 +14,7 @@ import { ContactDetails } from "@/components/shared/contact-details";
 import { Button } from "@/components/ui/button";
 import { FAQ } from "@/components/ui/accordion";
 import { clientPhoto } from "@/config/branding";
+import { canonicalMetadata } from "@/config/metadata";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
@@ -30,6 +31,7 @@ export async function generateMetadata({
         : service.title
       : "Service not found",
     description: service?.description,
+    ...(service ? canonicalMetadata(`/services/${service.slug}`) : {}),
     openGraph: { title: service?.title, description: service?.description },
   };
 }

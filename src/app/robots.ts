@@ -1,8 +1,16 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/config/site";
-export default function robots(): MetadataRoute.Robots {
+import { ecureCanonicalOrigin } from "@/config/site";
+import { isIndexableRequest } from "@/server/seo";
+
+export const dynamic = "force-dynamic";
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  if (!ecureCanonicalOrigin || !(await isIndexableRequest())) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+
   return {
-    rules: { userAgent: "*", ...(site.demo ? { disallow: "/" } : { allow: "/" }) },
-    ...(!site.demo && site.url ? { sitemap: `${site.url}/sitemap.xml` } : {}),
+    rules: { userAgent: "*", allow: "/" },
+    sitemap: `${ecureCanonicalOrigin}/sitemap.xml`,
   };
 }

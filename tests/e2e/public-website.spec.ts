@@ -90,6 +90,8 @@ test("contact page shows the company details and offers direct contact only", as
 });
 test("all public pages pass scoped accessibility checks", async ({ page }) => {
   test.setTimeout(180_000);
+  // Measure contrast after entrance effects instead of sampling an animated opacity.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const route of routes) {
     await page.goto(route);
     for (const width of [390, 1440]) {

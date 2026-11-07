@@ -140,11 +140,17 @@ The server layer lives under `src/server/submissions/`. See [SUBMISSIONS.md](doc
 ## Deploy to Vercel
 
 1. Commit this source to your repository and import it into Vercel.
-2. Choose the Next.js preset, repository root, `npm run build`, and a supported Node.js LTS version. The public frontend demo still runs without a database. Backend-enabled deployments need independent restricted runtime credentials and a separately controlled migration job as documented in `docs/architecture/BACKEND.md`.
-3. Optionally configure `NEXT_PUBLIC_SITE_URL` with the real deployment URL for canonical metadata. Keep `site.demo: true` for a demonstration.
-4. Deploy and verify direct navigation, images, FAQs, mobile menu, and both form flows.
+2. Choose the Next.js preset, repository root, `npm run build`, and a supported Node.js LTS version. The direct-contact site runs without a database. Backend-enabled deployments need independent restricted runtime credentials and a separately controlled migration job as documented in `docs/architecture/BACKEND.md`.
+3. Set `NEXT_PUBLIC_SITE_URL=https://www.ecurehomes.com` for E-Cure and keep CMS, staff sign-in and public form submissions disabled for the direct-contact site.
+4. Deploy and verify direct navigation, images, FAQs, mobile menu, phone, email and WhatsApp links. The old E-Cure appointment URL should redirect to Contact.
 
-The demo uses `noindex` metadata and disallows crawlers. Its sitemap intentionally remains empty until `site.demo` is false and a canonical URL is configured. Before a production launch, replace placeholder business/legal information and implement the operational service flow.
+### E-Cure search launch
+
+Keep `SITE_INDEXING_ENABLED` unset or `false` while the client reviews the site. After approval, set it to `true` in Vercel **Production** and redeploy. Only the E-Cure profile at `www.ecurehomes.com` becomes indexable. Preview and alternate hosts continue to serve `noindex` and empty sitemaps.
+
+Check the non-`www` redirect and `/robots.txt`. Confirm that `/sitemap.xml` lists exactly the 12 public URLs, that each declares its own canonical URL, and that preview and Vercel alias URLs still return `noindex` and an empty sitemap. If the live checks fail, switch indexing off and redeploy.
+
+After the live checks pass, [verify the `ecurehomes.com` Domain property](https://support.google.com/webmasters/answer/9008080) in Google Search Console with a TXT record in Cloudflare. Submit `https://www.ecurehomes.com/sitemap.xml`, then inspect the homepage, Physiotherapy, and Nursing Care.
 
 ## Deliberate simplicity
 

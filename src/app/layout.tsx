@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { WhatsAppContact } from "@/components/shared/whatsapp-contact";
 import { getPublicWebsite } from "@/server/cms/public";
+import { isIndexableRequest } from "@/server/seo";
 import { WebsiteProvider } from "@/components/website-provider";
 import { DraftBanner } from "@/components/admin/draft-banner";
 import { presentationStyle } from "@/config/client-presentation";
@@ -16,7 +17,8 @@ const sourceSans = Source_Sans_3({ subsets: ["latin"], variable: "--font-body", 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-ecure-heading", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-ecure-body", display: "swap" });
 export async function generateMetadata(): Promise<Metadata> {
-  const { site } = await getPublicWebsite();
+  const { site, preview } = await getPublicWebsite();
+  const indexable = !preview && (await isIndexableRequest());
   return {
     title: { default: `${site.name} — ${site.seo.homeTitle}`, template: `%s | ${site.name}` },
     description: site.description,
@@ -27,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: site.seo.locale,
     },
-    robots: { index: !site.demo, follow: !site.demo },
+    ...(!indexable ? { robots: { index: false, follow: false } } : {}),
   };
 }
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

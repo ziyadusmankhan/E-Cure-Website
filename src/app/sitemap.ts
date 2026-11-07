@@ -1,7 +1,12 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/config/site";
+import { ecureCanonicalOrigin, site } from "@/config/site";
 import { publicPaths } from "@/config/profile-utils";
-export default function sitemap(): MetadataRoute.Sitemap {
-  if (!site.url || site.demo) return [];
-  return publicPaths(site).map(path=>({url:new URL(path,site.url).href}));
+import { isIndexableRequest } from "@/server/seo";
+
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (!ecureCanonicalOrigin || !(await isIndexableRequest())) return [];
+
+  return publicPaths(site).map((path) => ({ url: new URL(path, ecureCanonicalOrigin).href }));
 }

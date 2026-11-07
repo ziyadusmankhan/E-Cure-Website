@@ -10,6 +10,9 @@ import { ContactDetails } from "@/components/shared/contact-details";
 import { getPublicWebsite } from "@/server/cms/public";
 import { FAQ } from "@/components/ui/accordion";
 import { clientPhoto } from "@/config/branding";
+import { canonicalMetadata } from "@/config/metadata";
+
+export const metadata = canonicalMetadata("/");
 
 export default async function Home() {
   const snapshot = await getPublicWebsite();

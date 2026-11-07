@@ -1,13 +1,92 @@
-import type { PublicProfile } from "@/types/profile";
+import type { PublicProfile, ServiceEntry } from "@/types/profile";
 import { ecureCopy, ecureFAQGroups } from "./content/ecure-copy";
 
-const servicePresentation: Record<string, { order: number; description: string; headline: string }> = {
-  "online-consultation": { order: 0, description: "Explore a consultation from the comfort of home.", headline: "A conversation about care, from home." },
-  "nursing-care": { order: 1, description: "Explore nursing support for individual care needs.", headline: "Nursing support in familiar surroundings." },
-  physiotherapy: { order: 2, description: "Explore support for movement, mobility and recovery.", headline: "Physiotherapy, closer to home." },
-  "laboratory-services": { order: 3, description: "Ask about tests and home sample collection.", headline: "Explore laboratory services from home." },
-  "caretaker-services": { order: 4, description: "Consider support with everyday routines at home.", headline: "Everyday support, with a personal touch." },
-  "medical-equipment": { order: 5, description: "Explore equipment options for care at home.", headline: "Medical equipment for home care." },
+export const ecureSiteUrl = "https://www.ecurehomes.com";
+
+type ServicePresentation = Pick<ServiceEntry, "order" | "description" | "headline"> &
+  Partial<Pick<ServiceEntry, "expectation" | "preparation">> & {
+    faqAnswers: Record<string, string>;
+    includeDescriptions?: Record<string, string>;
+  };
+
+const servicePresentation: Record<string, ServicePresentation | undefined> = {
+  "online-consultation": {
+    order: 0,
+    description: "Explore a consultation from the comfort of home.",
+    headline: "A conversation about care, from home.",
+    faqAnswers: {
+      "Can every concern be discussed online?":
+        "Suitability depends on the concern and the clinician’s assessment. Ask E-Cure how to arrange a consultation and whether an in-person visit may be needed.",
+      "Will a prescription be provided?":
+        "Any prescription depends on the clinician’s assessment and applicable requirements. Ask E-Cure what the consultation can cover when arranging it.",
+      "What technology will I need?":
+        "Contact E-Cure to confirm the call method, device requirements and joining instructions before your consultation.",
+    },
+  },
+  "nursing-care": {
+    order: 1,
+    description: "Explore nursing support for individual care needs.",
+    headline: "Nursing support in familiar surroundings.",
+    expectation:
+      "Contact E-Cure to discuss your nursing needs, care instructions and staff availability. The team will confirm what can be arranged before the visit.",
+    includeDescriptions: {
+      "Care needs discussion":
+        "Tell E-Cure what support you need so the team can check whether it can be arranged at home.",
+    },
+    faqAnswers: {
+      "Which nursing procedures are offered?":
+        "Ask E-Cure about the procedure you need. The team can review the care instructions and check whether the procedure can be arranged at home.",
+      "Can I book a nurse immediately?":
+        "Call, email or WhatsApp E-Cure to ask about availability. The team will review your request and confirm the visit directly.",
+    },
+  },
+  physiotherapy: {
+    order: 2,
+    description: "Explore support for movement, mobility and recovery.",
+    headline: "Physiotherapy, closer to home.",
+    faqAnswers: {
+      "Can physiotherapy take place at home?":
+        "Ask E-Cure about a home visit in Islamabad. The team can check your area, needs and physiotherapist availability before confirming a session.",
+    },
+  },
+  "laboratory-services": {
+    order: 3,
+    description: "Ask about tests and home sample collection.",
+    headline: "Explore laboratory services from home.",
+    expectation:
+      "Ask E-Cure about the requested test, home sample collection, fees and how results will be delivered. Confirm these details before arranging a visit.",
+    preparation: [
+      "Have the exact test name ready when you contact E-Cure.",
+      "Follow only the preparation instructions given for that test.",
+      "Ask how reports and any follow-up questions will be handled.",
+    ],
+    faqAnswers: {
+      "Which tests are available?":
+        "Tell E-Cure the test name and your area so the team can check availability and collection requirements.",
+    },
+  },
+  "caretaker-services": {
+    order: 4,
+    description: "Consider support with everyday routines at home.",
+    headline: "Everyday support, with a personal touch.",
+    faqAnswers: {
+      "Can I arrange overnight or ongoing support?":
+        "Contact E-Cure with the hours and level of support you need. The team will confirm caretaker availability and the agreed schedule.",
+      "Can families help plan the routine?":
+        "Discuss the person’s wishes, consent and daily routine with E-Cure. Agree on responsibilities and how family members will be involved before care begins.",
+    },
+  },
+  "medical-equipment": {
+    order: 5,
+    description: "Explore equipment options for care at home.",
+    headline: "Medical equipment for home care.",
+    faqAnswers: {
+      "Is this an equipment shop?":
+        "Contact E-Cure by phone, email or WhatsApp to ask about equipment availability, prices and how to order.",
+      "Can equipment be rented?":
+        "Ask E-Cure which items are available for rental or purchase and confirm pricing, delivery and maintenance terms before ordering.",
+    },
+  },
 };
 
 export const ecureAssets = {
@@ -87,6 +166,7 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
     ...base,
     presentation: "ecure",
     name: "E-Cure Home Health Services",
+    url: base.url || ecureSiteUrl,
     shortName: "E-Cure",
     brandLine: "HOME HEALTH SERVICES",
     logo: { src: ecureAssets.logo, alt: "E-Cure Home Health Services" },
@@ -108,7 +188,21 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
     },
     services: base.services.map((service) => {
       const photo = clientPhoto("ecure", { src: service.image, alt: service.imageAlt }, service.slug);
-      return { ...service, ...servicePresentation[service.slug], image: photo.src, imageAlt: photo.alt };
+      const { faqAnswers, includeDescriptions, ...presentation } = servicePresentation[service.slug] ?? {};
+      return {
+        ...service,
+        ...presentation,
+        image: photo.src,
+        imageAlt: photo.alt,
+        includes: service.includes.map((item) => ({
+          ...item,
+          description: includeDescriptions?.[item.title] ?? item.description,
+        })),
+        faqs: service.faqs.map((faq) => ({
+          ...faq,
+          answer: faqAnswers?.[faq.question] ?? faq.answer,
+        })),
+      };
     }),
     benefits: [
       { title: "Familiar surroundings", text: "Consider support that fits your home environment and everyday routine." },
@@ -143,9 +237,10 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
       layout_footer_a_thoughtful_starting_point_for_1:
         "Explore home healthcare services for patients and families in Islamabad, Pakistan.",
       layout_footer_temporary_branding_frontend_demonstration_2:
-        "Website preview · Service arrangements require confirmation.",
+        "Contact E-Cure to confirm availability and arrange a service.",
       layout_footer_explore_3: "Quick links",
       layout_footer_lets_connect_11: "Contact us",
+      layout_footer__demonstration_website_16: " · Islamabad, Pakistan",
       layout_footer_provisional_privacy_policy_17: "Privacy notice",
     },
     navigation: {

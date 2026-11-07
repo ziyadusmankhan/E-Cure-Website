@@ -21,6 +21,10 @@ test("public metadata is unique and complete while the review deployment remains
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", /\S/);
     await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", /\S/);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    const canonical = page.locator('link[rel="canonical"]');
+    await expect(canonical).toHaveCount(1);
+    const canonicalHref = await canonical.getAttribute("href");
+    expect(new URL(canonicalHref ?? "").href, route).toBe(`https://www.ecurehomes.com${route}`);
     await expect(page.locator('meta[name="viewport"]')).toHaveAttribute("content", /width=device-width/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     results.push({ route, title, description });
@@ -29,6 +33,9 @@ test("public metadata is unique and complete while the review deployment remains
   expect(await (await request.get("/sitemap.xml")).text()).not.toContain("<loc>");
   for (const route of ["/missing-page", "/services/missing-service", "/design-system"])
     expect((await request.get(route)).status(), route).toBe(404);
+  expect(await (await request.get("/services/missing-service")).text()).not.toMatch(
+    /<link rel="canonical"/,
+  );
   await info.attach("public-metadata", { body: JSON.stringify(results, null, 2), contentType: "application/json" });
 });
 
