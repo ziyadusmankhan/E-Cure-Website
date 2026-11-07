@@ -6,7 +6,7 @@ import { profiles } from "../../src/config/profiles";
 test("the public presentation keeps configured services, metadata and original brand artwork", async ({ page, request }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveText("Compassionate Care at Home");
-  await expect(page.locator(".hero-actions").getByRole("link", { name: "Book Appointment" })).toHaveAttribute("href", "/book-appointment");
+  await expect(page.locator(".hero-actions").getByRole("link", { name: "Contact for Booking" })).toHaveAttribute("href", "/contact");
   expect(await page.locator("#services .service-card").evaluateAll(links => links.map(link => link.getAttribute("href"))))
     .toEqual(activeServices(profiles.default).map(service => `/services/${service.slug}`));
   await expect(page.locator(".testimonial-section")).toHaveCount(0);
@@ -19,15 +19,15 @@ test("the public presentation keeps configured services, metadata and original b
   expect((await icon.body()).equals(readFileSync("public/images/branding/ecure-official-icon.png"))).toBe(true);
   await page.goto("/services/nursing-care");
   await expect(page).toHaveTitle(/Nursing Care in Islamabad/);
-  await expect(page.getByRole("link", { name: "Request this service" })).toHaveAttribute("href", "/book-appointment?service=nursing-care");
+  await expect(page.locator(".service-hero").getByRole("link", { name: "Contact for Booking" })).toHaveAttribute("href", "#service-contact");
 });
 
 test("light page surfaces and client photography retain the new public identity", async ({ page }) => {
-  for (const [route, surface] of [["/", ".hero"], ["/about", ".page-intro"], ["/services", ".page-intro"], ["/services/physiotherapy", ".service-hero"], ["/contact", ".page-intro"], ["/faq", ".page-intro"], ["/book-appointment", ".booking-page"]]) {
+  for (const [route, surface] of [["/", ".hero"], ["/about", ".page-intro"], ["/services", ".page-intro"], ["/services/physiotherapy", ".service-hero"], ["/contact", ".page-intro"], ["/faq", ".page-intro"]]) {
     await page.goto(route);
     expect(await page.locator(surface).evaluate(el => getComputedStyle(el).backgroundColor), route).toBe("rgb(244, 248, 251)");
     expect(await page.locator("main h1").evaluate(el => getComputedStyle(el).color), route).toBe("rgb(11, 50, 95)");
-    if (route === "/about") await expect(page.locator("main .about-image img")).toHaveAttribute("src", /islamabad-landmark/);
+    if (route === "/about") await expect(page.locator("main .about-image img")).toHaveAttribute("src", /home-sample-collection/);
     if (route === "/services/physiotherapy") await expect(page.locator(".service-hero-image img")).toHaveAttribute("src", /physiotherapy-treatment/);
     if (route === "/contact") await expect(page.locator(".contact-location-photo img")).toHaveAttribute("src", /islamabad-panorama/);
   }
@@ -39,64 +39,53 @@ test("light page surfaces and client photography retain the new public identity"
   expect(photo!.width).toBe(768);
 });
 
-test("booking selection, details and review remain usable at all requested widths", async ({ page }) => {
-  const widths = [320, 375, 390, 430, 768, 1024, 1280, 1440];
-  const checkLayout = async () => {
-    for (const width of widths) {
-      await page.setViewportSize({ width, height: 900 });
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px`).toBe(true);
-      const controls = page.locator(".booking-form input:visible, .booking-form select:visible, .booking-form textarea:visible, .booking-form button:visible");
-      for (const control of await controls.all()) {
-        const box = await control.boundingBox();
-        expect(box!.x, `Control left edge at ${width}px`).toBeGreaterThanOrEqual(0);
-        expect(box!.x + box!.width, `Control right edge at ${width}px`).toBeLessThanOrEqual(width);
-      }
-    }
-  };
+test("old appointment bookmarks open direct contacts on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/book-appointment?service=physiotherapy");
-  await checkLayout();
-  await expect(page.getByRole("radio", { name: "Physiotherapy", exact: true })).toBeChecked();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByLabel("Patient or contact name").fill("Example Family");
-  await page.getByLabel("Contact number", { exact: true }).fill("+1 202 555 0100");
-  const date = new Date(); date.setDate(date.getDate() + 1);
-  await page.getByLabel("Preferred date", { exact: true }).fill(`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`);
-  await page.getByLabel("Preferred time window").selectOption("No preference");
-  await checkLayout();
-  await page.getByRole("button", { name: "Review request", exact: true }).click();
-  await expect(page.getByText("Example Family", { exact: true })).toBeVisible();
-  await checkLayout();
-  await page.getByRole("button", { name: "Edit details", exact: true }).click();
-  await expect(page.getByLabel("Patient or contact name")).toHaveValue("Example Family");
+  await expect(page).toHaveURL(/\/contact$/);
+  await expect(page.locator("main form")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Contact us on WhatsApp" })).toHaveAttribute(
+    "href",
+    "https://wa.me/923394838347",
+  );
 });
 
-test("the mobile booking journey preserves details through review and edit without sending a request", async ({ page }, info) => {
-  const posts: string[] = [];
-  page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  await page.locator(".hero-actions").getByRole("link", { name: "Book Appointment" }).click();
-  await page.getByRole("radio", { name: "Nursing Care", exact: true }).check();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByLabel("Patient or contact name").fill("Example Family");
-  await page.getByLabel("Contact number", { exact: true }).fill("+1 202 555 0100");
-  const date = new Date();
-  date.setDate(date.getDate() + 1);
-  const tomorrow = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  await page.getByLabel("Preferred date", { exact: true }).fill(tomorrow);
-  await page.getByLabel("Preferred time window").selectOption("No preference");
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: info.outputPath("booking-details-mobile.png"), fullPage: true });
-  await page.getByRole("button", { name: "Review request", exact: true }).click();
-  await expect(page.getByText("Example Family", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Edit details", exact: true }).click();
-  await expect(page.getByLabel("Patient or contact name")).toHaveValue("Example Family");
-  await page.getByLabel("Patient or contact name").fill("Example Family Updated");
-  await page.getByRole("button", { name: "Review request", exact: true }).click();
-  await expect(page.getByText("Example Family Updated", { exact: true })).toBeVisible();
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: info.outputPath("booking-review-mobile.png"), fullPage: true });
-  await page.getByRole("button", { name: "Complete demo", exact: true }).click();
-  await expect(page.getByRole("status")).toHaveText("This is a demonstration. Your request has not been submitted or saved.");
-  expect(posts).toEqual([]);
+test("the About page displays two physiotherapist profiles and the six staff counts", async ({ page }, info) => {
+  await page.goto("/about#meet-our-staff");
+  const profiles = page.locator(".ecure-staff-profiles");
+  const cards = profiles.getByRole("listitem");
+  await expect(cards.getByRole("heading")).toHaveText(["Dr Daim Aziz", "Dr Muhammad"]);
+  await expect(cards.getByText("Physiotherapist (DPT)", { exact: true })).toHaveCount(2);
+  await expect(cards.getByRole("img", { name: "Portrait of Dr Muhammad" })).toHaveAttribute("src", /dr-muhammad-portrait\.jpg/);
+  await expect(cards.getByRole("img", { name: "Portrait of Dr Daim Aziz" })).toHaveAttribute("src", /dr-daim-aziz\.jpg/);
+
+  const staff = page.getByRole("region", { name: "Our Staff", exact: true });
+  await expect(staff.getByRole("listitem")).toHaveText([
+    /Physiotherapists\s*8 doctors/,
+    /Nurses\s*35 registered nurses/,
+    /Caretakers\s*15 caretakers/,
+    /Respiratory Therapists\s*5 respiratory therapists/,
+    /Speech Therapists\s*5 speech therapists/,
+    /Medical Consultants\s*10 medical consultants/,
+  ]);
+
+  for (const width of [320, 390, 639, 640, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const portrait of await cards.getByRole("img").all()) {
+      await portrait.scrollIntoViewIfNeeded();
+      await portrait.evaluate((image: HTMLImageElement) => image.decode());
+    }
+    const first = (await cards.nth(0).boundingBox())!;
+    const second = (await cards.nth(1).boundingBox())!;
+    if (width < 640) {
+      expect(second.x).toBe(first.x);
+      expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+    } else {
+      expect(second.y).toBe(first.y);
+      expect(second.x).toBeGreaterThanOrEqual(first.x + first.width);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    if (width === 390 || width === 1440)
+      await profiles.screenshot({ path: info.outputPath(`staff-profiles-${width}.png`) });
+  }
 });

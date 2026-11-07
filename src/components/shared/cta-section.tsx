@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 export function CTASection({ service }: { service?: string }) {
   const { site } = useWebsite();
   if (!site.sections.cta) return null;
+  const ecure = site.presentation === "ecure";
   return (
     <section className="cta-section">
       <div className="container cta-inner">
@@ -18,14 +19,16 @@ export function CTASection({ service }: { service?: string }) {
           <Button asChild variant={site.presentation === "ecure" ? "default" : "light"}>
             <Link
               href={
-                !site.features.booking
+                ecure && service
+                  ? "#service-contact"
+                  : !site.features.booking
                   ? "/contact"
                   : service
                     ? `/book-appointment?service=${service}`
                     : "/book-appointment"
               }
             >
-              {site.copy.shared_cta_section_request_an_appointment_4}
+              {ecure ? "Contact for Booking" : site.copy.shared_cta_section_request_an_appointment_4}
               <ArrowUpRight size={18} />
             </Link>
           </Button>

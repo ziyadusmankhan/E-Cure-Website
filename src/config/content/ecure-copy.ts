@@ -1,4 +1,5 @@
 import type { PublicCopy } from "./default-copy";
+import { faqGroups, type FAQGroup } from "@/data/faq-catalog";
 
 // Existing copy keys keep published CMS documents and the editor compatible.
 export const ecureCopy = {
@@ -9,7 +10,7 @@ export const ecureCopy = {
   home_for_the_everyday_moments_for_5:
     "Home healthcare services for patients and families in Islamabad, Pakistan. Explore care and support in the comfort of your home.",
   home_explore_our_services_6: "Explore Our Services",
-  home_request_an_appointment_7: "Book Appointment",
+  home_request_an_appointment_7: "Contact for Booking",
   home_for_you_for_your_family_8: "For you and your family.",
   home_for_the_place_you_call_9: "In the place you call home.",
   home_familiar_surroundings_11: "Care at your doorstep",
@@ -46,7 +47,7 @@ export const ecureCopy = {
   home_start_a_conversation_49: "CONTACT E-CURE",
   home_lets_talk_about_what_you_50: "Let’s talk about your needs",
   home_explore_your_options_ask_a_51:
-    "Ask a general question or explore the appointment request process. Please leave out sensitive medical information.",
+    "Call, email or message us on WhatsApp to ask a question or arrange a service.",
   about_the_idea_behind_home_care_2: "ABOUT E-CURE",
   about_care_belongs_in_3: "Care for you.",
   about_the_story_of_everyday_life_4: "Comfort for your family.",
@@ -89,7 +90,8 @@ export const ecureCopy = {
   service_equipment_title: "Equipment options for your needs",
   service_audience_title: "Understanding your needs",
   service_expect_title: "Know what to expect",
-  service_step_two: "Share and review your details",
+  service_step_one: "Call, email or message E-Cure",
+  service_step_two: "Tell us what support you need",
   service_step_three: "Discuss the arrangements",
   service_faq_title: "Your questions, answered",
   service_related_title: "Explore other services",
@@ -97,9 +99,9 @@ export const ecureCopy = {
   contact_a_question_is_2: "How can we",
   contact_a_good_place_to_begin_3: "help your family?",
   contact_whether_youre_exploring_options_for_4:
-    "Explore service options, ask about arrangements or start an appointment request. We are based in Islamabad, Pakistan.",
+    "Call, email or message us on WhatsApp to ask about services, availability or equipment orders in Islamabad.",
   contact_real_contact_details_and_service_6:
-    "Phone and email links appear here once confirmed. You can also explore the inquiry form.",
+    "Choose the contact method that works for you. Our team will discuss availability and confirm arrangements directly.",
   contact_try_the_appointment_experience_8: "Take the next step",
   book_appointment_a_little_closer_to_care_1: "APPOINTMENT REQUEST",
   book_appointment_lets_find_your_2: "Care begins with",
@@ -112,10 +114,52 @@ export const ecureCopy = {
   faq_a_little_clarity_2: "Your questions.",
   faq_a_more_confident_next_step_3: "Clear answers.",
   faq_explore_the_questions_people_may_4:
-    "Understand home healthcare options, appointment requests and how this website handles your information.",
+    "Understand home healthcare options and how to arrange a service with E-Cure.",
+  faq_for_a_general_inquiry_explore_12:
+    "For a general inquiry, contact E-Cure by phone, email or WhatsApp.",
   shared_cta_section_lets_find_your_next_step_1: "LET’S TAKE THE NEXT STEP",
   shared_cta_section_looking_for_care_at_home_2: "Looking for home healthcare in Islamabad?",
   shared_cta_section_explore_the_options_and_share_3:
     "Explore your options and start a conversation about the support you need.",
-  shared_cta_section_request_an_appointment_4: "Request an Appointment",
+  shared_cta_section_request_an_appointment_4: "Contact for Booking",
 } satisfies Partial<PublicCopy>;
+
+export const ecureFAQGroups: FAQGroup[] = [
+  {
+    ...faqGroups[0],
+    items: [
+      {
+        question: faqGroups[0].items[0].question,
+        answer: "Explore our services, then contact E-Cure to discuss which options may suit your needs.",
+      },
+      faqGroups[0].items[1],
+      {
+        question: "Are all services available in my area?",
+        answer: "Contact E-Cure with your area in Islamabad so the team can check coverage and availability.",
+      },
+      {
+        question: "Can I ask about services for a family member?",
+        answer: "Yes. Contact the team to discuss general options and consider your family member’s preferences and consent before sharing personal details.",
+      },
+    ],
+  },
+  {
+    id: "appointment-requests",
+    title: "Arranging a service",
+    description: "How to contact the team and confirm your arrangements.",
+    items: [
+      {
+        question: "How do I book a service or order equipment?",
+        answer: "Call, email or message E-Cure on WhatsApp. Tell the team which service or equipment you need so they can discuss the next step with you.",
+      },
+      {
+        question: "When is an appointment or order confirmed?",
+        answer: "The E-Cure team confirms the timing, availability and arrangements directly with you.",
+      },
+      {
+        question: "Where can I find prices and payment information?",
+        answer: "Ask E-Cure about fees and payment arrangements for your selected service or equipment before confirming.",
+      },
+    ],
+  },
+];

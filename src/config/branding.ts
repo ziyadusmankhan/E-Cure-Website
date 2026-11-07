@@ -1,5 +1,5 @@
 import type { PublicProfile } from "@/types/profile";
-import { ecureCopy } from "./content/ecure-copy";
+import { ecureCopy, ecureFAQGroups } from "./content/ecure-copy";
 
 const servicePresentation: Record<string, { order: number; description: string; headline: string }> = {
   "online-consultation": { order: 0, description: "Explore a consultation from the comfort of home.", headline: "A conversation about care, from home." },
@@ -17,27 +17,46 @@ export const ecureAssets = {
 } as const;
 
 export const ecurePhotography = {
-  landmark: { src: "/images/ecure/islamabad-landmark.jpg", alt: "Faisal Mosque in Islamabad beneath a blue sky" },
+  sampleCollection: {
+    src: "/images/ecure/home-sample-collection.png",
+    alt: "A healthcare professional collecting a blood sample during a home visit",
+  },
   panorama: { src: "/images/ecure/islamabad-panorama.jpg", alt: "A panoramic view of Islamabad and Faisal Mosque" },
   home: { src: "/images/ecure/home-care-companion.png", alt: "A caregiver beside an older woman holding a walking stick at home" },
   nursing: { src: "/images/ecure/nursing-at-home.png", alt: "A nurse checking a woman's blood pressure beside her bed at home" },
   caretaker: { src: "/images/ecure/home-care-companion.png", alt: "A caregiver supporting an older woman holding a walking stick at home" },
   physiotherapy: { src: "/images/ecure/physiotherapy-treatment.jpg", alt: "A healthcare professional assisting with a supported leg stretch on a treatment table" },
-  equipment: { src: "/images/ecure/medical-equipment.jpg", alt: "A blood pressure monitor, medical supplies and medication containers" },
+  equipment: {
+    src: "/images/ecure/medical-equipment-home.png",
+    alt: "An adjustable medical bed, oxygen concentrator and suction machine set up at home",
+  },
   consultation: { src: "/images/ecure/online-consultation.jpg", alt: "A person discussing a medication container during an online video consultation" },
-  laboratory: { src: "/images/ecure/laboratory-services.jpg", alt: "A gloved laboratory worker placing a sample tube into a centrifuge" },
 } as const;
 
 const photoDefaults: Record<string, { sources: string[]; photo: { src: string; alt: string } }> = {
-  about: { sources: ["/images/caregiver.jpg"], photo: ecurePhotography.landmark },
+  about: {
+    sources: ["/images/caregiver.jpg", "/images/ecure/islamabad-landmark.jpg"],
+    photo: ecurePhotography.sampleCollection,
+  },
   home: { sources: ["/images/home-care.jpg"], photo: ecurePhotography.home },
   "nursing-care": { sources: ["/images/home-care.jpg"], photo: ecurePhotography.nursing },
   "caretaker-services": { sources: ["/images/caregiver.jpg"], photo: ecurePhotography.caretaker },
   physiotherapy: { sources: ["/images/physiotherapy.jpg", "/images/ecure/physiotherapy-support.jpg"], photo: ecurePhotography.physiotherapy },
-  "medical-equipment": { sources: ["/images/equipment.svg"], photo: ecurePhotography.equipment },
+  "medical-equipment": {
+    sources: ["/images/equipment.svg", "/images/ecure/medical-equipment.jpg"],
+    photo: ecurePhotography.equipment,
+  },
   "online-consultation": { sources: ["/images/consultation.svg"], photo: ecurePhotography.consultation },
-  "laboratory-services": { sources: ["/images/laboratory.svg"], photo: ecurePhotography.laboratory },
+  "laboratory-services": {
+    sources: ["/images/laboratory.svg", "/images/ecure/laboratory-services.jpg"],
+    photo: ecurePhotography.sampleCollection,
+  },
 };
+
+// Saved CMS drafts may still contain the previous static image paths.
+export const ecureLegacyPhotoPaths = [
+  ...new Set(Object.values(photoDefaults).flatMap(({ sources }) => sources)),
+];
 
 // Resolve only known source defaults; uploaded or published custom media wins.
 export function clientPhoto(presentation: PublicProfile["presentation"], media: { src: string; alt: string }, usage: string) {
@@ -71,9 +90,22 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
     shortName: "E-Cure",
     brandLine: "HOME HEALTH SERVICES",
     logo: { src: ecureAssets.logo, alt: "E-Cure Home Health Services" },
-    contact: { ...base.contact, serviceArea: "Islamabad, Pakistan" },
+    contact: {
+      ...base.contact,
+      phone: "+92 3394838347",
+      secondaryPhone: "+92 3394837347",
+      email: "ecurehomes@gmail.com",
+      address: "Mehboob Market, Service Road West, Street 5, F-12, Islamabad",
+      serviceArea: "Islamabad, Pakistan",
+      whatsappUrl: "https://wa.me/923394838347",
+    },
+    features: { ...base.features, booking: false, inquiryForm: false },
+    faqGroups: ecureFAQGroups,
     description: "Explore home healthcare services in Islamabad, including nursing, physiotherapy, caretaker support, laboratory services, equipment and online consultation.",
-    media: { ...base.media, hero: clientPhoto("ecure", base.media.hero, "home") },
+    media: {
+      hero: clientPhoto("ecure", base.media.hero, "home"),
+      about: clientPhoto("ecure", base.media.about, "about"),
+    },
     services: base.services.map((service) => {
       const photo = clientPhoto("ecure", { src: service.image, alt: service.imageAlt }, service.slug);
       return { ...service, ...servicePresentation[service.slug], image: photo.src, imageAlt: photo.alt };
@@ -84,7 +116,7 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
       { title: "Clear next steps", text: "Confirm suitability, timing, fees and the scope of care before an appointment begins." },
     ],
     steps: [
-      { title: "Request a service", text: "Choose your service and share your preferred date and contact details." },
+      { title: "Contact E-Cure", text: "Choose a service, then call, email or message us on WhatsApp." },
       { title: "Discuss your needs", text: "Talk through the support you are looking for and ask your questions." },
       { title: "Confirm arrangements", text: "Agree on suitability, availability and practical details with the team." },
       { title: "Receive care", text: "Care begins once the service and appointment arrangements are confirmed." },
@@ -98,17 +130,15 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
         about: { title: "About E-Cure", description: "Learn about E-Cure Home Health Services and a personal approach to arranging care in Islamabad." },
         services: { title: "Home healthcare services in Islamabad", description: "Explore nursing, physiotherapy, caretaker services, laboratory services, medical equipment and online consultation in Islamabad." },
         booking: { title: "Request an appointment", description: "Choose a home healthcare service, enter your contact details and review an appointment request with E-Cure, Islamabad." },
-        contact: { title: "Contact E-Cure", description: "Explore contact options and general inquiries about E-Cure home healthcare in Islamabad, Pakistan." },
-        faq: { title: "Frequently asked questions", description: "Find answers about home healthcare services, appointment requests and privacy with E-Cure." },
+        contact: { title: "Contact E-Cure", description: "Call, email or message E-Cure on WhatsApp to discuss home healthcare in Islamabad." },
+        faq: { title: "Frequently asked questions", description: "Find answers about home healthcare services and how to arrange care with E-Cure." },
+        privacy: { title: "Privacy notice", description: "Information about contacting E-Cure and visiting this website." },
       },
     },
     copy: {
       ...base.copy,
       ...ecureCopy,
       layout_header_a_little_closer_to_home_1: "Islamabad, Pakistan",
-      layout_header_website_demonstration_2: "Website preview",
-      layout_header_request_appointment_6: "Book Appointment",
-      layout_header_request_an_appointment_11: "Book Appointment",
       layout_header_explore_home_care_7: "E-Cure navigation",
       layout_footer_a_thoughtful_starting_point_for_1:
         "Explore home healthcare services for patients and families in Islamabad, Pakistan.",
@@ -116,6 +146,7 @@ export function withEcureBranding(base: PublicProfile): PublicProfile {
         "Website preview · Service arrangements require confirmation.",
       layout_footer_explore_3: "Quick links",
       layout_footer_lets_connect_11: "Contact us",
+      layout_footer_provisional_privacy_policy_17: "Privacy notice",
     },
     navigation: {
       ...base.navigation,

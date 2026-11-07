@@ -10,6 +10,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { ServiceCard } from "@/components/shared/service-card";
 import { ServiceIcon } from "@/components/shared/service-icon";
 import { CTASection } from "@/components/shared/cta-section";
+import { ContactDetails } from "@/components/shared/contact-details";
 import { Button } from "@/components/ui/button";
 import { FAQ } from "@/components/ui/accordion";
 import { clientPhoto } from "@/config/branding";
@@ -38,6 +39,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const { site, services } = snapshot;
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
+  const ecure = site.presentation === "ecure";
   const photo = clientPhoto(site.presentation, { src: service.image, alt: service.imageAlt }, slug);
   return (
     <WebsitePage value={snapshot}>
@@ -57,9 +59,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <p>{service.overview}</p>
                 <Button asChild>
                   <Link
-                    href={site.features.booking ? `/book-appointment?service=${slug}` : "/contact"}
+                    href={ecure ? "#service-contact" : site.features.booking ? `/book-appointment?service=${slug}` : "/contact"}
                   >
-                    {site.copy.service_request} <ArrowUpRight size={18} />
+                    {ecure ? "Contact for Booking" : site.copy.service_request} <ArrowUpRight size={18} />
                   </Link>
                 </Button>
                 <span className="service-availability">{site.copy.service_availability}</span>
@@ -80,6 +82,15 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </div>
           </div>
         </section>
+        {ecure && (
+          <section className="section service-contact" id="service-contact" aria-labelledby="service-contact-heading">
+            <div className="container">
+              <h2 id="service-contact-heading">Contact us about {service.title}</h2>
+              <p>Call, email or message E-Cure on WhatsApp to discuss availability and make arrangements.</p>
+              <ContactDetails />
+            </div>
+          </section>
+        )}
         <section className="section">
           <div className="container">
             <SectionHeading
@@ -161,7 +172,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </ol>
             <p className="small muted">
               Care arrangements need a separate discussion about suitability, timing and practical
-              details. Sending a request does not confirm an appointment.
+              details. {ecure ? "The team will confirm your arrangements directly." : "Sending a request does not confirm an appointment."}
             </p>
           </div>
         </section>

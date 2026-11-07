@@ -21,6 +21,14 @@ export function snapshotFor(doc: CmsDocument, revision: number, preview = false)
   const profile = {
     ...base,
     ...doc.brand,
+    contact: base.presentation === "ecure" ? {
+      ...doc.brand.contact,
+      phone: doc.brand.contact.phone || base.contact.phone,
+      secondaryPhone: doc.brand.contact.secondaryPhone ?? base.contact.secondaryPhone,
+      email: doc.brand.contact.email || base.contact.email,
+      address: doc.brand.contact.address || base.contact.address,
+      whatsappUrl: doc.brand.contact.whatsappUrl || base.contact.whatsappUrl,
+    } : doc.brand.contact,
     logo: { ...doc.brand.logo, src: draftAsset(doc.brand.logo.src) },
     copy: doc.copy,
     media: {

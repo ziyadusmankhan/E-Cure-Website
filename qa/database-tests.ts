@@ -63,6 +63,7 @@ async function main() {
     return;
   }
   const browser = process.argv.includes("--browser") || auth;
+  const browserProfile = auth ? "default" : "home-care";
   const names = browser
     ? [`healthcare_browser_test_${suffix}`]
     : [
@@ -124,7 +125,7 @@ async function main() {
     }
     // Only a freshly created CI role or our own isolated workspace role is changed.
     await maintenance.unsafe(`ALTER ROLE healthcare_app LOGIN PASSWORD '${appPassword}'`);
-    if (browser) await seedDemoProfile(migrations[0].db, "default");
+    if (browser) await seedDemoProfile(migrations[0].db, browserProfile);
     if (management) await initializeCms(migrations[0].db);
     if (auth) authFixture = await createAuthFixture(migrations[0], suffix);
     exitCode = await runTests({
@@ -147,7 +148,7 @@ async function main() {
       QA_SUBMISSION_DB: browser ? appUrls[0] : undefined,
       QA_SUBMISSION_ADMIN: browser ? new URL(`/${names[0]}`, serverUrl).toString() : undefined,
       QA_SUBMISSION_HMAC: browser ? randomBytes(32).toString("hex") : undefined,
-      NEXT_PUBLIC_SITE_PROFILE: "default",
+      NEXT_PUBLIC_SITE_PROFILE: browser ? browserProfile : "default",
       ...authFixture?.env,
     });
     writeFileSync(

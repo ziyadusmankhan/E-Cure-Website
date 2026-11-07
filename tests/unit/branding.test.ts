@@ -3,17 +3,20 @@ import { withEcureBranding } from "@/config/branding";
 import { defaultProfile, profiles } from "@/config/profiles";
 import { validateProfile } from "@/config/profile-utils";
 
-it("applies E-Cure presentation without changing deployment identity or intake features", () => {
+it("keeps deployment identity while switching E-Cure to direct contact", () => {
   const original = structuredClone(defaultProfile);
   const branded = withEcureBranding(defaultProfile);
   expect(branded.id).toBe(defaultProfile.id);
   expect(branded.services.map(({ slug, enabled, kind }) => ({ slug, enabled, kind })))
     .toEqual(defaultProfile.services.map(({ slug, enabled, kind }) => ({ slug, enabled, kind })));
-  expect(branded.features).toEqual(defaultProfile.features);
+  expect(branded.features).toEqual({ ...defaultProfile.features, booking: false, inquiryForm: false });
   expect(branded.demo).toBe(true);
-  expect(branded.contact.phone).toBe("");
-  expect(branded.contact.email).toBe("");
-  expect(branded.contact.whatsappUrl).toBe("");
+  expect(branded.contact).toMatchObject({
+    phone: "+92 3394838347",
+    secondaryPhone: "+92 3394837347",
+    email: "ecurehomes@gmail.com",
+    whatsappUrl: "https://wa.me/923394838347",
+  });
   expect(validateProfile(branded)).toBe(branded);
   expect(defaultProfile).toEqual(original);
 });

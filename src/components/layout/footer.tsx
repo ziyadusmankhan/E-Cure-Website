@@ -3,7 +3,7 @@ import { useWebsite } from "@/components/website-provider";
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
-import { visibleLinks } from "@/config/profile-utils";
+import { contactPhones, visibleLinks } from "@/config/profile-utils";
 export function Footer() {
   const { site, services } = useWebsite();
   const footerNavigation = visibleLinks(site.navigation.footer, site);
@@ -41,8 +41,8 @@ export function Footer() {
             ) : (
               <p>{site.copy.layout_footer_contact_details_coming_soon_12}</p>
             )}
-            {site.contact.phone && <a href={`tel:${site.contact.phone}`}>{site.contact.phone}</a>}
-            <p className="footer-location">{site.presentation === "ecure" && <MapPin size={16} aria-hidden="true" />}{site.contact.serviceArea || "Service areas to be confirmed."}</p>
+            {contactPhones(site.contact).map(([href, label]) => <a key={href} href={href}>{label}</a>)}
+            <p className="footer-location">{site.presentation === "ecure" && <MapPin size={16} aria-hidden="true" />}{(site.presentation === "ecure" && site.contact.address) || site.contact.serviceArea || "Service areas to be confirmed."}</p>
             <Link href="/contact" className="footer-contact">
               {site.copy.layout_footer_explore_contact_options_13}
               <ArrowUpRight size={16} />

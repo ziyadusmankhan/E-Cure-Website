@@ -56,7 +56,7 @@ test("E-Cure artwork, typography and request access reflow across all target wid
     expect(frame!.x).toBeGreaterThanOrEqual(0);
     expect(frame!.x + frame!.width).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px`).toBe(true);
-    await expect(page.getByRole("banner").getByRole("link", { name: "Book Appointment" }).filter({ visible: true })).toHaveCount(1);
+    await expect(page.getByRole("banner").getByRole("link", { name: "Contact for Booking" }).filter({ visible: true })).toHaveCount(1);
     await expect(page.getByRole("navigation", { name: "Main navigation", exact: true })).toBeVisible({ visible: width >= 1024 });
     await page.screenshot({ path: info.outputPath(`ecure-home-${width}.png`), fullPage: true });
   }

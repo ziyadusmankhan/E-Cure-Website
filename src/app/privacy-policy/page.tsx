@@ -9,6 +9,28 @@ export const metadata: Metadata = pageMetadata("privacy");
 export default async function PrivacyPage() {
   const snapshot = await getPublicWebsite();
   const { site } = snapshot;
+  if (site.presentation === "ecure") {
+    return (
+      <WebsitePage value={snapshot}>
+        <div className="container legal-page">
+          <Breadcrumbs items={[{ label: "Privacy policy" }]} />
+          <h1>Privacy notice</h1>
+          <section>
+            <h2>Contacting E-Cure</h2>
+            <p>Bookings and inquiries are handled by phone, email or WhatsApp. Use these channels to discuss general arrangements and ask the team how to share sensitive information if needed.</p>
+          </section>
+          <section>
+            <h2>Website delivery</h2>
+            <p>The hosting service may process technical information such as IP addresses and request logs when you visit the site.</p>
+          </section>
+          <section>
+            <h2>Privacy contact</h2>
+            <p>Email <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> with questions about your information.</p>
+          </section>
+        </div>
+      </WebsitePage>
+    );
+  }
   const submissions = await submissionPageConfig();
   return (
     <WebsitePage value={snapshot}>

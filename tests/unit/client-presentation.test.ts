@@ -48,7 +48,7 @@ it("updates known legacy artwork references while honoring custom CMS logos", ()
 
 it("uses client photography only for known E-Cure defaults", () => {
   const original = { src: "/images/caregiver.jpg", alt: "Original photograph" };
-  expect(clientPhoto("ecure", original, "about")).toEqual(ecurePhotography.landmark);
+  expect(clientPhoto("ecure", original, "about")).toEqual(ecurePhotography.sampleCollection);
   expect(clientPhoto(undefined, original, "about")).toBe(original);
   const uploaded = { src: "/api/media/client-photo", alt: "Published client photograph" };
   expect(clientPhoto("ecure", uploaded, "about")).toBe(uploaded);
@@ -60,7 +60,9 @@ it("uses client photography only for known E-Cure defaults", () => {
     ["caretaker-services", "/images/caregiver.jpg", ecurePhotography.caretaker],
     ["medical-equipment", "/images/equipment.svg", ecurePhotography.equipment],
     ["online-consultation", "/images/consultation.svg", ecurePhotography.consultation],
-    ["laboratory-services", "/images/laboratory.svg", ecurePhotography.laboratory],
+    ["laboratory-services", "/images/laboratory.svg", ecurePhotography.sampleCollection],
+    ["laboratory-services", "/images/ecure/laboratory-services.jpg", ecurePhotography.sampleCollection],
+    ["medical-equipment", "/images/ecure/medical-equipment.jpg", ecurePhotography.equipment],
   ] as const) {
     expect(clientPhoto("ecure", { src: source, alt: "Original" }, usage)).toEqual(expected);
     expect(clientPhoto(undefined, { src: source, alt: "Other client" }, usage)).toEqual({ src: source, alt: "Other client" });

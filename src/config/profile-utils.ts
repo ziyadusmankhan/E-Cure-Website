@@ -27,6 +27,12 @@ export function visibleLinks(links: NavLink[], profile: PublicProfile) {
       (link.href !== "/book-appointment" || profile.features.booking),
   );
 }
+export function contactPhones(contact: PublicProfile["contact"]) {
+  const phones = [contact.phone, contact.secondaryPhone].filter(
+    (phone): phone is string => Boolean(phone),
+  );
+  return [...new Map(phones.map((phone) => ["tel:" + phone.replace(/[^\d+]/g, ""), phone]))];
+}
 export function validateProfile(profile: PublicProfile) {
   if (profile.logo.src && !profile.logo.src.startsWith("/images/"))
     throw new Error("Logo must be a local image path.");

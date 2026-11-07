@@ -2,6 +2,8 @@
 
 A multi-page Next.js App Router healthcare website with typed business profiles, E-Cure branding, a PostgreSQL/Drizzle backend, appointment/contact submissions, local Supabase staff authentication with MFA, role-scoped administration and a website editor. Outbound email delivery is not enabled.
 
+The default E-Cure site directs bookings and equipment orders to the company's phone, email and WhatsApp links. The other demo profiles still support the form workflows where enabled.
+
 ## E-Cure redesign review
 
 The five redesign stages are separate from the platform development phases below. The blue/green redesign is recorded in [the design reports](docs/design/), the [completed Stage 5 report](docs/design/ECURE_BLUE_GREEN_STAGE_5_REPORT.md), the subsequent [client logo/interaction refinement](docs/design/ECURE_LOGO_AND_MOTION_REFINEMENT.md) and [current handoff](docs/design/ECURE_BLUE_GREEN_HANDOFF.md). Earlier `ECURE_STAGE_*` reports describe the previous black/green milestone. The approved redesign is deployed at [the Oracle HTTPS preview](https://144.24.117.229/); see [deployment status](docs/deployment/ORACLE_INSTANCE_STATUS.md) for the current release and production-service limitations.
@@ -73,8 +75,8 @@ For automated browser verification, run `node node_modules/playwright/cli.js ins
 - `/services/medical-equipment`
 - `/services/laboratory-services`
 - `/services/nursing-care`
-- `/book-appointment` — selection, validated details, editable review, preview completion or persisted request receipt
-- `/contact` — configured contacts and validated preview/persisted inquiry
+- `/book-appointment` — redirects to `/contact` for E-Cure. Enabled demo profiles retain the request form.
+- `/contact` — direct contact options for E-Cure and an inquiry form on demo profiles where enabled
 - `/privacy-policy` — mode-specific processing notice
 
 All six service routes are generated from typed content and can be loaded directly. Unknown routes show a custom 404. Homepage anchors include `#about`, `#services`, `#why-home-care`, `#how-it-works`, and `#contact`.
@@ -126,6 +128,8 @@ Assets are local in `public/images`; photo source links and licensing notes are 
 Next.js Image optimizes photographs and provides responsive sizing. The small custom SVG illustrations remain vectors. Keep replacements appropriately cropped and compressed; preserve declared image containers to prevent layout shifts.
 
 ## Public request forms
+
+This section applies to profiles with forms enabled. E-Cure handles requests through direct contact.
 
 React Hook Form keeps entries in component memory. Disabled mode retains the frontend demonstration. Local-test mode sends to protected POST endpoints with independent server validation, consent, Turnstile, durable rate limits and retry-safe duplicate protection. Completion clears personal form data; no browser storage or analytics payloads are used.
 

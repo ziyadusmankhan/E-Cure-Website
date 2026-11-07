@@ -117,7 +117,7 @@ export default async function AboutPage() {
             </dl>
           </div>
         </section>
-        {site.presentation === "ecure" && site.demo && <EcureStaff />}
+        {site.presentation === "ecure" && <EcureStaff />}
         <CTASection />
       </>
     </WebsitePage>

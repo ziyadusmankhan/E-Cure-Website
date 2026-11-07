@@ -21,7 +21,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "npm run start -- --port 3102",
+    command: "npm run dev -- --port 3102",
     url: "http://127.0.0.1:3102",
     reuseExistingServer: false,
     timeout: 120_000,
@@ -34,7 +34,7 @@ export default defineConfig({
       SUBMISSIONS_HMAC_SECRET: process.env.QA_SUBMISSION_HMAC,
       SUBMISSION_ALLOWED_ORIGINS: "http://127.0.0.1:3102,http://localhost:3102",
       TRUSTED_CLIENT_IP_HEADER: "x-real-ip",
-      NEXT_PUBLIC_SITE_PROFILE: "default",
+      NEXT_PUBLIC_SITE_PROFILE: "home-care",
       ENABLE_DESIGN_SYSTEM: "false",
       SITE_THEME: "",
     },

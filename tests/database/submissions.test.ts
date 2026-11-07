@@ -10,6 +10,8 @@ import { takeRateLimit, digest } from "../../src/server/submissions/store";
 import { validatePreferredDate } from "../../src/server/submissions/validation";
 import type { SubmissionKind } from "../../src/types/submission";
 
+vi.hoisted(() => vi.stubEnv("NEXT_PUBLIC_SITE_PROFILE", "home-care"));
+
 assertTestDatabase(process.env.TEST_SUBMISSION_DATABASE_URL);
 assertTestDatabase(process.env.TEST_SUBMISSION_MIGRATION_URL);
 const app = openDatabase(process.env.TEST_SUBMISSION_DATABASE_URL);
@@ -82,9 +84,10 @@ const counts = async () => {
   return r;
 };
 beforeAll(async () => {
-  await seedDemoProfile(app.db, "default");
+  await seedDemoProfile(app.db, "home-care");
 });
 afterAll(async () => {
+  vi.unstubAllEnvs();
   await Promise.all([app.close(), admin.close()]);
 });
 
@@ -275,7 +278,7 @@ describe("public submission persistence", () => {
     try {
       expect((await handle(request("inquiry", inquiry()), "inquiry")).status).toBe(503);
     } finally {
-      await app.client`update healthcare.business_settings set profile_id='default' where id=1`;
+      await app.client`update healthcare.business_settings set profile_id='home-care' where id=1`;
       logger.mockRestore();
     }
   });

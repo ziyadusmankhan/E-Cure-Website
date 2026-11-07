@@ -7,7 +7,7 @@ import { defaultCopy } from "@/config/content/default-copy";
 it("isolates per-business visibility flags from the default and other profiles", () => {
   expect(profiles.default.sections.about).toBe(true);
   expect(profiles.default.features.whatsapp).toBe(true);
-  expect(profiles.default.features.inquiryForm).toBe(true);
+  expect(profiles.default.features).toMatchObject({ inquiryForm: false, booking: false });
   expect(profiles["general-clinic"].sections.whyHomeCare).toBe(false);
   expect(profiles["home-care"].sections.about).toBe(false);
   expect(profiles["physiotherapy-center"].features.inquiryForm).toBe(false);

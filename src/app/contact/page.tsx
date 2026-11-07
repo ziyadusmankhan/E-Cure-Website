@@ -15,7 +15,8 @@ export const metadata: Metadata = pageMetadata("contact");
 export default async function ContactPage() {
   const snapshot = await getPublicWebsite();
   const { site } = snapshot;
-  const submissions = await submissionPageConfig();
+  const ecure = site.presentation === "ecure";
+  const submissions = site.features.inquiryForm ? await submissionPageConfig() : undefined;
   return (
     <WebsitePage value={snapshot}>
       <>
@@ -37,20 +38,25 @@ export default async function ContactPage() {
               <h2>{site.copy.contact_ways_to_connect_5}</h2>
               <p className="muted">{site.copy.contact_real_contact_details_and_service_6}</p>
               <ContactDetails />
-              {site.presentation === "ecure" && <figure className="contact-location-photo">
-                <div><Image src={ecurePhotography.panorama.src} alt={ecurePhotography.panorama.alt} fill sizes="(max-width: 760px) 100vw, 42vw" /></div>
-                <figcaption>{site.contact.serviceArea}</figcaption>
-              </figure>}
-              <div className="contact-booking">
-                <span className="eyebrow">{site.copy.contact_already_have_a_service_in_7}</span>
-                <h3>{site.copy.contact_try_the_appointment_experience_8}</h3>
-                <Link className="text-link" href="/book-appointment">
-                  {site.copy.contact_request_an_appointment_9}
-                  <ArrowUpRight size={17} />
-                </Link>
-              </div>
+              {site.features.booking && (
+                <div className="contact-booking">
+                  <span className="eyebrow">{site.copy.contact_already_have_a_service_in_7}</span>
+                  <h3>{site.copy.contact_try_the_appointment_experience_8}</h3>
+                  <Link className="text-link" href="/book-appointment">
+                    {site.copy.contact_request_an_appointment_9}
+                    <ArrowUpRight size={17} />
+                  </Link>
+                </div>
+              )}
             </div>
-            {site.features.inquiryForm ? (
+            {ecure ? (
+              <figure className="contact-location-photo">
+                <div>
+                  <Image src={ecurePhotography.panorama.src} alt={ecurePhotography.panorama.alt} fill sizes="(max-width: 760px) 100vw, 42vw" />
+                </div>
+                <figcaption>{site.contact.serviceArea}</figcaption>
+              </figure>
+            ) : site.features.inquiryForm ? (
               <ContactForm submissions={submissions} />
             ) : (
               <div className="expect-panel">

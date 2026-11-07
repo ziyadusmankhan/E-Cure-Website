@@ -5,7 +5,6 @@ const routes = [
   "/services",
   "/contact",
   "/faq",
-  "/book-appointment",
   "/privacy-policy",
   ...[
     "online-consultation",
@@ -37,28 +36,10 @@ test("mobile navigation closes after following a service", async ({ page }) => {
   await expect(page).toHaveURL(/services\/physiotherapy$/);
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
-test("booking retains service context and completes truthfully", async ({ page }) => {
+test("direct booking keeps the visitor on the selected service", async ({ page }) => {
   await page.goto("/services/physiotherapy");
-  await page.getByRole("link", { name: "Request this service" }).click();
-  await expect(page.getByRole("radio", { name: "Physiotherapy", exact: true })).toBeChecked();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByRole("button", { name: "Review request", exact: true }).click();
-  await expect(page.getByLabel("Patient or contact name")).toHaveAttribute("aria-invalid", "true");
-  await page.getByLabel("Patient or contact name").fill("Example Person");
-  await page.getByLabel("Contact number", { exact: true }).fill("+1 202 555 0100");
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  await page
-    .getByLabel("Preferred date", { exact: true })
-    .fill(
-      `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`,
-    );
-  await page.getByLabel("Preferred time window").selectOption("No preference");
-  await page.getByRole("button", { name: "Review request", exact: true }).click();
-  await expect(page.getByText("Example Person", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Complete demo", exact: true }).scrollIntoViewIfNeeded();
-  await page.getByRole("button", { name: "Complete demo", exact: true }).click();
-  await expect(page.getByRole("status")).toHaveText(
-    "This is a demonstration. Your request has not been submitted or saved.",
-  );
+  await page.locator(".service-hero").getByRole("link", { name: "Contact for Booking" }).click();
+  await expect(page).toHaveURL(/\/services\/physiotherapy#service-contact$/);
+  await expect(page.getByRole("region", { name: "Contact us about Physiotherapy" })).toBeVisible();
+  await expect(page.locator("main form")).toHaveCount(0);
 });

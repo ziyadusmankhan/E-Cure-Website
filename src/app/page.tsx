@@ -43,8 +43,8 @@ export default async function Home() {
               <p>{site.copy.home_for_the_everyday_moments_for_5}</p>
               <div className="hero-actions">
                 <Button asChild>
-                  <Link href={ecure && site.features.booking ? "/book-appointment" : "/services"}>
-                    {ecure && site.features.booking ? <><CalendarDays size={18} aria-hidden="true" />{site.copy.home_request_an_appointment_7}</> : <>{site.copy.home_explore_our_services_6}<ArrowUpRight size={18} aria-hidden="true" /></>}
+                  <Link href={ecure ? "/contact" : "/services"}>
+                    {ecure ? <><CalendarDays size={18} aria-hidden="true" />Contact for Booking</> : <>{site.copy.home_explore_our_services_6}<ArrowUpRight size={18} aria-hidden="true" /></>}
                   </Link>
                 </Button>
                 <Link

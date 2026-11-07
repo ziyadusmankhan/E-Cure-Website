@@ -33,7 +33,7 @@ test("public metadata is unique and complete while the review deployment remains
 });
 
 test("the skip link places keyboard navigation in the main content", async ({ page }) => {
-  for (const route of ["/", "/services/nursing-care", "/book-appointment", "/contact"]) {
+  for (const route of ["/", "/services/nursing-care", "/about", "/contact"]) {
     await page.goto(route);
     await expect(page.locator("main h1")).toBeVisible();
     await page.keyboard.press("Tab");

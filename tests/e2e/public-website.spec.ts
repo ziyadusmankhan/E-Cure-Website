@@ -14,7 +14,6 @@ const routes = [
   "/services",
   "/faq",
   "/contact",
-  "/book-appointment",
   "/privacy-policy",
   ...slugs.map((slug) => `/services/${slug}`),
 ];
@@ -52,55 +51,42 @@ test("FAQ discovery, category anchors, keyboard answers and service links work",
   await expect(page).toHaveURL(/\/faq$/);
   await page
     .getByRole("navigation", { name: "Question topics" })
-    .getByRole("link", { name: "Understanding appointment requests" })
+    .getByRole("link", { name: "Arranging a service" })
     .click();
   await expect(page).toHaveURL(/#appointment-requests$/);
   const question = page.getByRole("button", {
-    name: "Does completing the form book an appointment?",
+    name: "How do I book a service or order equipment?",
   });
   await question.focus();
   await page.keyboard.press("Enter");
   await expect(question).toHaveAttribute("aria-expanded", "true");
   await expect(
-    page.getByRole("region", { name: "Does completing the form book an appointment?" }),
-  ).toContainText("not a confirmed appointment");
-  await expect(
-    page.getByRole("region", { name: "Does completing the form book an appointment?" }),
-  ).toContainText("Preview mode does not submit entries");
+    page.getByRole("region", { name: "How do I book a service or order equipment?" }),
+  ).toContainText("Call, email or message E-Cure on WhatsApp");
   await page.getByRole("main").getByRole("link", { name: "Nursing Care", exact: true }).click();
   await expect(page).toHaveURL(/\/services\/nursing-care$/);
 });
-test("each service CTA prefills its own service", async ({ page }) => {
+test("each service CTA takes visitors to its direct booking contacts", async ({ page }) => {
   for (const slug of slugs) {
     await page.goto(`/services/${slug}`);
-    await page.getByRole("link", { name: "Request this service" }).click();
-    await expect(page.locator(`input[type="radio"][value="${slug}"]`)).toBeChecked();
+    await page.locator(".service-hero").getByRole("link", { name: "Contact for Booking" }).click();
+    await expect(page).toHaveURL(/#service-contact$/);
+    const contacts = page.locator("#service-contact");
+    await expect(contacts.getByRole("link", { name: "+92 3394838347", exact: true })).toHaveAttribute("href", "tel:+923394838347");
+    await expect(contacts.getByRole("link", { name: "+92 3394837347", exact: true })).toHaveAttribute("href", "tel:+923394837347");
+    await expect(contacts.getByRole("link", { name: "ecurehomes@gmail.com" })).toHaveAttribute("href", "mailto:ecurehomes@gmail.com");
+    await expect(contacts.locator('a[href="https://wa.me/923394838347"]')).toBeVisible();
   }
 });
-test("contact form validates and resets without sending a message", async ({ page }) => {
-  const submissions: string[] = [];
-  page.on("request", (request) => {
-    if (request.method() === "POST") submissions.push(request.url());
-  });
+test("contact page shows the company details and offers direct contact only", async ({ page }) => {
   await page.goto("/contact");
-  await page.getByRole("button", { name: "Preview inquiry completion" }).click();
-  await expect(page.getByLabel("Your name", { exact: true })).toHaveAttribute(
-    "aria-invalid",
-    "true",
-  );
-  await page.getByLabel("Your name", { exact: true }).fill("Example Person");
-  await page.getByLabel("Email address", { exact: true }).fill("example@example.com");
-  await page.getByLabel("Topic", { exact: true }).selectOption("Exploring care options");
-  await page
-    .getByLabel("Your message", { exact: true })
-    .fill("Example inquiry about care arrangements.");
-  await page.getByRole("button", { name: "Preview inquiry completion" }).click();
-  await expect(page.getByRole("status")).toHaveText(
-    "This is a demonstration. Your request has not been submitted or saved.",
-  );
-  await page.getByRole("button", { name: "Try another inquiry" }).click();
-  await expect(page.getByLabel("Your name", { exact: true })).toHaveValue("");
-  expect(submissions).toEqual([]);
+  const main = page.getByRole("main");
+  await expect(main.getByText("Mehboob Market, Service Road West, Street 5, F-12, Islamabad")).toBeVisible();
+  await expect(main.locator('a[href="tel:+923394838347"]')).toBeVisible();
+  await expect(main.locator('a[href="tel:+923394837347"]')).toBeVisible();
+  await expect(main.locator('a[href="mailto:ecurehomes@gmail.com"]')).toBeVisible();
+  await expect(main.locator('a[href="https://wa.me/923394838347"]')).toBeVisible();
+  await expect(main.locator("form")).toHaveCount(0);
 });
 test("all public pages pass scoped accessibility checks", async ({ page }) => {
   test.setTimeout(180_000);

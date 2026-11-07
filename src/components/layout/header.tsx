@@ -7,13 +7,16 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowUpRight, CalendarDays, ChevronDown, Mail, MapPin, Menu, Phone, X, House } from "lucide-react";
 import { Brand } from "@/components/shared/brand";
 import { Button } from "@/components/ui/button";
-import { visibleLinks } from "@/config/profile-utils";
+import { contactPhones, visibleLinks } from "@/config/profile-utils";
 import { ServiceIcon } from "@/components/shared/service-icon";
 import { ServicesMenu } from "./services-menu";
 
 export function Header() {
   const { site, services } = useWebsite();
   const ecure = site.presentation === "ecure";
+  const phones = contactPhones(site.contact);
+  const bookingHref = site.features.booking ? "/book-appointment" : "/contact";
+  const bookingLabel = ecure ? "Contact for Booking" : site.copy.layout_header_request_appointment_6;
   const navLinks = visibleLinks(site.navigation.main, site);
   const serviceIndex = Math.max(1, navLinks.findIndex((link) => link.section === "about") + 1);
   const pathname = usePathname();
@@ -63,11 +66,11 @@ export function Header() {
             {ecure ? <MapPin size={14} aria-hidden="true" /> : <House size={13} aria-hidden="true" />}
             {site.copy.layout_header_a_little_closer_to_home_1}
           </span>
-          {ecure && (site.contact.phone || site.contact.email) && <div className="utility-contact">
-            {site.contact.phone && <a href={`tel:${site.contact.phone}`}><Phone size={13} aria-hidden="true" />{site.contact.phone}</a>}
+          {ecure && (phones.length > 0 || site.contact.email) && <div className="utility-contact">
+            {phones.map(([href, label]) => <a key={href} href={href}><Phone size={13} aria-hidden="true" />{label}</a>)}
             {site.contact.email && <a href={`mailto:${site.contact.email}`}><Mail size={13} aria-hidden="true" />{site.contact.email}</a>}
           </div>}
-          {site.demo && <span className="demo-label">
+          {site.demo && !ecure && <span className="demo-label">
             <i />
             {site.copy.layout_header_website_demonstration_2}
           </span>}
@@ -103,15 +106,15 @@ export function Header() {
               ))}
             </ul>
           </nav>
-          {site.features.booking && (
+          {(site.features.booking || ecure) && (
             <Button asChild size="small" className="header-cta">
-              <Link href="/book-appointment">
-                {site.copy.layout_header_request_appointment_6}
+              <Link href={bookingHref}>
+                {bookingLabel}
                 {ecure ? <CalendarDays size={17} aria-hidden="true" /> : <ArrowUpRight size={16} aria-hidden="true" />}
               </Link>
             </Button>
           )}
-          {ecure && site.contact.phone && <a className="mobile-call" href={`tel:${site.contact.phone}`} aria-label={`Call ${site.name}`}><Phone size={20} aria-hidden="true" /></a>}
+          {ecure && phones[0] && <a className="mobile-call" href={phones[0][0]} aria-label={`Call ${site.name}`}><Phone size={20} aria-hidden="true" /></a>}
           <Dialog.Root open={open} onOpenChange={(value) => {
             setOpen(value);
             if (!value) setServicesOpen(false);
@@ -154,23 +157,23 @@ export function Header() {
                     <Link href="/services" onClick={closeMenu}>{site.navigation.allServicesLabel}<ArrowUpRight size={18} aria-hidden="true" /></Link>
                   </>}
                 </nav>
-                {site.features.booking && (
+                {(site.features.booking || ecure) && (
                   <Button asChild>
-                    <Link href="/book-appointment" onClick={closeMenu}>
-                      {site.copy.layout_header_request_an_appointment_11}
+                    <Link href={bookingHref} onClick={closeMenu}>
+                      {ecure ? bookingLabel : site.copy.layout_header_request_an_appointment_11}
                       {ecure ? <CalendarDays size={18} aria-hidden="true" /> : <ArrowUpRight size={18} aria-hidden="true" />}
                     </Link>
                   </Button>
                 )}
                 <p className="small muted">
-                  {site.copy.layout_header_a_frontend_demo_no_appointments_12}
+                  {ecure ? "Call, email or message us on WhatsApp to arrange care." : site.copy.layout_header_a_frontend_demo_no_appointments_12}
                 </p>
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
         </div>
-        {ecure && site.features.booking && <div className="container mobile-booking-row">
-          <Link href="/book-appointment"><CalendarDays size={17} aria-hidden="true" />{site.copy.layout_header_request_appointment_6}<ArrowUpRight size={16} aria-hidden="true" /></Link>
+        {ecure && <div className="container mobile-booking-row">
+          <Link href={bookingHref}><CalendarDays size={17} aria-hidden="true" />{bookingLabel}<ArrowUpRight size={16} aria-hidden="true" /></Link>
         </div>}
       </header>
     </>

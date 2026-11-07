@@ -1,7 +1,8 @@
 import { WebsitePage } from "@/components/website-provider";
 import { pageMetadata } from "@/config/metadata";
 import { getPublicWebsite } from "@/server/cms/public";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { site as profile } from "@/config/site";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { HandHeart, ShieldCheck } from "lucide-react";
@@ -12,6 +13,7 @@ import { submissionPageConfig } from "@/server/submissions/config";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata("booking");
 export default async function BookingPage() {
+  if (profile.presentation === "ecure") redirect("/contact");
   const snapshot = await getPublicWebsite();
   const { site } = snapshot;
   if (!site.features.booking) notFound();

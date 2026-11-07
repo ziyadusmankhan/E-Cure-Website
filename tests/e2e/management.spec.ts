@@ -54,20 +54,16 @@ test("inquiries support assigned follow-up, history, search and mobile navigatio
   page,
   browser,
 }, info) => {
-  const response = await page.request.post("/api/inquiries", {
-    headers: { ...headers, "idempotency-key": randomUUID() },
-    data: {
-      name: "Fictional Inquiry Workflow",
-      email: "inquiry-workflow@example.com",
-      topic: "care-options",
-      message: "Please explain the fictional scheduling arrangements.",
-      consent: true,
-      website: "",
-      turnstileToken: "XXXX.DUMMY.TOKEN.XXXX",
-    },
+  const receipt = await admin.begin(async (tx) => {
+    const [inquiry] = await tx`
+      insert into healthcare.contact_inquiries (name, email, subject, message, consent_at)
+      values ('Fictional Inquiry Workflow', 'inquiry-workflow@example.com', 'Care options',
+              'Please explain the fictional scheduling arrangements.', now())
+      returning id, reference
+    `;
+    await tx`insert into healthcare.workflow_events (inquiry_id, to_status) values (${inquiry.id}, 'new')`;
+    return inquiry;
   });
-  expect(response.status()).toBe(201);
-  const receipt = await response.json();
   await login(page);
   await page.goto("/admin/inquiries");
   await verifyStaffPresentation(page, info, "owner-inquiries");
@@ -122,28 +118,28 @@ test("inquiries support assigned follow-up, history, search and mobile navigatio
   await staff.screenshot({ path: info.outputPath("mobile-inquiry.png"), fullPage: true });
   await ctx.close();
 });
-test("public booking appears in dashboard; Owner assigns and staff manage status, notes and customer", async ({
+test("existing appointment appears in dashboard; Owner assigns and staff manage status, notes and customer", async ({
   page,
   browser,
 }, info) => {
-  const booking = await page.request.post("/api/appointments", {
-    headers: { ...headers, "idempotency-key": randomUUID() },
-    data: {
-      service: "physiotherapy",
-      name: "Fictional Management Person",
-      phone: "+12025550191",
-      email: "management@example.com",
-      date: new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 10),
-      time: "No preference",
-      visitMode: "home",
-      inquiry: "Fictional scheduling question.",
-      consent: true,
-      website: "",
-      turnstileToken: "XXXX.DUMMY.TOKEN.XXXX",
-    },
+  const receipt = await admin.begin(async (tx) => {
+    const [customer] = await tx`
+      insert into healthcare.customers (name, phone, email, consent_at)
+      values ('Fictional Management Person', '+12025550191', 'management@example.com', now())
+      returning id
+    `;
+    const reference = "REQ-" + randomUUID().replaceAll("-", "").slice(0, 24).toUpperCase();
+    const [appointment] = await tx`
+      insert into healthcare.appointments (reference, customer_id, service_id, preferred_date,
+                                           time_window, visit_mode, inquiry)
+      select ${reference}, ${customer.id}, id, current_date + 7, 'No preference', 'home',
+             'Fictional scheduling question.'
+      from healthcare.services where slug = 'physiotherapy'
+      returning id, reference
+    `;
+    await tx`insert into healthcare.workflow_events (appointment_id, to_status) values (${appointment.id}, 'new')`;
+    return appointment;
   });
-  expect(booking.status()).toBe(201);
-  const receipt = await booking.json();
   await login(page);
   await expect(page.getByRole("link", { name: receipt.reference, exact: true })).toBeVisible();
   await verifyStaffPresentation(page, info, "owner-dashboard");
@@ -390,8 +386,7 @@ test("Owner creates a service in the editor, reorders it, publishes and disables
   await expect(pub.getByRole("heading", { level: 1 })).toContainText(
     "A new service, managed by the Owner.",
   );
-  await pub.goto("/book-appointment?service=fictional-new-care");
-  await expect(pub.locator("body")).toContainText("Fictional New Care");
+  await expect(pub.getByRole("region", { name: "Contact us about Fictional New Care" })).toBeVisible();
   await page
     .getByRole("navigation", { name: "Website editor sections" })
     .getByRole("button", { name: "Services", exact: true })

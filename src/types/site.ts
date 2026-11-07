@@ -6,6 +6,7 @@ export type SiteConfig = {
   logo: { src: string; alt: string };
   contact: {
     phone: string;
+    secondaryPhone?: string;
     email: string;
     address: string;
     serviceArea: string;

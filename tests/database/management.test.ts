@@ -120,7 +120,7 @@ it("excludes disabled service content and unused images from public responses un
   );
   expect((await readMedia(app.db, media.path.slice(11))).publishedAt).not.toBeNull();
 });
-it("changes public booking eligibility only when the new catalog is published", async () => {
+it("keeps E-Cure form submissions disabled after catalog publication", async () => {
   vi.stubEnv("CMS_MODE", "database");
   let state = await cms.read();
   const service = {
@@ -161,7 +161,8 @@ it("changes public booking eligibility only when the new catalog is published", 
     });
   await expect(submit()).rejects.toMatchObject({ code: "SERVICE_UNAVAILABLE" });
   await cms.publish({ revision: state.revision });
-  expect((await submit()).receipt.status).toBe("new");
+  expect((await readPublishedWebsite(app.db)).services.some((entry) => entry.slug === service.slug)).toBe(true);
+  await expect(submit()).rejects.toMatchObject({ code: "SERVICE_UNAVAILABLE" });
   state = await cms.archiveService({ revision: state.revision, slug: service.slug });
   await cms.publish({ revision: state.revision });
   await expect(submit()).rejects.toMatchObject({ code: "SERVICE_UNAVAILABLE" });

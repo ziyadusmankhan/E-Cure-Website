@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { site } from "@/config/site";
+import { ecureLegacyPhotoPaths } from "@/config/branding";
 import { copyKeysFor, contentPages, type CmsDocument, type CmsBrand } from "@/types/cms";
 const text = (max = 1000) => z.string().trim().min(1).max(max);
 const list = z.array(text()).max(30);
@@ -10,6 +11,7 @@ const staticAssets = new Set(
     site.logo.src,
     site.media.hero.src,
     site.media.about.src,
+    ...(site.presentation === "ecure" ? ecureLegacyPhotoPaths : []),
     ...site.services.map((s) => s.image),
   ].filter(Boolean),
 );
@@ -61,6 +63,11 @@ export const brandSchema = z
           .string()
           .max(24)
           .refine((v) => !v || /^\+?[0-9\s()-]{7,24}$/.test(v)),
+        secondaryPhone: z
+          .string()
+          .max(24)
+          .refine((v) => !v || /^\+?[0-9\s()-]{7,24}$/.test(v))
+          .optional(),
         email: z.union([z.literal(""), z.email().max(254)]),
         address: z.string().max(500),
         serviceArea: z.string().max(500),

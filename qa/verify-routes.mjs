@@ -13,7 +13,6 @@ const routes = [
   "/services/medical-equipment",
   "/services/laboratory-services",
   "/services/nursing-care",
-  "/book-appointment",
   "/contact",
   "/faq",
   "/privacy-policy",

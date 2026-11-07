@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { isIP } from "node:net";
 import { z } from "zod";
+import { site } from "@/config/site";
 import type { SubmissionKind } from "@/types/submission";
 import { getDatabase, type Database } from "../db/connection";
 import { BackendError, publicError } from "../errors";
@@ -51,7 +52,8 @@ export async function handleSubmission(
   const requestId = randomUUID();
   try {
     const policy = deps.policy ?? submissionPolicy();
-    if (policy.mode === "disabled") throw new BackendError("SUBMISSIONS_DISABLED");
+    if (policy.mode === "disabled" || site.presentation === "ecure")
+      throw new BackendError("SUBMISSIONS_DISABLED");
     const origin = request.headers.get("origin");
     const url = new URL(request.url);
     if (
