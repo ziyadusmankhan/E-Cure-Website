@@ -6,11 +6,11 @@ const physiotherapists = [
     portrait: "/images/ecure/staff/dr-daim-aziz.jpg",
     position: "center",
   },
-  {
-    name: "Dr Muhammad",
-    portrait: "/images/ecure/staff/dr-muhammad-portrait.jpg",
-    position: "center top",
-  },
+  // {
+  //   name: "Dr Muhammad",
+  //   portrait: "/images/ecure/staff/dr-muhammad-portrait.jpg",
+  //   position: "center top",
+  // },
 ];
 
 const staff = [
